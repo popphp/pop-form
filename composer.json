@@ -22,8 +22,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "popphp/pop-dom": "2.0.0a",
-        "popphp/pop-validator": "2.0.0a"
+        "popphp/pop-dom": "~2.0",
+        "popphp/pop-validator": "~2.0"
     },
     "autoload": {
         "psr-4": {
