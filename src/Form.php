@@ -642,12 +642,10 @@ class Form extends AbstractForm
      * by a basic 1:1 DT/DD tag structure.
      *
      * @param  boolean $ret
-     * @param  int $depth
-     * @param  string $indent
      * @throws Exception
      * @return mixed
      */
-    public function render($ret = false, $depth = 0, $indent = null)
+    public function renderForm($ret = false)
     {
         // Check to make sure form elements exist.
         if ((count($this->getChildren()) == 0) && (count($this->fieldConfig) == 0)) {
@@ -661,13 +659,9 @@ class Form extends AbstractForm
             $this->setAttribute('enctype', 'multipart/form-data');
         }
 
-        // If the template is not set, default to the basic output.
-        if (null === $this->template) {
-            $this->renderWithoutTemplate();
-        // Else, start building the form's HTML output based on the template.
-        } else {
-            $this->renderWithTemplate();
-        }
+        // Render the form template
+        $this->output = (null !== $this->template) ?
+            $this->template->render($this) : $this->renderWithoutTemplate();
 
         // Return or print the form output.
         if ($ret) {
@@ -729,7 +723,7 @@ class Form extends AbstractForm
     /**
      * Method to render the form using a basic 1:1 DT/DD layout
      *
-     * @return void
+     * @return string
      */
     protected function renderWithoutTemplate()
     {
@@ -818,124 +812,7 @@ class Form extends AbstractForm
 
         // Add the DL element and its children to the form element.
         $this->addChild($dl);
-        $this->output = parent::render(true);
-    }
-
-    /**
-     * Method to render the form using the template
-     *
-     * @return void
-     */
-    protected function renderWithTemplate()
-    {
-        // Initialize properties and variables.
-        $isFile       = !((stripos($this->template, '.phtml') === false) && (stripos($this->template, '.php') === false));
-        $template     = $this->template;
-        $fileContents = ($isFile) ? file_get_contents($this->template) : null;
-        $this->output = null;
-        $children     = $this->getChildren();
-
-        // Loop through the child elements of the form.
-        foreach ($children as $child) {
-            // Clear the password field from display.
-            if ($child->getAttribute('type') == 'password') {
-                $child->setValue(null);
-                $child->setAttribute('value', null);
-            }
-
-            // Get the element name.
-            if ($child->getNodeName() == 'fieldset') {
-                $chdrn = $child->getChildren();
-                $attribs = $chdrn[0]->getAttributes();
-            } else {
-                $attribs = $child->getAttributes();
-            }
-
-            $name = (isset($attribs['name'])) ? $attribs['name'] : '';
-            $name = str_replace('[]', '', $name);
-
-            // Set the element's label, if applicable.
-            if (null !== $child->getLabel()) {
-
-                // Format the label name.
-                $label = new Child('label', $child->getLabel());
-                $label->setAttribute('for', $name);
-
-                $labelAttributes = $child->getLabelAttributes();
-                if (null !== $labelAttributes) {
-                    foreach ($labelAttributes as $a => $v) {
-                        $label->setAttribute($a, $v);
-                    }
-                } else if ($child->isRequired()) {
-                    $label->setAttribute('class', 'required');
-                }
-
-                // Swap the element's label placeholder with the rendered label element.
-                $labelSearch        = '[{' . $name . '_label}]';
-                $labelReplace       = $label->render(true);
-                $labelReplace       = substr($labelReplace, 0, -1);
-                $template           = str_replace($labelSearch, $labelReplace, $template);
-                ${$name . '_label'} = $labelReplace;
-            }
-
-            // Calculate the element's indentation.
-            if (null === $fileContents) {
-                $childIndent = substr($template, 0, strpos($template, ('[{' . $name . '}]')));
-                $childIndent = substr($childIndent, (strrpos($childIndent, "\n") + 1));
-            } else {
-                $childIndent = substr($fileContents, 0, strpos($fileContents, ('$' . $name)));
-                $childIndent = substr($childIndent, (strrpos($childIndent, "\n") + 1));
-            }
-
-            // Some whitespace clean up
-            $length  = strlen($childIndent);
-            $last    = 0;
-            $matches = [];
-            preg_match_all('/[^\s]/', $childIndent, $matches, PREG_OFFSET_CAPTURE);
-            if (isset($matches[0])) {
-                foreach ($matches[0] as $str) {
-                    $childIndent = str_replace($str[0], null, $childIndent);
-                    $last = $str[1];
-                }
-            }
-
-            // Final whitespace clean up
-            if (null !== $fileContents) {
-                $childIndent = substr($childIndent, 0, (0 - abs($length - $last)));
-            }
-
-            // Set each child element's indentation.
-            $childChildren = $child->getChildren();
-            $child->removeChildren();
-            foreach ($childChildren as $cChild) {
-                $cChild->setIndent(($childIndent . '    '));
-                $child->addChild($cChild);
-            }
-
-            // Swap the element's placeholder with the rendered element.
-            $elementSearch  = '[{' . $name . '}]';
-            $elementReplace = $child->render(true, 0, null, $childIndent);
-            $elementReplace = substr($elementReplace, 0, -1);
-            $elementReplace = str_replace('</select>', $childIndent . '</select>', $elementReplace);
-            $elementReplace = str_replace('</fieldset>', $childIndent . '</fieldset>', $elementReplace);
-            $template       = str_replace($elementSearch, $elementReplace, $template);
-            ${$name}        = $elementReplace;
-        }
-
-        // Set the rendered form content and remove the children.
-        if (!$isFile) {
-            $this->setNodeValue("\n" . $template . "\n" . $this->getIndent());
-            $this->removeChildren();
-            $this->output = parent::render(true);
-        } else {
-            $action = $this->getAttribute('action');
-            $method = $this->getAttribute('method');
-            $form   = $this;
-
-            ob_start();
-            include $this->template;
-            $this->output = ob_get_clean();
-        }
+        return parent::render(true);
     }
 
     /**
@@ -946,7 +823,7 @@ class Form extends AbstractForm
 
     public function __toString()
     {
-        return $this->render(true);
+        return $this->renderForm(true);
     }
 
 }

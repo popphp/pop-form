@@ -32,7 +32,7 @@ abstract class AbstractForm extends Child implements \ArrayAccess
 
     /**
      * Form template
-     * @var string
+     * @var Template\TemplateInterface
      */
     protected $template = null;
 
@@ -67,28 +67,24 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     protected $hasFile = false;
 
     /**
-     * Set a form template for the render method to utilize
+     * Set a form template
      *
-     * @param  string $tmpl
+     * @param  string $template
      * @return Form
      */
-    public function setTemplate($tmpl)
+    public function setTemplate($template)
     {
-        if (preg_match('/(.*)\.(x|ht|pht|xht)ml/i', $tmpl) ||
-            (substr($tmpl, -4) == '.htm') ||
-            (substr($tmpl, -4) == '.php') ||
-            (substr($tmpl, -5) == '.php3') ||
-            (substr($tmpl, -4) == '.txt')) {
-            if (file_exists($tmpl)) {
-                $this->template = ((stripos($tmpl, '.phtml') === false) && (stripos($tmpl, '.php') === false)) ?
-                    file_get_contents($tmpl) :
-                    $tmpl;
+        if (!($template instanceof Template\TemplateInterface)) {
+            if (((substr($template, -6) == '.phtml') ||
+                    (substr($template, -5) == '.php3') ||
+                    (substr($template, -4) == '.php')) && (file_exists($template))) {
+                $template = new Template\File($template);
             } else {
-                $this->template = $tmpl;
+                $template = (file_exists($template)) ? new Template\Stream(file_get_contents($template)) : new Template\Stream($template);
             }
-        } else {
-            $this->template = $tmpl;
         }
+        $this->template = $template;
+
         return $this;
     }
 
@@ -119,7 +115,7 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     /**
      * Get the form template for the render method to utilize.
      *
-     * @return string
+     * @return Template\TemplateInterface
      */
     public function getTemplate()
     {

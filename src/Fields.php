@@ -25,7 +25,7 @@ namespace Pop\Form;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    2.0.0a
  */
-class Fields
+class Fields implements \ArrayAccess
 {
 
     /**
@@ -194,7 +194,9 @@ class Fields
     public function addFieldsFromTable(array $tableInfo, array $attribs = null, array $values = null, $omit = null)
     {
         if (!isset($tableInfo['tableName']) || !isset($tableInfo['primaryId']) || !isset($tableInfo['columns'])) {
-            throw new Exception('Error: The table info parameter is not in the correct format. It should be a returned array value from the getTableInfo() method of the Db\\Record component.');
+            throw new Exception(
+                'Error: The table info parameter is not in the correct format. It should be a returned array value from the getTableInfo() method of the Db\\Record component.'
+            );
         }
 
         if (null !== $omit) {
@@ -353,6 +355,51 @@ class Fields
     public function __unset($name)
     {
         unset($this->fields[$name]);
+    }
+
+    /**
+     * ArrayAccess offsetExists
+     *
+     * @param  mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+
+    /**
+     * ArrayAccess offsetGet
+     *
+     * @param  mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    /**
+     * ArrayAccess offsetSet
+     *
+     * @param  mixed $offset
+     * @param  mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->__set($offset, $value);
+    }
+
+    /**
+     * ArrayAccess offsetUnset
+     *
+     * @param  mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        $this->__unset($offset);
     }
 
 }
