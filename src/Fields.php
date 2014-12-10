@@ -70,7 +70,6 @@ class Fields implements \ArrayAccess
         if (!isset($field['type'])) {
             throw new Exception('Error: The field type was not set.');
         }
-
         $type       = $field['type'];
         $label      = (isset($field['label']))      ? $field['label']      : null;
         $required   = (isset($field['required']))   ? $field['required']   : null;
@@ -156,7 +155,7 @@ class Fields implements \ArrayAccess
             $elem->setLabel($label);
         }
         // Set if required.
-        if (null !== $required) {
+        if ((null !== $required) && ($required)) {
             $elem->setRequired($required);
         }
         // Set if error display.
@@ -195,7 +194,8 @@ class Fields implements \ArrayAccess
     {
         if (!isset($tableInfo['tableName']) || !isset($tableInfo['primaryId']) || !isset($tableInfo['columns'])) {
             throw new Exception(
-                'Error: The table info parameter is not in the correct format. It should be a returned array value from the getTableInfo() method of the Db\\Record component.'
+                'Error: The table info parameter is not in the correct format. ' .
+                'It should be a returned array value from the getTableInfo() method of the Pop\\Db\\Record component.'
             );
         }
 

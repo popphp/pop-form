@@ -478,8 +478,12 @@ abstract class AbstractElement extends Child implements ElementInterface
             }
         }
 
-        $output = ($this->errorDisplay['pre']) ? $errors . $output : $output . $errors;
-        return $output;
+        $this->output = ($this->errorDisplay['pre']) ? $errors . $output : $output . $errors;
+        if ($ret) {
+            return $this->output;
+        } else {
+            echo $this->output;
+        }
     }
 
 }

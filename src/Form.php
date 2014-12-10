@@ -85,7 +85,6 @@ class Form extends AbstractForm
         }
 
         $this->fieldConfig = (count($this->fieldConfig) > 0) ? array_merge($this->fieldConfig, $fields) : $fields;
-
         return $this;
     }
 

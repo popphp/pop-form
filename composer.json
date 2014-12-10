@@ -21,8 +21,12 @@
     ],
     "require": {
         "php": ">=5.4.0",
+        "popphp/pop-db": "2.*@dev",
         "popphp/pop-dom": "2.*@dev",
         "popphp/pop-validator": "2.*@dev"
+    },
+    "suggest" : {
+        "popphp/pop-db": "For auto-generating fields from database tables"
     },
     "autoload": {
         "psr-4": {
