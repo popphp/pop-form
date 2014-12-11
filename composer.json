@@ -25,9 +25,6 @@
         "popphp/pop-dom": "2.*@dev",
         "popphp/pop-validator": "2.*@dev"
     },
-    "suggest" : {
-        "popphp/pop-db": "For auto-generating fields from database tables"
-    },
     "autoload": {
         "psr-4": {
             "Pop\\Form\\": "src/"
