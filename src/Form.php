@@ -250,6 +250,8 @@ class Form extends AbstractForm
                                             $field->getChild($key)->setAttribute('checked', 'checked');
                                         } else if ($child->getAttribute('value') == $field->getMarked()) {
                                             $field->getChild($key)->setAttribute('checked', 'checked');
+                                        } else {
+                                            $field->getChild($key)->removeAttribute('checked');
                                         }
                                     // If select option
                                     } else if ($child->getNodeName() == 'option') {
@@ -257,6 +259,8 @@ class Form extends AbstractForm
                                             $field->getChild($key)->setAttribute('selected', 'selected');
                                         } else if ($child->getAttribute('value') == $field->getMarked()) {
                                             $field->getChild($key)->setAttribute('selected', 'selected');
+                                        } else {
+                                            $field->getChild($key)->removeAttribute('selected');
                                         }
                                     }
                                 }
