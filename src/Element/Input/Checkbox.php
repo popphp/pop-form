@@ -62,6 +62,7 @@ class Checkbox extends AbstractElement
         parent::__construct('fieldset', null, null, false, $indent);
         $this->setAttribute('class', 'checkbox-fieldset');
         $this->setMarked($marked);
+        $this->setName($name . '[]');
 
         // Create the checkbox elements and related span elements.
         $i = null;

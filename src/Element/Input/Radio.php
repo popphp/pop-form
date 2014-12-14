@@ -54,6 +54,7 @@ class Radio extends AbstractElement
         parent::__construct('fieldset', null, null, false, $indent);
         $this->setAttribute('class', 'radio-fieldset');
         $this->setMarked($marked);
+        $this->setName($name);
 
         // Create the radio elements and related span elements.
         $i = null;
