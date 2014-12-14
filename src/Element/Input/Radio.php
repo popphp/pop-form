@@ -69,7 +69,7 @@ class Radio extends AbstractElement
             ]);
 
             // Determine if the current radio element is checked.
-            if ($k == $this->marked) {
+            if ($k === $this->marked) {
                 $rad->setAttribute('checked', 'checked');
             }
 

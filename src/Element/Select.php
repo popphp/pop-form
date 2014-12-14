@@ -119,11 +119,11 @@ class Select extends AbstractElement
                     $o->setAttribute('value', $ky);
                     // Determine if the current option element is selected.
                     if (is_array($this->marked)) {
-                        if (in_array($ky, $this->marked)) {
+                        if (in_array($ky, $this->marked, true)) {
                             $o->setAttribute('selected', 'selected');
                         }
                     } else {
-                        if ($ky == $this->marked) {
+                        if ($ky === $this->marked) {
                             $o->setAttribute('selected', 'selected');
                         }
                     }
@@ -139,7 +139,7 @@ class Select extends AbstractElement
                         $opt->setAttribute('selected', 'selected');
                     }
                 } else {
-                    if ($k == $this->marked) {
+                    if ($k === $this->marked) {
                         $opt->setAttribute('selected', 'selected');
                     }
                 }

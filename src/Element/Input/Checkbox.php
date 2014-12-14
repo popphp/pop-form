@@ -77,7 +77,7 @@ class Checkbox extends AbstractElement
             ]);
 
             // Determine if the current radio element is checked.
-            if (in_array($k, $this->marked)) {
+            if (in_array($k, $this->marked, true)) {
                 $chk->setAttribute('checked', 'checked');
             }
 
