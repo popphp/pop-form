@@ -51,7 +51,7 @@ class Stream extends AbstractTemplate
      */
     public function setTemplate($template)
     {
-        $this->template = $template;
+        $this->template = (file_exists($template)) ? file_get_contents($template) : $template;
         return $this;
     }
 

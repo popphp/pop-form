@@ -82,8 +82,7 @@ abstract class AbstractForm extends Child implements \ArrayAccess
                 $template = new Template\File($template);
             // Else, if template is a string or a non-PHP file
             } else {
-                $template = (file_exists($template)) ? new Template\Stream(file_get_contents($template)) :
-                    new Template\Stream($template);
+                $template = new Template\Stream($template);
             }
         }
         $this->template = $template;
