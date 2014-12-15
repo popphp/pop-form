@@ -196,46 +196,32 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      */
     protected function filterValues(array $values, array $filters)
     {
-        $filteredValues = [];
-
-        foreach ($values as $key => $value) {
-            foreach ($filters as $func => $params) {
-                if (function_exists($func)) {
-                    if ($value instanceof \ArrayObject) {
-                        $value = (array)$value;
-                    }
-                    if (is_array($value)) {
-                        $filteredAry = [];
-                        foreach ($value as $k => $v) {
-                            if (null !== $params) {
-                                $pars = (!is_array($params)) ?
-                                    [$v, $params] :
-                                    array_merge([$v], $params);
-                                $filteredAry[$k] = call_user_func_array($func, $pars);
-                            } else {
-                                $filteredAry[$k] = $func($v);
-                            }
-                        }
-                        $filteredValues[$key] = $filteredAry;
-                        $value = $filteredAry;
-                    } else {
-                        if (null !== $params) {
-                            $pars = (!is_array($params)) ?
-                                [$value, $params] :
-                                array_merge([$value], $params);
-                            $filteredValues[$key] = call_user_func_array($func, $pars);
-                        } else {
-                            $filteredValues[$key] = $func($value);
-                        }
-                        $value = $filteredValues[$key];
-                    }
-                } else {
-                    $filteredValues[$key] = $value;
-                }
+        foreach ($filters as $call => $params) {
+            if (null !== $params) {
+                $params = (!is_array($params)) ? [$params] : $params;
+            } else {
+                $params = [];
             }
+            $this->applyFilter($values, $call, $params);
         }
 
-        return $filteredValues;
+        return $values;
+    }
+
+    /**
+     * Execute filter
+     *
+     * @param  array  $array
+     * @param  string $call
+     * @param  array  $params
+     * @return void
+     */
+    protected function applyFilter(&$array, $call, $params = [])
+    {
+        array_walk_recursive($array, function(&$value, $key, $userdata) {
+            $params = array_merge([$value], $userdata[1]);
+            $value  = call_user_func_array($userdata[0], $params);
+        }, [$call, $params]);
     }
 
     /**
