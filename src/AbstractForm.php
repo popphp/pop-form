@@ -383,4 +383,11 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      */
     abstract public function setFieldValues(array $values = null);
 
+    /**
+     * Filter of field values with the filters that have been set
+     *
+     * @return AbstractForm
+     */
+    abstract public function filter();
+
 }
