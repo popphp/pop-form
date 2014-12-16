@@ -43,6 +43,12 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     protected $fields = [];
 
     /**
+     * Filters
+     * @var array
+     */
+    protected $filters = [];
+
+    /**
      * Form field groups
      * @var array
      */
@@ -111,6 +117,52 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     public function setMethod($method)
     {
         $this->setAttribute('method', $method);
+        return $this;
+    }
+
+    /**
+     * Add filter
+     *
+     * @param  mixed $call
+     * @param  mixed $params
+     * @return AbstractForm
+     */
+    public function addFilter($call, $params = null)
+    {
+        $this->filters[] = [
+            'call'   => $call,
+            'params' => $params
+        ];
+        return $this;
+    }
+
+    /**
+     * Add filters
+     *
+     * @param  array $filters
+     * @throws Exception
+     * @return AbstractForm
+     */
+    public function addFilters(array $filters)
+    {
+        foreach ($filters as $filter) {
+            if (!isset($filter['call'])) {
+                throw new Exception('Error: The \'call\' key must be set.');
+            }
+            $params = (isset($filter['params'])) ? $filter['params'] : null;
+            $this->addFilter($filter['call'], $params);
+        }
+        return $this;
+    }
+
+    /**
+     * Clear filters
+     *
+     * @return AbstractForm
+     */
+    public function clearFilters()
+    {
+        $this->filters = [];
         return $this;
     }
 
@@ -193,21 +245,25 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      * callbacks and their parameters
      *
      * @param  array $values
-     * @param  array $filters
-     * @return array
+     * @return mixed
      */
-    protected function filterValues(array $values, array $filters)
+    protected function filterValues(array $values = null)
     {
-        foreach ($filters as $call => $params) {
-            if (null !== $params) {
-                $params = (!is_array($params)) ? [$params] : $params;
-            } else {
+        if (count($this->filters) > 0) {
+            foreach ($this->filters as $filter) {
                 $params = [];
+                if (isset($filter['params'])) {
+                    $params = (!is_array($filter['params'])) ? [$filter['params']] : $filter['params'];
+                }
+                if (null !== $values) {
+                    $this->applyFilter($values, $filter['call'], $params);
+                } else {
+                    $this->applyFilter($this->fields, $filter['call'], $params);
+                }
             }
-            $this->applyFilter($values, $call, $params);
         }
 
-        return $values;
+        return (null !== $values) ? $values : $this->fields;
     }
 
     /**
@@ -317,5 +373,14 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     {
         $this->__unset($offset);
     }
+
+    /**
+     * Set the field values. Optionally, you can apply filters
+     * to the passed values via callbacks and their parameters
+     *
+     * @param  array $values
+     * @return AbstractForm
+     */
+    abstract public function setFieldValues(array $values = null);
 
 }

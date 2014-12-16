@@ -216,14 +216,13 @@ class Form extends AbstractForm
      * to the passed values via callbacks and their parameters
      *
      * @param  array $values
-     * @param  array $filters
      * @return Form
      */
-    public function setFieldValues(array $values = null, array $filters = null)
+    public function setFieldValues(array $values = null)
     {
         // Filter values if passed
-        if ((null !== $values) && (null !== $filters)) {
-            $values = $this->filterValues($values, $filters);
+        if (null !== $values) {
+            $values = $this->filterValues($values);
         }
 
         // If no fields have been created yet, create the fields assigning the field values
@@ -675,15 +674,13 @@ class Form extends AbstractForm
     }
 
     /**
-     * Method to filter current form values with the
-     * applied callbacks and their parameters
+     * Filter of field values with the filters that have been set
      *
-     * @param  array $filters
      * @return Form
      */
-    public function filter($filters)
+    public function filter()
     {
-        $this->setFieldValues($this->fields, $filters);
+        $this->filterValues();
         return $this;
     }
 
