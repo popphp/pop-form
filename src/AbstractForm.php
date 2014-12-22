@@ -61,6 +61,12 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     protected $fieldConfig = [];
 
     /**
+     * Form field group configuration values
+     * @var array
+     */
+    protected $fieldGroupConfig = [];
+
+    /**
      * Global Form error display format
      * @var array
      */
@@ -214,6 +220,41 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     public function getFields()
     {
         return $this->fields;
+    }
+
+    /**
+     * Get fieldConfig
+     *
+     * @param $name
+     * @return array
+     */
+    public function getFieldConfig($name = null)
+    {
+        if (null !== $name) {
+            return (array_key_exists($name, $this->fieldConfig)) ? $this->fieldConfig[$name] : [];
+        } else {
+            return $this->fieldConfig;
+        }
+    }
+
+    /**
+     * Get fieldGroupConfig
+     *
+     * @return array
+     */
+    public function getFieldGroupConfig()
+    {
+        return $this->fieldGroupConfig;
+    }
+
+    /**
+     * Determine if the for has group field configs
+     *
+     * @return array
+     */
+    public function hasFieldGroupConfig()
+    {
+        return (count($this->fieldGroupConfig) > 0);
     }
 
     /**

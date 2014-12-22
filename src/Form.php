@@ -64,7 +64,10 @@ class Form extends AbstractForm
     public function setFieldConfig(array $fields)
     {
         $keys = array_keys($fields);
+
+        // If group fields config
         if (is_numeric($keys[0])) {
+            $this->fieldGroupConfig = (count($this->fieldGroupConfig) > 0) ? array_merge($this->fieldGroupConfig, $fields) : $fields;
             foreach ($fields as $field) {
                 foreach ($field as $name => $value) {
                     $field[$name]['name'] = $name;
@@ -74,6 +77,7 @@ class Form extends AbstractForm
                     }
                 }
             }
+        // Else, if fields config
         } else {
             foreach ($fields as $name => $value) {
                 $fields[$name]['name'] = $name;
@@ -209,6 +213,60 @@ class Form extends AbstractForm
         $this->setFieldValues();
 
         return $this;
+    }
+
+    /**
+     * Insert a field group config before another field group config
+     *
+     * @param  string $beforeIndex
+     * @param  array  $fieldGroup
+     * @throws Exception
+     * @return Form
+     */
+    public function insertGroupConfigBefore($beforeIndex, array $fieldGroup)
+    {
+        if (!isset($this->fieldGroupConfig[$beforeIndex])) {
+            throw new Exception('Error: That field group does not exist.');
+        }
+        if ($beforeIndex == 0) {
+            $this->fieldGroupConfig = array_merge($fieldGroup, $this->fieldGroupConfig);
+        } else {
+            array_splice($this->fieldGroupConfig, $beforeIndex, 0, $fieldGroup);
+        }
+
+        $this->childNodes  = [];
+        $this->fieldConfig = [];
+        $this->groups      = [];
+        $this->setFieldConfig($this->fieldGroupConfig);
+        $this->setFieldValues();
+    }
+
+    /**
+     * Insert a field group config after another field group config
+     *
+     * @param  string $afterIndex
+     * @param  array  $fieldGroup
+     * @throws Exception
+     * @return Form
+     */
+    public function insertGroupConfigAfter($afterIndex, array $fieldGroup)
+    {
+        if (!isset($this->fieldGroupConfig[$afterIndex])) {
+            throw new Exception('Error: That field group does not exist.');
+        }
+        $afterIndex++;
+        if (($afterIndex - 1) == (count($this->fieldGroupConfig) - 1)) {
+            $this->fieldGroupConfig = array_merge($this->fieldGroupConfig, $fieldGroup);
+        } else {
+            array_splice($this->fieldGroupConfig, $afterIndex, 0, $fieldGroup);
+        }
+
+        $this->childNodes  = [];
+        $this->fieldConfig = [];
+        $this->groups      = [];
+        $this->setFieldConfig($this->fieldGroupConfig);
+        $this->setFieldValues();
+
     }
 
     /**
@@ -405,21 +463,6 @@ class Form extends AbstractForm
         }
 
         return $this;
-    }
-
-    /**
-     * Get a single field from $fieldConfig
-     *
-     * @param $name
-     * @return array
-     */
-    public function getFieldConfig($name = null)
-    {
-        if (null !== $name) {
-            return (array_key_exists($name, $this->fieldConfig)) ? $this->fieldConfig[$name] : [];
-        } else {
-            return $this->fieldConfig;
-        }
     }
 
     /**
