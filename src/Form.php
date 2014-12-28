@@ -324,12 +324,14 @@ class Form extends AbstractForm
                             }
                         // Else, if a single-value form element
                         } else {
-                            $field->setValue($values[$fieldName]);
-                            $this->fields[$fieldName] = $values[$fieldName];
+                            $fieldValue = ($field instanceof Element\Input\Captcha) ?
+                                strtoupper($values[$fieldName]) : $values[$fieldName];
+                            $field->setValue($fieldValue);
+                            $this->fields[$fieldName] = $fieldValue;
                             if ($field->getNodeName() == 'textarea') {
-                                $field->setNodeValue($values[$fieldName]);
+                                $field->setNodeValue($fieldValue);
                             } else {
-                                $field->setAttribute('value', $values[$fieldName]);
+                                $field->setAttribute('value', $fieldValue);
                             }
                         }
                     }
