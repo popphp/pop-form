@@ -91,6 +91,27 @@ class Captcha extends Text
         $this->setValidator();
     }
 
+
+
+    /**
+     * Set the token of the captcha form element
+     *
+     * @param  array  $token
+     * @param  string $label
+     * @return Captcha
+     */
+    public function setToken(array $token, $label = null)
+    {
+        if (isset($token['captcha']) && isset($token['value']) && isset($token['expire']) && isset($token['start'])) {
+            $this->token = $token;
+            $this->setValue(strtoupper($token['value']))
+                 ->setLabel($label)
+                 ->setValidator();
+        }
+
+        return $this;
+    }
+
     /**
      * Set the label of the captcha form element
      *
@@ -120,6 +141,7 @@ class Captcha extends Text
      */
     protected function setValidator()
     {
+        $this->validators = [];
         // Get query data
         if ($_SERVER['REQUEST_METHOD']) {
             $queryData = [];
