@@ -91,8 +91,6 @@ class Captcha extends Text
         $this->setValidator();
     }
 
-
-
     /**
      * Set the token of the captcha form element
      *

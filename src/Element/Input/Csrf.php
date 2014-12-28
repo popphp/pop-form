@@ -84,6 +84,23 @@ class Csrf extends Hidden
     }
 
     /**
+     * Set the token of the csrf form element
+     *
+     * @param  array  $token
+     * @return Captcha
+     */
+    public function setToken(array $token)
+    {
+        if (isset($token['value']) && isset($token['expire']) && isset($token['start'])) {
+            $this->token = $token;
+            $this->setValue($token['value'])
+                 ->setValidator();
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the validator
      *
      * @throws Exception
