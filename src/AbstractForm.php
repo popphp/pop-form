@@ -334,6 +334,7 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     public function __set($name, $value)
     {
         $this->fields[$name] = $value;
+        $this->setFieldValues([$name => $value]);
     }
 
     /**
