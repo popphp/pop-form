@@ -15,6 +15,8 @@
  */
 namespace Pop\Form\Element\Input;
 
+use Pop\Form\Element;
+
 /**
  * Form submit element class
  *
@@ -26,14 +28,8 @@ namespace Pop\Form\Element\Input;
  * @version    2.0.0a
  */
 
-class Submit extends AbstractInput
+class Submit extends Element\Input
 {
-
-    /**
-     * Element attributes
-     * @var array
-     */
-    protected $attributes = ['type' => 'submit'];
 
     /**
      * Constructor
@@ -47,8 +43,7 @@ class Submit extends AbstractInput
      */
     public function __construct($name, $value = null, $indent = null)
     {
-        parent::__construct($name, $value, $indent);
-        $this->setAttributes(['name' => $name, 'id' => $name, 'value' => $value]);
+        parent::__construct($name, 'submit', $value, $indent);
     }
 
 }

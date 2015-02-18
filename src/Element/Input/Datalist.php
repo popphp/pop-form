@@ -43,35 +43,23 @@ class Datalist extends Text
      * Instantiate the datalist text input form element
      *
      * @param  string $name
+     * @param  array  $values
      * @param  string $value
      * @param  string $indent
-     * @param  array  $values
      * @return Datalist
      */
-    public function __construct($name, $value = null, $indent = null, array $values = null)
+    public function __construct($name, array $values, $value = null, $indent = null)
     {
         parent::__construct($name, $value, $indent);
-        $this->setAttribute('list', $name . '-datalist');
+        $this->setAttribute('list', $name . '_datalist');
 
         if (null !== $values) {
             $this->datalist = new Child('datalist', null, null, $this->indent);
-            $this->datalist->setAttribute('id', $name . '-datalist');
+            $this->datalist->setAttribute('id', $name . '_datalist');
             foreach ($values as $val) {
                 $this->datalist->addChild((new Child('option'))->setAttribute('value', $val));
             }
         }
-    }
-
-    /**
-     * Set whether the form element is required
-     *
-     * @param  boolean $required
-     * @return Datalist
-     */
-    public function setRequired($required)
-    {
-        $this->setAttribute('required', 'required');
-        return parent::setRequired($required);
     }
 
     /**

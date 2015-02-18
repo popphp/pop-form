@@ -121,7 +121,8 @@ class Captcha extends Text
         parent::setLabel($label);
 
         if (isset($this->token['captcha'])) {
-            if ((strpos($this->token['captcha'], '<img') === false) && ((strpos($this->token['captcha'], ' + ') !== false) || (strpos($this->token['captcha'], ' - ') !== false) || (strpos($this->token['captcha'], ' * ') !== false) || (strpos($this->token['captcha'], ' / ') !== false))) {
+            if ((strpos($this->token['captcha'], '<img') === false) &&
+                ((strpos($this->token['captcha'], ' + ') !== false) || (strpos($this->token['captcha'], ' - ') !== false) || (strpos($this->token['captcha'], ' * ') !== false) || (strpos($this->token['captcha'], ' / ') !== false))) {
                 $this->label = $this->label . '(' . str_replace([' * ', ' / '], [' &#215; ', ' &#247; '], $this->token['captcha'] .')');
             } else {
                 $this->label = $this->label . $this->token['captcha'];

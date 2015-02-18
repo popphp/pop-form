@@ -288,7 +288,8 @@ class Form extends AbstractForm
             $this->createFields($values);
         // Else, set the field values for the already existing fields
         } else {
-            $fields = $this->getElements();
+            $fields       = $this->getElements();
+            $fieldsPassed = [];
             if ((null !== $values) && (count($fields) > 0)) {
                 foreach ($fields as $field) {
                     $fieldName = str_replace('[]', '', $field->getName());
@@ -297,6 +298,7 @@ class Form extends AbstractForm
                         if ($field->hasChildren()) {
                             $field->setMarked($values[$fieldName]);
                             $this->fields[$fieldName] = $values[$fieldName];
+                            $fieldsPassed[]           = $fieldName;
                             // Loop through the field's children
                             if ($field->hasChildren()) {
                                 $children = $field->getChildren();
@@ -328,6 +330,7 @@ class Form extends AbstractForm
                                 strtoupper($values[$fieldName]) : $values[$fieldName];
                             $field->setValue($fieldValue);
                             $this->fields[$fieldName] = $fieldValue;
+                            $fieldsPassed[] = $fieldName;
                             if ($field->getNodeName() == 'textarea') {
                                 $field->setNodeValue($fieldValue);
                             } else {
@@ -337,7 +340,21 @@ class Form extends AbstractForm
                     }
                 }
             }
+
+            // Double-check for any fields that might have not been passed
+            foreach ($this->fields as $field => $value) {
+                if (!in_array($field, $fieldsPassed)) {
+                    foreach ($fields as $fld) {
+                        if ((($fld instanceof Element\CheckboxSet) && ($field . '[]' == $fld->getName())) ||
+                            (($fld instanceof Element\RadioSet) && ($field == $fld->getName())) ||
+                            (($fld instanceof Element\Select) && ($field == $fld->getName()))) {
+                            $fld->setMarked(null);
+                        }
+                    }
+                }
+            }
         }
+
 
         if (null !== $this->errorDisplay) {
             $this->setErrorDisplay(
@@ -437,7 +454,7 @@ class Form extends AbstractForm
                     $name = (strpos($attribs['name'], '[]') !== false) ? substr($attribs['name'], 0, strpos($attribs['name'], '[]')) : $attribs['name'];
                     $this->fields[$name] = ((null !== $child->getMarked()) ? $child->getMarked() : null);
                 }
-            } else if ($child instanceof Element\Input\Radio) {
+            } else if ($child instanceof Element\RadioSet) {
                 $radioChildren = $child->getChildren();
                 if (isset($radioChildren[0])) {
                     $childAttribs = $radioChildren[0]->getAttributes();
@@ -445,7 +462,7 @@ class Form extends AbstractForm
                         $this->fields[$childAttribs['name']] = ((null !== $child->getMarked()) ? $child->getMarked() : null);
                     }
                 }
-            } else if ($child instanceof Element\Input\Checkbox) {
+            } else if ($child instanceof Element\CheckboxSet) {
                 $checkChildren = $child->getChildren();
                 if (isset($checkChildren[0])) {
                     $childAttribs = $checkChildren[0]->getAttributes();

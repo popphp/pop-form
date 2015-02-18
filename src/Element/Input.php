@@ -13,12 +13,10 @@
 /**
  * @namespace
  */
-namespace Pop\Form\Element\Input;
-
-use Pop\Form\Element\AbstractElement;
+namespace Pop\Form\Element;
 
 /**
- * Form button element class
+ * Form input element class
  *
  * @category   Pop
  * @package    Pop_Form
@@ -28,7 +26,7 @@ use Pop\Form\Element\AbstractElement;
  * @version    2.0.0a
  */
 
-abstract class AbstractInput extends AbstractElement
+class Input extends AbstractElement
 {
 
     /**
@@ -40,18 +38,39 @@ abstract class AbstractInput extends AbstractElement
     /**
      * Constructor
      *
-     * Instantiate the form element
+     * Instantiate the form input element, defaults to text
      *
      * @param  string $name
+     * @param  string $type
      * @param  string $value
      * @param  string $indent
-     * @return AbstractInput
+     * @return Input
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct($name, $type = 'text', $value = null, $indent = null)
     {
         parent::__construct($this->type, null, null, false, $indent);
+
+        $this->setAttributes([
+            'type'  => $type,
+            'name'  => $name,
+            'id'    => $name,
+            'value' => $value
+        ]);
+
         $this->setValue($value);
         $this->setName($name);
+    }
+
+    /**
+     * Set whether the form element is required
+     *
+     * @param  boolean $required
+     * @return Input
+     */
+    public function setRequired($required)
+    {
+        $this->setAttribute('required', 'required');
+        return parent::setRequired($required);
     }
 
 }

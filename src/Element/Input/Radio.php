@@ -15,8 +15,7 @@
  */
 namespace Pop\Form\Element\Input;
 
-use Pop\Dom\Child;
-use Pop\Form\Element\AbstractElement;
+use Pop\Form\Element;
 
 /**
  * Form radio element class
@@ -29,58 +28,21 @@ use Pop\Form\Element\AbstractElement;
  * @version    2.0.0a
  */
 
-class Radio extends AbstractElement
+class Radio extends Element\Input
 {
-
-    /**
-     * Element type
-     * @var string
-     */
-    protected $type = 'input';
-
     /**
      * Constructor
      *
-     * Instantiate the radio input form elements
+     * Instantiate the text input form element
      *
      * @param  string $name
-     * @param  array  $values
+     * @param  string $value
      * @param  string $indent
-     * @param  string $marked
      * @return Radio
      */
-    public function __construct($name, array $values, $indent = null, $marked = null)
+    public function __construct($name, $value = null, $indent = null)
     {
-        parent::__construct('fieldset', null, null, false, $indent);
-        $this->setAttribute('class', 'radio-fieldset');
-        $this->setMarked($marked);
-        $this->setName($name);
-
-        // Create the radio elements and related span elements.
-        $i = null;
-        foreach ($values as $k => $v) {
-            $rad = new Child($this->type, null, null, false, $indent);
-            $rad->setAttributes([
-                'type'  => 'radio',
-                'class' => 'radio',
-                'name'  => $name,
-                'id'    => ($name . $i),
-                'value' => $k
-            ]);
-
-            // Determine if the current radio element is checked.
-            if ($k === $this->marked) {
-                $rad->setAttribute('checked', 'checked');
-            }
-
-            $span = new Child('span', null, null, false, $indent);
-            $span->setAttribute('class', 'radio-span');
-            $span->setNodeValue($v);
-            $this->addChildren([$rad, $span]);
-            $i++;
-        }
-
-        $this->value = $values;
+        parent::__construct($name, 'radio', $value, $indent);
     }
 
 }

@@ -128,10 +128,10 @@ class Fields implements \ArrayAccess
                 $elem = new Element\Textarea($name, $value);
                 break;
             case 'checkbox':
-                $elem = new Element\Input\Checkbox($name, $value, null, $marked);
+                $elem = new Element\CheckboxSet($name, $value, null, $marked);
                 break;
             case 'radio':
-                $elem = new Element\Input\Radio($name, $value, null, $marked);
+                $elem = new Element\RadioSet($name, $value, null, $marked);
                 break;
             case 'csrf':
                 $elem = new Element\Input\Csrf($name, $value, null, $expire);

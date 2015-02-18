@@ -15,6 +15,8 @@
  */
 namespace Pop\Form\Element\Input;
 
+use Pop\Form\Element;
+
 /**
  * Form text element class
  *
@@ -26,14 +28,8 @@ namespace Pop\Form\Element\Input;
  * @version    2.0.0a
  */
 
-class Text extends AbstractInput
+class Text extends Element\Input
 {
-
-    /**
-     * Element attributes
-     * @var array
-     */
-    protected $attributes = ['type' => 'text'];
 
     /**
      * Constructor
@@ -47,20 +43,7 @@ class Text extends AbstractInput
      */
     public function __construct($name, $value = null, $indent = null)
     {
-        parent::__construct($name, $value, $indent);
-        $this->setAttributes(['name' => $name, 'id' => $name, 'value' => $value]);
-    }
-
-    /**
-     * Set whether the form element is required
-     *
-     * @param  boolean $required
-     * @return Text
-     */
-    public function setRequired($required)
-    {
-        $this->setAttribute('required', 'required');
-        return parent::setRequired($required);
+        parent::__construct($name, 'text', $value, $indent);
     }
 
 }

@@ -15,8 +15,7 @@
  */
 namespace Pop\Form\Element\Input;
 
-use Pop\Dom\Child;
-use Pop\Form\Element\AbstractElement;
+use Pop\Form\Element;
 
 /**
  * Form checkbox element class
@@ -29,66 +28,21 @@ use Pop\Form\Element\AbstractElement;
  * @version    2.0.0a
  */
 
-class Checkbox extends AbstractElement
+class Checkbox extends Element\Input
 {
-
-    /**
-     * Element type
-     * @var string
-     */
-    protected $type = 'input';
-
     /**
      * Constructor
      *
-     * Instantiate the checkbox input form elements
+     * Instantiate the text input form element
      *
-     * @param  string       $name
-     * @param  array        $values
-     * @param  string       $indent
-     * @param  string|array $marked
+     * @param  string $name
+     * @param  string $value
+     * @param  string $indent
      * @return Checkbox
      */
-    public function __construct($name, array $values, $indent = null, $marked = null)
+    public function __construct($name, $value = null, $indent = null)
     {
-        if (null !== $marked) {
-            if (!is_array($marked)) {
-                $marked = [$marked];
-            }
-        } else {
-            $marked = [];
-        }
-
-        parent::__construct('fieldset', null, null, false, $indent);
-        $this->setAttribute('class', 'checkbox-fieldset');
-        $this->setMarked($marked);
-        $this->setName($name . '[]');
-
-        // Create the checkbox elements and related span elements.
-        $i = null;
-        foreach ($values as $k => $v) {
-            $chk = new Child($this->type, null, null, false, $indent);
-            $chk->setAttributes([
-                'type'  => 'checkbox',
-                'class' => 'checkbox',
-                'name'  => ($name . '[]'),
-                'id'    => ($name . $i),
-                'value' => $k
-            ]);
-
-            // Determine if the current radio element is checked.
-            if (in_array($k, $this->marked, true)) {
-                $chk->setAttribute('checked', 'checked');
-            }
-
-            $span = new Child('span', null, null, false, $indent);
-            $span->setAttribute('class', 'checkbox-span');
-            $span->setNodeValue($v);
-            $this->addChildren([$chk, $span]);
-            $i++;
-        }
-
-        $this->value = $values;
+        parent::__construct($name, 'checkbox', $value, $indent);
     }
 
 }
