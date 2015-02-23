@@ -59,7 +59,7 @@ class CheckboxSet extends AbstractElement
         }
 
         parent::__construct('fieldset', null, null, false, $indent);
-        $this->attributes['class'] = 'check-box-fieldset';
+        $this->attributes['class'] = 'checkbox-fieldset';
         $this->setMarked($marked);
         $this->setName($name . '[]');
 

@@ -51,7 +51,7 @@ class RadioSet extends AbstractElement
     public function __construct($name, array $values, $indent = null, $marked = null)
     {
         parent::__construct('fieldset', null, null, false, $indent);
-        $this->attributes['class'] = 'radio-btn-fieldset';
+        $this->attributes['class'] = 'radio-fieldset';
         $this->setMarked($marked);
         $this->setName($name);
 
