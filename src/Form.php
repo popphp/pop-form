@@ -63,10 +63,8 @@ class Form extends AbstractForm
      */
     public function setFieldConfig(array $fields)
     {
-        $keys = array_keys($fields);
-
         // If group fields config
-        if (is_numeric($keys[0])) {
+        if ($this->isFieldGroupConfig($fields)) {
             $this->fieldGroupConfig = (count($this->fieldGroupConfig) > 0) ? array_merge($this->fieldGroupConfig, $fields) : $fields;
             foreach ($fields as $field) {
                 foreach ($field as $name => $value) {
@@ -783,6 +781,30 @@ class Form extends AbstractForm
     }
 
     /**
+     * Method to determine if the field config passed is a field group
+     *
+     * @param  array $fields
+     * @return boolean
+     */
+    protected function isFieldGroupConfig(array $fields)
+    {
+        $result = false;
+
+        foreach ($fields as $key => $value) {
+            if (is_array($value) && !isset($value['type'])) {
+                $values = array_values($value);
+                $val    = array_shift($values);
+                if (is_array($val) && isset($val['type'])) {
+                    $result = true;
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Method to render the form using a basic 1:1 DT/DD layout
      *
      * @return string
@@ -794,12 +816,13 @@ class Form extends AbstractForm
         $children     = $this->getChildren();
         $this->removeChildren();
 
-        $id = (null !== $this->getAttribute('id')) ? $this->getAttribute('id') . '-field-group-' : 'pop-form-field-group-';
+        $id = (null !== $this->getAttribute('id')) ? $this->getAttribute('id') . '-field-group' : 'pop-form-field-group';
 
         // Create DL element.
         $i = 1;
         $dl = new Child('dl', null, null, false, $this->getIndent());
-        $dl->setAttribute('id', $id . $i);
+        $dl->setAttribute('id', $id . '-' . $i);
+        $dl->setAttribute('class', $id);
 
         // Loop through the children and create and attach the appropriate DT and DT elements, with labels where applicable.
         foreach ($children as $child) {
@@ -820,7 +843,8 @@ class Form extends AbstractForm
                     $this->addChild($dl);
                     $i++;
                     $dl = new Child('dl', null, null, false, $this->getIndent());
-                    $dl->setAttribute('id', $id . $i);
+                    $dl->setAttribute('id', $id . '-' . $i);
+                    $dl->setAttribute('class', $id);
                 }
             }
 
