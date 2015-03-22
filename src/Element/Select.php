@@ -107,7 +107,7 @@ class Select extends AbstractElement
         $this->setAsMultiple($multiple);
         $this->setMarked($marked);
 
-        $values = $this->parseValues($values, $data);
+        $values = self::parseValues($values, $data);
 
         // Create the child option elements.
         foreach ($values as $k => $v) {
@@ -250,7 +250,7 @@ class Select extends AbstractElement
      * @param  string       $data
      * @return array
      */
-    public function parseValues($values, $data = null)
+    public static function parseValues($values, $data = null)
     {
         $parsedValues = null;
 
