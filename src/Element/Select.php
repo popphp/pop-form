@@ -256,7 +256,7 @@ class Select extends AbstractElement
 
         // If the value flag is YEAR-based, calculate the year range for the select drop-down menu.
         if (is_string($values) && (strpos($values, 'YEAR') !== false)) {
-            $years = ['----' => '----'];
+            $years = [];
             $yearAry = explode('_', $values);
             // YEAR_1111_2222 (from year 1111 to 2222)
             if (isset($yearAry[1]) && isset($yearAry[2])) {
