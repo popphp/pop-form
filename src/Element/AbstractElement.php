@@ -423,7 +423,7 @@ abstract class AbstractElement extends Child implements ElementInterface
                             $this->errors[] = $validator->getMessage();
                         }
                     } else {
-                        if (!empty($curElemValue) && !$validator->evaluate($curElemValue)) {
+                        if ((!empty($curElemValue) || ($curElemValue == '0')) && !$validator->evaluate($curElemValue)) {
                             $this->errors[] = $validator->getMessage();
                         }
                     }
