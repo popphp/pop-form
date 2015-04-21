@@ -66,7 +66,7 @@ class RadioSet extends AbstractElement
             ]);
 
             // Determine if the current radio element is checked.
-            if ($k == $this->marked) {
+            if ((null !== $this->marked) && ($k == $this->marked)) {
                 $radio->setAttribute('checked', 'checked');
             }
 

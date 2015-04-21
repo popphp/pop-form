@@ -123,7 +123,7 @@ class Select extends AbstractElement
                             $o->setAttribute('selected', 'selected');
                         }
                     } else {
-                        if ($ky == $this->marked) {
+                        if ((null !== $this->marked) && ($ky == $this->marked)) {
                             $o->setAttribute('selected', 'selected');
                         }
                     }
@@ -139,7 +139,7 @@ class Select extends AbstractElement
                         $opt->setAttribute('selected', 'selected');
                     }
                 } else {
-                    if ($k == $this->marked) {
+                    if ((null !== $this->marked) && ($k == $this->marked)) {
                         $opt->setAttribute('selected', 'selected');
                     }
                 }
