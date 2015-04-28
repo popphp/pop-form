@@ -245,7 +245,8 @@ class Fields implements \ArrayAccess
                     }
                 }
 
-                if ((stripos($key, 'email') !== false) || (stripos($key, 'e-mail') !== false) || (stripos($key, 'e_mail') !== false)) {
+                if ((stripos($key, 'email') !== false) || (stripos($key, 'e-mail') !== false) ||
+                    (stripos($key, 'e_mail') !== false)) {
                     $fieldType  = 'email';
                     $validators = new \Pop\Validator\Email();
                 }
