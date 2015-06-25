@@ -167,6 +167,13 @@ interface ElementInterface
     public function getValidators();
 
     /**
+     * Get error display values
+     *
+     * @return array
+     */
+    public function getErrorDisplay();
+
+    /**
      * Get whether the form element is required
      *
      * @return boolean

@@ -380,6 +380,8 @@ class Select extends AbstractElement
      */
     protected static function parseXml($xmlFile, $value)
     {
+        $val = $value;
+
         if (file_exists($xmlFile)) {
             $xml = new \SimpleXMLElement($xmlFile, null, true);
             $xmlValues = [];
@@ -390,8 +392,6 @@ class Select extends AbstractElement
                 }
             }
             $val = (array_key_exists($value, $xmlValues)) ? $xmlValues[$value] : [$value];
-        } else {
-            $val = [$value];
         }
 
         return $val;

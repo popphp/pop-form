@@ -141,45 +141,47 @@ class Captcha extends Text
     protected function setValidator()
     {
         $this->validators = [];
+
         // Get query data
-        if ($_SERVER['REQUEST_METHOD']) {
-            $queryData = [];
-            switch ($_SERVER['REQUEST_METHOD']) {
-                case 'GET':
-                    $queryData = $_GET;
-                    break;
-
-                case 'POST':
-                    $queryData = $_POST;
-                    break;
-
-                default:
-                    $input = fopen('php://input', 'r');
-                    $qData = null;
-                    while ($data = fread($input, 1024)) {
-                        $qData .= $data;
-                    }
-
-                    parse_str($qData, $queryData);
-            }
-
-            // If there is query data, set validator to check against the token value
-            if (count($queryData) > 0) {
-                if (isset($queryData[$this->name])) {
-                    $captcha = $this->token['captcha'];
-                    if (stripos($captcha, '<img') !== false) {
-                        $answer =  $this->token['value'];
-                    } else if ((strpos($captcha, '<img') === false) && ((strpos($captcha, ' + ') !== false) || (strpos($captcha, ' - ') !== false) || (strpos($captcha, ' * ') !== false) || (strpos($captcha, ' / ') !== false))) {
-                        $answer = eval("return ($captcha);");
-                    } else {
-                        $answer = $captcha;
-                    }
-                    $this->addValidator(new \Pop\Validator\Equal($answer, 'The answer is incorrect.'));
-                }
-            }
-        } else {
+        if (!isset($_SERVER['REQUEST_METHOD'])) {
             throw new Exception('Error: The server request method is not set.');
         }
+
+        $queryData = [];
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $queryData = $_GET;
+                break;
+
+            case 'POST':
+                $queryData = $_POST;
+                break;
+
+            default:
+                $input = fopen('php://input', 'r');
+                $qData = null;
+                while ($data = fread($input, 1024)) {
+                    $qData .= $data;
+                }
+
+                parse_str($qData, $queryData);
+        }
+
+        // If there is query data, set validator to check against the token value
+        if (count($queryData) > 0) {
+            if (isset($queryData[$this->name])) {
+                $captcha = $this->token['captcha'];
+                if (stripos($captcha, '<img') !== false) {
+                    $answer =  $this->token['value'];
+                } else if ((strpos($captcha, '<img') === false) && ((strpos($captcha, ' + ') !== false) || (strpos($captcha, ' - ') !== false) || (strpos($captcha, ' * ') !== false) || (strpos($captcha, ' / ') !== false))) {
+                    $answer = eval("return ($captcha);");
+                } else {
+                    $answer = $captcha;
+                }
+                $this->addValidator(new \Pop\Validator\Equal($answer, 'The answer is incorrect.'));
+            }
+        }
+
     }
 
     /**

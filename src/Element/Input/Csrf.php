@@ -109,34 +109,34 @@ class Csrf extends Hidden
     protected function setValidator()
     {
         // Get query data
-        if ($_SERVER['REQUEST_METHOD']) {
-            $queryData = [];
-            switch ($_SERVER['REQUEST_METHOD']) {
-                case 'GET':
-                    $queryData = $_GET;
-                    break;
-
-                case 'POST':
-                    $queryData = $_POST;
-                    break;
-
-                default:
-                    $input = fopen('php://input', 'r');
-                    $qData = null;
-                    while ($data = fread($input, 1024)) {
-                        $qData .= $data;
-                    }
-
-                    parse_str($qData, $queryData);
-            }
-
-            // If there is query data, set validator to check against the token value
-            if (count($queryData) > 0) {
-                $val = (isset($queryData[$this->name])) ? $queryData[$this->name] : '';
-                $this->addValidator(new \Pop\Validator\Equal($val, 'The security token does not match.'));
-            }
-        } else {
+        if (!isset($_SERVER['REQUEST_METHOD'])) {
             throw new Exception('Error: The server request method is not set.');
+        }
+
+        $queryData = [];
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $queryData = $_GET;
+                break;
+
+            case 'POST':
+                $queryData = $_POST;
+                break;
+
+            default:
+                $input = fopen('php://input', 'r');
+                $qData = null;
+                while ($data = fread($input, 1024)) {
+                    $qData .= $data;
+                }
+
+                parse_str($qData, $queryData);
+        }
+
+        // If there is query data, set validator to check against the token value
+        if (count($queryData) > 0) {
+            $val = (isset($queryData[$this->name])) ? $queryData[$this->name] : '';
+            $this->addValidator(new \Pop\Validator\Equal($val, 'The security token does not match.'));
         }
     }
 

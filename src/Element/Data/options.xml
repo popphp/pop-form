@@ -13,7 +13,6 @@
 ]>
 <options>
     <set name="MONTHS_LONG" desc="Months, long name value">
-        <opt value="--">------</opt>
         <opt value="01">January</opt>
         <opt value="02">February</opt>
         <opt value="03">March</opt>
@@ -28,7 +27,6 @@
         <opt value="12">December</opt>
     </set>
     <set name="DAYS_OF_WEEK" desc="Days of the week">
-        <opt value="--">--</opt>
         <opt value="Sunday">Sunday</opt>
         <opt value="Monday">Monday</opt>
         <opt value="Tuesday">Tuesday</opt>
@@ -38,7 +36,6 @@
         <opt value="Saturday">Saturday</opt>
     </set>
     <set name="US_STATES_SHORT" desc="US states, short name values">
-        <opt value="--">--</opt>
         <opt value="AK">AK</opt>
         <opt value="AL">AL</opt>
         <opt value="AR">AR</opt>
@@ -92,7 +89,6 @@
         <opt value="WY">WY</opt>
     </set>
     <set name="US_STATES_LONG" desc="US states, long name values">
-        <opt value="--">------</opt>
         <opt value="AL">Alabama</opt>
         <opt value="AK">Alaska</opt>
         <opt value="AZ">Arizona</opt>
@@ -146,7 +142,6 @@
         <opt value="WY">Wyoming</opt>
     </set>
     <set name="US_TERR_SHORT" desc="US Territories, short name values">
-        <opt value="--">--</opt>
         <opt value="AS">AS</opt>
         <opt value="FM">FM</opt>
         <opt value="GU">GU</opt>
@@ -160,7 +155,6 @@
         <opt value="AP">AP</opt>
     </set>
     <set name="US_TERR_LONG" desc="US Territories, long name values">
-        <opt value="--">------</opt>
         <opt value="AS">American Samoa</opt>
         <opt value="FM">Federated States of Micronesia</opt>
         <opt value="GU">Guam</opt>
@@ -174,7 +168,6 @@
         <opt value="AP">Armed Forces Pacific</opt>
     </set>
     <set name="CA_PROVINCES_SHORT" desc="Canadian Provinces, short name values">
-        <opt value="--">--</opt>
         <opt value="AB">AB</opt>
         <opt value="BC">BC</opt>
         <opt value="MB">MB</opt>
@@ -190,7 +183,6 @@
         <opt value="YT">YT</opt>
     </set>
     <set name="CA_PROVINCES_LONG" desc="Canadian Provinces, long name values">
-        <opt value="--">------</opt>
         <opt value="AB">Alberta</opt>
         <opt value="BC">British Columbia</opt>
         <opt value="MB">Manitoba</opt>
@@ -206,7 +198,6 @@
         <opt value="YT">Yukon</opt>
     </set>
     <set name="MEX_STATES_SHORT" desc="Mexican States, short name values">
-        <opt value="--">--</opt>
         <opt value="AG">AG</opt>
         <opt value="BC">BC</opt>
         <opt value="BS">BS</opt>
@@ -241,7 +232,6 @@
         <opt value="ZA">ZA</opt>
     </set>
     <set name="MEX_STATES_LONG" desc="Mexican states, long name values">
-        <opt value="--">------</opt>
         <opt value="AG">Aguascalientes</opt>
         <opt value="BC">Baja California</opt>
         <opt value="BS">Baja California Sur</opt>
@@ -276,7 +266,6 @@
         <opt value="ZA">Zacatecas</opt>
     </set>
     <set name="COUNTRIES" desc="Countries">
-        <opt value="--">------</opt>
         <opt value="AF">Afghanistan</opt>
         <opt value="AL">Albania</opt>
         <opt value="DZ">Algeria</opt>

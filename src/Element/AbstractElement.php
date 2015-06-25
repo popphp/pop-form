@@ -211,13 +211,19 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  boolean $pre
      * @return AbstractElement
      */
-    public function setErrorDisplay($container, array $attribs, $pre = false)
+    public function setErrorDisplay($container, array $attribs = null, $pre = false)
     {
         $this->errorDisplay['container'] = $container;
-        foreach ($attribs as $a => $v) {
-            $this->errorDisplay['attributes'][$a] = $v;
+        $this->errorDisplay['pre']       = (boolean)$pre;
+
+        if (null !== $attribs) {
+            foreach ($attribs as $a => $v) {
+                $this->errorDisplay['attributes'][$a] = $v;
+            }
+        } else {
+            $this->errorDisplay['attributes'] = [];
         }
-        $this->errorDisplay['pre'] = (boolean)$pre;
+
         return $this;
     }
 
@@ -315,6 +321,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Get error display values
+     *
+     * @return array
+     */
+    public function getErrorDisplay()
+    {
+        return $this->errorDisplay;
+    }
+
+    /**
      * Get whether the form element object is required
      *
      * @return boolean
@@ -337,7 +353,7 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get if form element object has errors
      *
-     * @return array
+     * @return boolean
      */
     public function hasErrors()
     {
