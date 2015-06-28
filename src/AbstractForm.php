@@ -250,7 +250,7 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     /**
      * Determine if the for has group field configs
      *
-     * @return array
+     * @return boolean
      */
     public function hasFieldGroupConfig()
     {

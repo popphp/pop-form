@@ -279,22 +279,34 @@ class Fields implements \ArrayAccess
     }
 
     /**
-     * Set form field
+     * Set form field config attribute
      *
      * @param  string $field
-     * @param  mixed  $attrib
-     * @param  mixed  $value
+     * @param  string $attrib
+     * @param  string $value
      * @return Fields
      */
-    public function setField($field, $attrib, $value = null)
+    public function setFieldAttribute($field, $attrib, $value)
     {
         if (isset($this->fields[$field])) {
-            if (is_string($attrib) && (null !== $value)) {
-                $this->fields[$field][$attrib] = $value;
-            } else if (is_array($attrib)) {
-                foreach ($attrib as $k => $v) {
-                    $this->fields[$field][$k] = $v;
-                }
+            $this->fields[$field][$attrib] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set form field config attributes
+     *
+     * @param  string $field
+     * @param  array  $attribs
+     * @return Fields
+     */
+    public function setFieldAttributes($field, array $attribs)
+    {
+        if (isset($this->fields[$field])) {
+            foreach ($attribs as $a => $v) {
+                $this->setFieldAttribute($field, $a, $v);
             }
         }
 

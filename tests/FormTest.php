@@ -29,6 +29,38 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Form', $form);
     }
 
+    public function testActionAndMethod()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form();
+        $form->setAction('/my-process')
+             ->setMethod(('post'));
+        $this->assertEquals('/my-process', $form->getAction());
+        $this->assertEquals('post', $form->getMethod());
+    }
+
+    public function testMagicMethods()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form();
+        $form->username = 'my_username';
+        $this->assertEquals('my_username', $form->username);
+        $this->assertTrue(isset($form->username));
+        unset($form->username);
+        $this->assertFalse(isset($form->username));
+    }
+
+    public function testOffsetMethods()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form();
+        $form['username'] = 'my_username';
+        $this->assertEquals('my_username', $form['username']);
+        $this->assertTrue(isset($form['username']));
+        unset($form['username']);
+        $this->assertFalse(isset($form['username']));
+    }
+
     public function testFieldGroupConfig()
     {
         $_SERVER['REQUEST_URI'] = '/process';
@@ -393,6 +425,269 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form->removeElement('my_checkbox');
         $form->removeElement('my_input');
         $this->assertEquals(0, count($form->elements()));
+    }
+
+    public function testRemoveElementFromGroup()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ],
+                'file' => [
+                    'type'  => 'file',
+                    'label' => 'File:'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+        $form->setFieldValues([
+            'username' => 'my_username'
+        ]);
+        $form->removeElement('file');
+        $this->assertEquals(2, count($form->elements()));
+    }
+
+    public function testIsValid()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ]
+            ],
+            [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+        $this->assertFalse($form->isValid());
+        $this->assertTrue($form->hasErrors());
+        $this->assertEquals(1, count($form->getErrors()));
+        $this->assertEquals(1, count($form->getErrors('username')));
+    }
+
+    public function testRenderForm()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ],
+                'password' => [
+                    'type'     => 'password',
+                    'label'    => 'Password:',
+                    'required' => true
+                ],
+                'file' => [
+                    'type'  => 'file',
+                    'label' => 'File:'
+                ],
+                'colors' => [
+                    'type' => 'checkbox',
+                    'label' => 'Colors',
+                    'value' => [
+                        'Red'   => 'Red',
+                        'White' => 'White',
+                        'Blue'  => 'Blue'
+                    ]
+                ]
+            ],
+            [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+
+        $form->getElement('colors')->setLabelAttributes([
+            'class' => 'label-class'
+        ]);
+
+        ob_start();
+        $form->renderForm();
+        $result = ob_get_clean();
+        $string = (string)$form;
+
+        $this->assertTrue($form->hasFile());
+        $this->assertContains('<form', $result);
+        $this->assertContains('<form', $form->renderForm(true));
+        $this->assertContains('<form', $string);
+        $this->assertContains('action="/process"', $result);
+        $this->assertContains('action="/process"', $form->renderForm(true));
+        $this->assertContains('action="/process"', $string);
+        $this->assertContains('id="username"', $result);
+        $this->assertContains('id="username"', $form->renderForm(true));
+        $this->assertContains('id="username"', $string);
+        $this->assertContains('enctype="multipart/form-data"', $result);
+        $this->assertContains('enctype="multipart/form-data"', $form->renderForm(true));
+        $this->assertContains('enctype="multipart/form-data"', $string);
+    }
+
+    public function testRenderFormNoElementsException()
+    {
+        $this->setExpectedException('Pop\Form\Exception');
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form   = new Form();
+        $result = $form->renderForm(true);
+    }
+
+    public function testAddFilter()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type' => 'text',
+                    'label' => 'Username:',
+                    'required' => true,
+                    'value' => 'my<script></script>"username"'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type' => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+
+        $form->addFilter('strip_tags');
+        $form->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8']);
+        $form->filter();
+        $this->assertEquals('my&quot;username&quot;', $form->username);
+    }
+
+    public function testAddFilters()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type' => 'text',
+                    'label' => 'Username:',
+                    'required' => true,
+                    'value' => 'my<script></script>"username"'
+                ],
+                'colors' => [
+                    'type' => 'checkbox',
+                    'label' => 'Colors',
+                    'value' => [
+                        'Red'   => 'Red',
+                        'White' => 'White',
+                        'Blue'  => 'Blue'
+                    ],
+                    'marked' => [
+                        'Red', 'White'
+                    ]
+                ]
+            ],
+            [
+                'submit' => [
+                    'type' => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+
+        $form->addFilters([
+            ['call' => 'strip_tags'],
+            ['call' => 'htmlentities', 'params' => [ENT_QUOTES, 'UTF-8']]
+        ]);
+        $form->filter();
+        $this->assertEquals('my&quot;username&quot;', $form->username);
+    }
+
+    public function testAddFiltersNoCallException()
+    {
+        $this->setExpectedException('Pop\Form\Exception');
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type' => 'text',
+                    'label' => 'Username:',
+                    'required' => true,
+                    'value' => 'my<script></script>"username"'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type' => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+
+        $form->addFilters([
+            ['strip_tags']
+        ]);
+    }
+
+    public function testClearFilters()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form([
+            [
+                'username' => [
+                    'type' => 'text',
+                    'label' => 'Username:',
+                    'required' => true,
+                    'value' => 'my<script></script>"username"'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type' => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+
+        $form->addFilters([
+            ['call' => 'strip_tags'],
+            ['call' => 'htmlentities', 'params' => [ENT_QUOTES, 'UTF-8']]
+        ]);
+        $form->clearFilters();
+        $form->filter();
+        $this->assertEquals('my<script></script>"username"', $form->username);
+        $this->assertEquals(2, count($form->getFields()));
+        $this->assertEquals('Username:', $form->getFieldConfig('username')['label']);
+        $this->assertEquals(2, count($form->getFieldConfig()));
+        $this->assertTrue($form->hasFieldGroupConfig());
+        $this->assertEquals(2, count($form->getFieldGroupConfig()));
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testClear()
+    {
+        $_SERVER['REQUEST_URI'] = '/process';
+        $form = new Form();
+        $form->clear();
+        $_SESSION['pop_csrf']    = 'test';
+        $_SESSION['pop_captcha'] = 'test';
+        $form->clear();
+        $this->assertFalse(isset($_SESSION['pop_csrf']));
+        $this->assertFalse(isset($_SESSION['pop_captcha']));
     }
 
 }
