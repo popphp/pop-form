@@ -319,6 +319,18 @@ class Form extends AbstractForm
                                         } else {
                                             $field->getChild($key)->removeAttribute('selected');
                                         }
+                                    // If select option group
+                                    } else if ($child->getNodeName() == 'optgroup') {
+                                        $cdrn = $child->getChildren();
+                                        foreach ($cdrn as $k => $c) {
+                                            if (is_array($field->getMarked()) && in_array($c->getAttribute('value'), $field->getMarked())) {
+                                                $child->getChild($k)->setAttribute('selected', 'selected');
+                                            } else if ($c->getAttribute('value') == $field->getMarked()) {
+                                                $child->getChild($k)->setAttribute('selected', 'selected');
+                                            } else {
+                                                $child->getChild($k)->removeAttribute('selected');
+                                            }
+                                        }
                                     }
                                 }
                             }
