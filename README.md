@@ -28,7 +28,7 @@ Install `pop-form` using Composer.
 
 ## BASIC USAGE
 
-* [Using field configurations](#using-field-configuration)
+* [Using field configurations](#using-field-configurations)
 * [Using field objects](#using-field-objects)
 * [Templates](#templates)
 * [Filtering](#filtering)
