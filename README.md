@@ -62,8 +62,7 @@ $fields = [
         'required'   => true,
         'attributes' => [
             'size'     => 40
-        ],
-        'validators' => new Validator\Email()
+        ]
     ],
     'submit' => [
         'type'  => 'submit',
@@ -75,13 +74,10 @@ $form = new Form($fields);
 $form->setAttribute('id', 'my-form');
 
 if ($_POST) {
-    $form->addFilter('strip_tags')
-         ->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8'])
-         ->setFieldValues($_POST);
+    $form->setFieldValues($_POST);
     if (!$form->isValid()) {
-        echo $form;
+        echo $form; // Has errors
     } else {
-        // Form is valid.
         echo 'Valid!';
     }
 } else {
@@ -131,7 +127,7 @@ If it fails validation, it will render with the errors, in this case, the userna
         <label for="username" class="required">Username:</label>
     </dt>
     <dd>
-        <input type="text" name="username" id="username" value="sdc@#$234" required="required" size="40" />
+        <input type="text" name="username" id="username" value="sdcsdc#$2345" required="required" size="40" />
         <div class="error">The value must only contain alphanumeric characters.</div>
     </dd>
     <dt>
