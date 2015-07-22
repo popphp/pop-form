@@ -10,7 +10,7 @@ OVERVIEW
 With it, you can have complete control over how a form looks and functions as well
 as granular control over field validation. Features include:
 
-* Field configuration
+* Field element configuration and creation
 * Validation
     + Use any callable validation object, such as `pop-validator` or custom validators
 * Filtering
