@@ -26,10 +26,16 @@ Install `pop-form` using Composer.
 
     composer require popphp/pop-form
 
-BASIC USAGE
------------
+## BASIC USAGE
 
-### Simple example with some validation and filtering
+* [Using field configurations](#using-field-configuration)
+* [Using field objects](#using-field-objects)
+* [Templates](#templates)
+* [Filtering](#filtering)
+* [Validation](#validation)
+* [Dynamic fields from a database table](#dynamic-fields-from-a-database-table)
+
+### Using field configurations
 
 The form object will default to 'post' as the method and the current request URI as
 the action otherwise changed by the user.
@@ -75,7 +81,7 @@ if ($_POST) {
     if (!$form->isValid()) {
         echo $form;
     } else {
-        // Form is valid. Do something with the form and its values
+        // Form is valid.
         echo 'Valid!';
     }
 } else {
@@ -86,8 +92,8 @@ if ($_POST) {
 So a few different things are going on in the above example:
  
 1. We set a `$fields` configuration array first, defining the field type, name, label, attributes, validators, etc.
-2. We create the form object and gave it an 'id' attribute.
-3. We checked for a $_POST submission. If not detected, just render the form for the first time.
+2. We created the form object and gave it an 'id' attribute.
+3. We checked for a $_POST submission. If not detected, we just render the form for the first time.
 4. If a $_POST submission is detected:
     1. Add some filters (`strip tags` and `htmlentities`) and then set the field values with the values in the $_POST array.
     2. Check if the form object passes validation. If not, re-render the form with the errors. If it does pass, then you're good to go.
@@ -139,5 +145,26 @@ If it fails validation, it will render with the errors, in this case, the userna
     </dd>
     </dl>
 </form>
-
 ```
+
+[Top](#basic-usage)
+
+### Using field objects
+
+[Top](#basic-usage)
+
+### Templates
+
+[Top](#basic-usage)
+
+### Filtering
+
+[Top](#basic-usage)
+
+### Validation
+
+[Top](#basic-usage)
+
+### Dynamic fields from a database table
+
+[Top](#basic-usage)
