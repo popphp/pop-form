@@ -29,7 +29,7 @@ Install `pop-form` using Composer.
 ## BASIC USAGE
 
 * [Using field configurations](#using-field-configurations)
-* [Using field objects](#using-field-objects)
+* [Using field element objects](#using-field-element-objects)
 * [Templates](#templates)
 * [Filtering](#filtering)
 * [Validation](#validation)
@@ -145,7 +145,7 @@ If it fails validation, it will render with the errors, in this case, the userna
 
 [Top](#basic-usage)
 
-### Using field objects
+### Using field element objects
 
 [Top](#basic-usage)
 
