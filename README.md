@@ -50,7 +50,7 @@ $fields = [
         'label'      => 'Username:',
         'required'   => true,
         'attributes' => [
-            'size'     => 40
+            'size' => 40
         ],
         'validators' => [
             new Validator\AlphaNumeric()
@@ -61,7 +61,7 @@ $fields = [
         'label'      => 'Email:',
         'required'   => true,
         'attributes' => [
-            'size'     => 40
+            'size' => 40
         ]
     ],
     'submit' => [
@@ -118,7 +118,7 @@ On the first pass, the form will render like this:
 </form>
 ```
 
-If it fails validation, it will render with the errors, in this case, the username was not alphanumeric:
+If it fails validation, it will render with the errors. In this case, the username was not alphanumeric:
 
 ```html
 <form action="/" method="post" id="my-form">
