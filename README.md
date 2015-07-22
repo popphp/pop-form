@@ -91,7 +91,7 @@ So a few different things are going on in the above example:
 2. We created the form object and gave it an 'id' attribute.
 3. We checked for a $_POST submission. If not detected, we just render the form for the first time.
 4. If a $_POST submission is detected:
-    1. Add some filters (`strip tags` and `htmlentities`) and then set the field values with the values in the $_POST array.
+    1. Set the field values with the values in the $_POST array (a bad idea without any [filtering](#filtering))
     2. Check if the form object passes validation. If not, re-render the form with the errors. If it does pass, then you're good to go.
 
 On the first pass, the form will render like this:
