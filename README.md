@@ -88,7 +88,7 @@ if ($_POST) {
 So a few different things are going on in the above example:
  
 1. We set a `$fields` configuration array first, defining the field type, name, label, attributes, validators, etc.
-2. We created the form object and gave it an 'id' attribute.
+2. We created the form object, passed it the `$fields` config and gave it an 'id' attribute.
 3. We checked for a $_POST submission. If not detected, we just render the form for the first time.
 4. If a $_POST submission is detected:
     1. Set the field values with the values in the $_POST array (a bad idea without any [filtering](#filtering))
