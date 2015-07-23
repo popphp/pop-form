@@ -368,7 +368,7 @@ if ($_POST) {
 }
 ```
 
-Of course, the `strip_tags` filter will strip out and possible malicious tags. The `htmlentities`
+Of course, the `strip_tags` filter will strip out any possible malicious tags. The `htmlentities`
 filter is useful if the form has to render with the values in it again:
 
 ```html
@@ -383,7 +383,7 @@ and filter the values with `html_entity_decode`.
 
 ### Validation
 
-Of course, one of the main reasons of using a form component such as this one is the leverage
+Of course, one of the main reasons for using a form component such as this one is the leverage
 the validation aspect of it. You've already seen the use of a basic validator from the `pop-validator`
 component and those are easy enough to use. But, you can create your own custom validators by
 either extending the `pop-validator` component with your own or just writing your own custom
@@ -410,7 +410,7 @@ class MyValidator
     public function validate($value)
     {
         if (strlen($value) < 6) {
-            return 'The password value must be greater than or equal to 6';
+            return 'The username value must be greater than or equal to 6';
         }
     }
 }
@@ -426,13 +426,14 @@ $username->addValidator([new MyValidator(), 'validate']);
 The `pop-form` comes with the functionality to very quickly wire up form fields that are mapped
 to the columns in a database. It does require the installation of the `pop-db` component to work.
 Consider that there is a database table class called `Users` that is mapped to the `users` table
-in the database.
+in the database. It has three fields: `id`, `username` and `password`.
 
-For more information on using `pop-db` [click here](https://github.com/popphp/pop-db).
+(For more information on using `pop-db` [click here](https://github.com/popphp/pop-db).)
 
 ```php
 use Pop\Form\Form;
 use Pop\Form\Fields;
+use MyApp\Table\Users;
 
 $fields = new Fields(Users::getTableInfo(), null, null, 'id');
 $fields->submit = [
