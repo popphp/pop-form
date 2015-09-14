@@ -343,6 +343,9 @@ class Form extends AbstractForm
                                 $field->setNodeValue($fieldValue);
                             } else {
                                 $field->setAttribute('value', $fieldValue);
+                                if (($field instanceof Element\Input\Checkbox) || ($field instanceof Element\Input\Radio)) {
+                                    $field->setAttribute('checked', 'checked');
+                                }
                             }
                         }
                     }

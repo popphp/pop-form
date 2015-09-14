@@ -40,7 +40,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructorAddFieldsFromTable()
     {
-        $fields = new Fields(TestAsset\Users::getTableInfo());
+        $fields = new Fields((new TestAsset\Users())->getTableInfo());
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(4, count($fields->getFields()));
     }
@@ -192,7 +192,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['text' => ['class' => 'input-field']];
         $values  = ['username' => 'username', 'email' => 'email'];
         $fields  = new Fields();
-        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -202,7 +202,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['textarea' => ['class' => 'input-field']];
         $values  = ['username' => ['type' => 'textarea']];
         $fields  = new Fields();
-        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -212,7 +212,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['text' => ['class' => 'input-field']];
         $values  = ['username' => ['type' => 'hidden']];
         $fields  = new Fields();
-        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -220,7 +220,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
     public function testAddFieldsFromTableException()
     {
         $this->setExpectedException('Pop\Form\Exception');
-        $table   = TestAsset\Users::getTableInfo();
+        $table   = (new TestAsset\Users())->getTableInfo();
         unset($table['tableName']);
         $fields  = new Fields();
         $fields->addFieldsFromTable($table);
