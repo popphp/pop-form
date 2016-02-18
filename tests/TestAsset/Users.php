@@ -9,12 +9,12 @@ use Pop\Db\Record;
 class Users extends Record
 {
 
-    public function __construct(array $columns = null, Adapter\AbstractAdapter $db = null)
+    public function __construct(array $columns = null, $table = null, Adapter\AbstractAdapter $db = null)
     {
         if (null === $db) {
             $db = Db::connect('sqlite', ['database' => __DIR__ . '/../tmp/db.sqlite']);
         }
-        parent::__construct($columns, $db);
+        parent::__construct($columns, $table, $db);
     }
 
 }
