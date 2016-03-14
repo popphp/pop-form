@@ -474,6 +474,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ]);
+
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->hasErrors());
         $this->assertEquals(1, count($form->getErrors()));

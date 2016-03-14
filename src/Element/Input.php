@@ -71,4 +71,16 @@ class Input extends AbstractElement
         return parent::setRequired($required);
     }
 
+    /**
+     * Set the value of the form element object
+     *
+     * @param  mixed $value
+     * @return Input
+     */
+    public function setValue($value)
+    {
+        $this->setAttribute('value', $value);
+        return parent::setValue($value);
+    }
+
 }
