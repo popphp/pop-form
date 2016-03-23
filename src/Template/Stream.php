@@ -98,7 +98,6 @@ class Stream extends AbstractTemplate
 
                 // Set the element's label, if applicable.
                 if (null !== $child->getLabel()) {
-
                     // Format the label name.
                     $label = new Child('label', $child->getLabel());
                     $label->setAttribute('for', $name);
@@ -106,6 +105,9 @@ class Stream extends AbstractTemplate
                     $labelAttributes = $child->getLabelAttributes();
                     if (null !== $labelAttributes) {
                         foreach ($labelAttributes as $a => $v) {
+                            if (($a == 'class') && ($child->isRequired())) {
+                                $v .= ' required';
+                            }
                             $label->setAttribute($a, $v);
                         }
                     } else if ($child->isRequired()) {
@@ -117,6 +119,25 @@ class Stream extends AbstractTemplate
                     $labelReplace       = $label->render(true);
                     $labelReplace       = substr($labelReplace, 0, -1);
                     $template           = str_replace($labelSearch, $labelReplace, $template);
+                }
+
+                // Set the element's hint, if applicable.
+                if (null !== $child->getHint()) {
+                    // Format the hint name.
+                    $hint = new Child('span', $child->getHint());
+
+                    $hintAttributes = $child->getHintAttributes();
+                    if (null !== $hintAttributes) {
+                        foreach ($hintAttributes as $a => $v) {
+                            $hint->setAttribute($a, $v);
+                        }
+                    }
+
+                    // Swap the element's hint placeholder with the rendered hint element.
+                    $hintSearch        = '[{' . $name . '_hint}]';
+                    $hintReplace       = $hint->render(true);
+                    $hintReplace       = substr($hintReplace, 0, -1);
+                    $template           = str_replace($hintSearch, $hintReplace, $template);
                 }
 
                 // Calculate the element's indentation.

@@ -60,10 +60,22 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected $label = null;
 
     /**
+     * Form element hint
+     * @var string
+     */
+    protected $hint = null;
+
+    /**
      * Form element label attributes
      * @var array
      */
-    protected $labelAttributes = null;
+    protected $labelAttributes = [];
+
+    /**
+     * Form element hint attributes
+     * @var array
+     */
+    protected $hintAttributes = [];
 
     /**
      * Form element required property
@@ -134,20 +146,37 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Set the label of the form element object
      *
-     * @param  mixed $label
+     * @param  string $label
      * @return AbstractElement
      */
     public function setLabel($label)
     {
-        if (is_array($label)) {
-            foreach ($label as $l => $a) {
-                $this->label = $l;
-                $this->labelAttributes = $a;
-            }
-        } else {
-            $this->label = $label;
-        }
+        $this->label = $label;
+        return $this;
+    }
 
+    /**
+     * Set the hint of the form element object
+     *
+     * @param  string $hint
+     * @return AbstractElement
+     */
+    public function setHint($hint)
+    {
+        $this->hint = $hint;
+        return $this;
+    }
+
+    /**
+     * Set an attribute of the label of the form element object
+     *
+     * @param  string $a
+     * @param  string $v
+     * @return AbstractElement
+     */
+    public function setLabelAttribute($a, $v)
+    {
+        $this->labelAttributes[$a] = $v;
         return $this;
     }
 
@@ -160,7 +189,34 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function setLabelAttributes(array $attribs)
     {
         foreach ($attribs as $a => $v) {
-            $this->labelAttributes[$a] = $v;
+            $this->setLabelAttribute($a, $v);
+        }
+        return $this;
+    }
+
+    /**
+     * Set an attribute of the hint of the form element object
+     *
+     * @param  string $a
+     * @param  string $v
+     * @return AbstractElement
+     */
+    public function setHintAttribute($a, $v)
+    {
+        $this->hintAttributes[$a] = $v;
+        return $this;
+    }
+
+    /**
+     * Set the attributes of the hint of the form element object
+     *
+     * @param  array $attribs
+     * @return AbstractElement
+     */
+    public function setHintAttributes(array $attribs)
+    {
+        foreach ($attribs as $a => $v) {
+            $this->setHintAttribute($a, $v);
         }
         return $this;
     }
@@ -299,6 +355,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Get form element object hint
+     *
+     * @return string
+     */
+    public function getHint()
+    {
+        return $this->hint;
+    }
+
+    /**
      * Get the attributes of the form element object label
      *
      * @return array
@@ -306,6 +372,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function getLabelAttributes()
     {
         return $this->labelAttributes;
+    }
+
+    /**
+     * Get the attributes of the form element object hint
+     *
+     * @return array
+     */
+    public function getHintAttributes()
+    {
+        return $this->hintAttributes;
     }
 
     /**

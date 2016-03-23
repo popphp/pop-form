@@ -881,6 +881,9 @@ class Form extends AbstractForm
                 $labelAttributes = $child->getLabelAttributes();
                 if (null !== $labelAttributes) {
                     foreach ($labelAttributes as $a => $v) {
+                        if (($a == 'class') && ($child->isRequired())) {
+                            $v .= ' required';
+                        }
                         $label->setAttribute($a, $v);
                     }
                 } else if ($child->isRequired()) {
@@ -899,12 +902,30 @@ class Form extends AbstractForm
                 }
 
                 $dd->addChild($child);
+
+                if (null !== $child->getHint()) {
+                    $hint = new Child('span', $child->getHint(), null, false, ($this->getIndent() . '        '));
+                    if (count($child->getHintAttributes()) > 0) {
+                        $hint->setAttributes($child->getHintAttributes());
+                    }
+                    $dd->addChild($hint);
+                }
+
                 $dl->addChildren([$dt, $dd]);
             // Else, render only a DD element.
             } else {
                 $dd = new Child('dd', null, null, false, ($this->getIndent() . '    '));
                 $child->setIndent(($this->getIndent() . '        '));
                 $dd->addChild($child);
+
+                if (($child instanceof Element\AbstractElement) && (null !== $child->getHint())) {
+                    $hint = new Child('span', $child->getHint(), null, false, ($this->getIndent() . '        '));
+                    if (count($child->getHintAttributes()) > 0) {
+                        $hint->setAttributes($child->getHintAttributes());
+                    }
+                    $dd->addChild($hint);
+                }
+
                 $dl->addChild($dd);
             }
         }

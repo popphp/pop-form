@@ -39,6 +39,13 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             'username' => [
                 'type'     => 'text',
                 'label'    => 'Username:',
+                'label-attributes' => [
+                    'class' => 'field-label'
+                ],
+                'hint'    => 'Enter Username',
+                'hint-attributes' => [
+                    'class' => 'field-hint'
+                ],
                 'required' => true
             ],
             'email' => [
@@ -89,6 +96,13 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             'username' => [
                 'type'     => 'text',
                 'label'    => 'Username:',
+                'label-attributes' => [
+                    'class' => 'field-label'
+                ],
+                'hint'    => 'Enter Username',
+                'hint-attributes' => [
+                    'class' => 'field-hint'
+                ],
                 'required' => true
             ],
             'email' => [

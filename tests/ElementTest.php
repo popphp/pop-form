@@ -36,7 +36,8 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     public function testSetLabelWithAttributes()
     {
         $element = new Element\Input('my_input');
-        $element->setLabel(['my_label' => ['class' => 'my-label']]);
+        $element->setLabel('my_label');
+        $element->setLabelAttributes(['class' => 'my-label']);
         $this->assertEquals('my_label', $element->getLabel());
         $this->assertEquals(1, count($element->getLabelAttributes()));
     }
@@ -48,6 +49,32 @@ class ElementTest extends \PHPUnit_Framework_TestCase
             'class' => 'my-label'
         ]);
         $this->assertEquals(1, count($element->getLabelAttributes()));
+    }
+
+    public function testSetHint()
+    {
+        $element = new Element\Input('my_input');
+        $element->setHint('my_hint');
+        $element->setErrorDisplay('div');
+        $this->assertEquals('my_hint', $element->getHint());
+    }
+
+    public function testSetHintWithAttributes()
+    {
+        $element = new Element\Input('my_input');
+        $element->setHint('my_hint');
+        $element->setHintAttributes(['class' => 'my-hint']);
+        $this->assertEquals('my_hint', $element->getHint());
+        $this->assertEquals(1, count($element->getHintAttributes()));
+    }
+
+    public function testSetHintAttributes()
+    {
+        $element = new Element\Input('my_input');
+        $element->setHintAttributes([
+            'class' => 'my-hint'
+        ]);
+        $this->assertEquals(1, count($element->getHintAttributes()));
     }
 
     public function testSetValidators()

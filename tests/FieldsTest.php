@@ -14,6 +14,13 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
             'username' => [
                 'type' => 'text',
                 'label' => 'Username:',
+                'label-attributes' => [
+                    'class' => 'field-label'
+                ],
+                'hint' => 'Enter Username',
+                'hint-attributes' => [
+                    'class' => 'field-hint'
+                ],
                 'required' => true,
                 'value' => 'my<script></script>"username"'
             ],
@@ -73,7 +80,14 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
     {
         $field = Fields::factory('username',  [
             'type'     => 'text',
-            'label'    => 'Username:',
+            'label' => 'Username:',
+            'label-attributes' => [
+                'class' => 'field-label'
+            ],
+            'hint' => 'Enter Username',
+            'hint-attributes' => [
+                'class' => 'field-hint'
+            ],
             'required' => true,
             'error'    => [
                 'div' => ['class' => 'error-class'],
@@ -142,6 +156,22 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
             'value'    => 'MY BUTTON'
         ]);
         $this->assertInstanceOf('Pop\Form\Element\Input\Button', $field);
+    }
+
+    public function testFactoryDateTime()
+    {
+        $field = Fields::factory('my_datetime',  [
+            'type'     => 'datetime',
+        ]);
+        $this->assertInstanceOf('Pop\Form\Element\Input\DateTime', $field);
+    }
+
+    public function testFactoryDateTimeLocal()
+    {
+        $field = Fields::factory('my_datetime',  [
+            'type'     => 'datetime-local',
+        ]);
+        $this->assertInstanceOf('Pop\Form\Element\Input\DateTimeLocal', $field);
     }
 
     /**

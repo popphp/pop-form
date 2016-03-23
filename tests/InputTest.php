@@ -13,6 +13,48 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Button', $input);
     }
 
+    public function testColor()
+    {
+        $input = new Input\Color('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Color', $input);
+    }
+
+    public function testDate()
+    {
+        $input = new Input\Date('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Date', $input);
+    }
+
+    public function testMonth()
+    {
+        $input = new Input\Month('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Month', $input);
+    }
+
+    public function testSearch()
+    {
+        $input = new Input\Search('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Search', $input);
+    }
+
+    public function testTel()
+    {
+        $input = new Input\Tel('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Tel', $input);
+    }
+
+    public function testTime()
+    {
+        $input = new Input\Time('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Time', $input);
+    }
+
+    public function testWeek()
+    {
+        $input = new Input\Week('my_field');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Week', $input);
+    }
+
     /**
      * @runInSeparateProcess
      */

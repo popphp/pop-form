@@ -68,15 +68,18 @@ class Fields implements \ArrayAccess
         if (!isset($field['type'])) {
             throw new Exception('Error: The field type was not set.');
         }
-        $type       = $field['type'];
-        $label      = (isset($field['label']))      ? $field['label']      : null;
-        $required   = (isset($field['required']))   ? $field['required']   : null;
-        $attributes = (isset($field['attributes'])) ? $field['attributes'] : null;
-        $validators = (isset($field['validators'])) ? $field['validators'] : null;
-        $expire     = (isset($field['expire']))     ? $field['expire']     : 300;
-        $captcha    = (isset($field['captcha']))    ? $field['captcha']    : null;
-        $data       = (isset($field['data']))       ? $field['data']       : null;
-        $multiple   = (isset($field['multiple']))   ? $field['multiple']   : false;
+        $type         = $field['type'];
+        $label        = (isset($field['label']))      ? $field['label']      : null;
+        $labelAttribs = (isset($field['label-attributes'])) ? $field['label-attributes'] : null;
+        $hint         = (isset($field['hint']))       ? $field['hint']       : null;
+        $hintAttribs  = (isset($field['hint-attributes'])) ? $field['hint-attributes'] : null;
+        $required     = (isset($field['required']))   ? $field['required']   : null;
+        $attributes   = (isset($field['attributes'])) ? $field['attributes'] : null;
+        $validators   = (isset($field['validators'])) ? $field['validators'] : null;
+        $expire       = (isset($field['expire']))     ? $field['expire']     : 300;
+        $captcha      = (isset($field['captcha']))    ? $field['captcha']    : null;
+        $data         = (isset($field['data']))       ? $field['data']       : null;
+        $multiple     = (isset($field['multiple']))   ? $field['multiple']   : false;
 
         if (isset($field['error'])) {
             $error = [
@@ -140,6 +143,12 @@ class Fields implements \ArrayAccess
             case 'input-button':
                 $elem = new Element\Input\Button($name, $value);
                 break;
+            case 'datetime':
+                $elem = new Element\Input\DateTime($name, $value);
+                break;
+            case 'datetime-local':
+                $elem = new Element\Input\DateTimeLocal($name, $value);
+                break;
             default:
                 $class = 'Pop\\Form\\Element\\Input\\' . ucfirst(strtolower($type));
                 if (!class_exists($class)) {
@@ -151,6 +160,18 @@ class Fields implements \ArrayAccess
         // Set the label.
         if (null !== $label) {
             $elem->setLabel($label);
+        }
+        // Set the label attributes.
+        if ((null !== $labelAttribs) && is_array($labelAttribs)) {
+            $elem->setLabelAttributes($labelAttribs);
+        }
+        // Set the hint.
+        if (null !== $hint) {
+            $elem->setHint($hint);
+        }
+        // Set the hint attributes.
+        if ((null !== $hintAttribs) && is_array($hintAttribs)) {
+            $elem->setHintAttributes($hintAttribs);
         }
         // Set if required.
         if ((null !== $required) && ($required)) {
