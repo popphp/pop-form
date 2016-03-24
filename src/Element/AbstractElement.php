@@ -467,10 +467,11 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Validate the form element object
      *
+     * @param  array $fields
      * @throws Exception
      * @return boolean
      */
-    public function validate()
+    public function validate(array $fields = [])
     {
         $this->errors = [];
 
@@ -504,7 +505,12 @@ abstract class AbstractElement extends Child implements ElementInterface
 
                 // If Pop\Validator\*
                 if ($validator instanceof \Pop\Validator\ValidatorInterface) {
-                    if ('Pop\Validator\NotEmpty' == get_class($validator)) {
+                    if (('Pop\Validator\Equal' == get_class($validator)) && array_key_exists($validator->getValue(), $fields)) {
+                        $validator->setValue($fields[$validator->getValue()]);
+                        if (!$validator->evaluate($curElemValue)) {
+                            $this->errors[] = $validator->getMessage();
+                        }
+                    } else if ('Pop\Validator\NotEmpty' == get_class($validator)) {
                         if (!$validator->evaluate($curElemValue)) {
                             $this->errors[] = $validator->getMessage();
                         }

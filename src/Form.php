@@ -640,7 +640,7 @@ class Form extends AbstractForm
 
         // Check each element for validators, validate them and return the result.
         foreach ($children as $child) {
-            if ($child->validate() == false) {
+            if ($child->validate($this->fields) == false) {
                 $noErrors = false;
             }
         }
