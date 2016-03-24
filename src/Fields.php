@@ -80,6 +80,8 @@ class Fields implements \ArrayAccess
         $captcha      = (isset($field['captcha']))    ? $field['captcha']    : null;
         $data         = (isset($field['data']))       ? $field['data']       : null;
         $multiple     = (isset($field['multiple']))   ? $field['multiple']   : false;
+        $min          = (isset($field['min']))        ? $field['min']        : false;
+        $max          = (isset($field['max']))        ? $field['max']        : false;
 
         if (isset($field['error'])) {
             $error = [
@@ -148,6 +150,12 @@ class Fields implements \ArrayAccess
                 break;
             case 'datetime-local':
                 $elem = new Element\Input\DateTimeLocal($name, $value);
+                break;
+            case 'number':
+                $elem = new Element\Input\Number($name, $min, $max, $value);
+                break;
+            case 'range':
+                $elem = new Element\Input\Range($name, $min, $max, $value);
                 break;
             default:
                 $class = 'Pop\\Form\\Element\\Input\\' . ucfirst(strtolower($type));
