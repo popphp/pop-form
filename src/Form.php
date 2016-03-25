@@ -879,7 +879,7 @@ class Form extends AbstractForm
                 $label->setAttribute('for', ($name . $lblName));
 
                 $labelAttributes = $child->getLabelAttributes();
-                if (null !== $labelAttributes) {
+                if (count($labelAttributes) > 0) {
                     foreach ($labelAttributes as $a => $v) {
                         if (($a == 'class') && ($child->isRequired())) {
                             $v .= ' required';

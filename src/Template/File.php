@@ -108,7 +108,7 @@ class File extends AbstractTemplate
                     $label->setAttribute('for', $name);
 
                     $labelAttributes = $child->getLabelAttributes();
-                    if (null !== $labelAttributes) {
+                    if (count($labelAttributes) > 0) {
                         foreach ($labelAttributes as $a => $v) {
                             if (($a == 'class') && ($child->isRequired())) {
                                 $v .= ' required';
