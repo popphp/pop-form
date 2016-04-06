@@ -55,11 +55,7 @@ class Datalist extends Text
             $this->datalist = new Child('datalist', null, null, $this->indent);
             $this->datalist->setAttribute('id', $name . '_datalist');
             foreach ($values as $key => $val) {
-                if (is_numeric($key)) {
-                    $this->datalist->addChild((new Child('option'))->setAttribute('value', $val));
-                } else {
-                    $this->datalist->addChild((new Child('option', $val))->setAttribute('value', $key));
-                }
+                $this->datalist->addChild((new Child('option', $val))->setAttribute('value', $key));
             }
         }
     }
