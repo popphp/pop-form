@@ -64,4 +64,16 @@ class Textarea extends AbstractElement
         return parent::setRequired($required);
     }
 
+    /**
+     * Set the value of the form element object
+     *
+     * @param  mixed $value
+     * @return Textarea
+     */
+    public function setValue($value)
+    {
+        $this->setNodeValue($value);
+        return parent::setValue($value);
+    }
+
 }

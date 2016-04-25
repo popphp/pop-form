@@ -139,6 +139,16 @@ abstract class AbstractElement extends Child implements ElementInterface
      */
     public function setMarked($marked)
     {
+        $markedValues = (!is_array($marked)) ? [$marked] : $marked;
+
+        foreach ($this->childNodes as $child) {
+
+            if (in_array($child->getAttribute('value'), $markedValues)) {
+                $child->setAttribute('selected', 'selected');
+            } else if (null !== $child->getAttribute('selected')) {
+                $child->removeAttribute('selected');
+            }
+        }
         $this->marked = $marked;
         return $this;
     }
