@@ -352,20 +352,7 @@ class Form extends AbstractForm
                 }
             }
 
-            // Double-check for any fields that might have not been passed
-            foreach ($this->fields as $field => $value) {
-                if (!in_array($field, $fieldsPassed)) {
-                    foreach ($fields as $fld) {
-                        if ((($fld instanceof Element\CheckboxSet) && ($field . '[]' == $fld->getName())) ||
-                            (($fld instanceof Element\RadioSet) && ($field == $fld->getName())) ||
-                            (($fld instanceof Element\Select) && ($field == $fld->getName()))) {
-                            $fld->setMarked(null);
-                        }
-                    }
-                }
-            }
         }
-
 
         if (null !== $this->errorDisplay) {
             $this->setErrorDisplay(
