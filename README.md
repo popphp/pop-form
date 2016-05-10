@@ -2,7 +2,7 @@ pop-form
 ========
 
 [![Build Status](https://travis-ci.org/popphp/pop-form.svg?branch=master)](https://travis-ci.org/popphp/pop-form)
-[![Coverage Status](http://www.popphp.org/cc/coverage.php?comp=pop-form)](http://www.popphp.org/cc/pop-form/)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
 
 OVERVIEW
 --------
@@ -470,7 +470,7 @@ This will render like:
 ```
 
 You can set element-specific attributes and values, as well as set fields to omit, like
-the 'id' parameter in the above examples. Any `TEXT` column type in the database is 
+the 'id' parameter in the above examples. Any `TEXT` column type in the database is
 created as textarea objects and then the rest are created as input text objects.
 
 [Top](#basic-usage)
