@@ -23,7 +23,7 @@ use Pop\Dom\Child;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.2
  */
 class Form extends AbstractForm
 {
@@ -480,92 +480,6 @@ class Form extends AbstractForm
         }
 
         return $this;
-    }
-
-    /**
-     * Alias method to getElements())
-     *
-     * @return array
-     */
-    public function elements()
-    {
-        return $this->getElements();
-    }
-
-    /**
-     * Get the elements of the form object.
-     *
-     * @return array
-     */
-    public function getElements()
-    {
-        $children = $this->getChildren();
-        $elements = [];
-
-        foreach ($children as $child) {
-            if ($child instanceof Element\AbstractElement){
-                $elements[] = $child;
-            }
-        }
-
-        return $elements;
-    }
-
-    /**
-     * Alias method to getElement()
-     *
-     * @param string $elementName
-     * @return Element\AbstractElement
-     */
-    public function element($elementName)
-    {
-        return $this->getElement($elementName);
-    }
-
-    /**
-     * Get an element object of the form by name.
-     *
-     * @param string $elementName
-     * @return Element\AbstractElement
-     */
-    public function getElement($elementName)
-    {
-        $i = $this->getElementIndex($elementName);
-        return (null !== $i) ? $this->getChild($this->getElementIndex($elementName)) : null;
-    }
-
-    /**
-     * Get the index of an element object of the form by name.
-     *
-     * @param string $elementName
-     * @return int
-     */
-    public function getElementIndex($elementName)
-    {
-        $name  = null;
-        $elem  = null;
-        $index = null;
-        $elems = $this->getChildren();
-
-        foreach ($elems as $i => $e) {
-            if ($e->getNodeName() == 'fieldset') {
-                $children = $e->getChildren();
-                foreach ($children as $c) {
-                    if ($c->getNodeName() == 'input') {
-                        $attribs = $c->getAttributes();
-                        $name = str_replace('[]', '', $attribs['name']);
-                    }
-                }
-            } else {
-                $attribs = $e->getAttributes();
-                $name = $attribs['name'];
-            }
-            if ($name == $elementName) {
-                $index = $i;
-            }
-        }
-
-        return $index;
     }
 
     /**

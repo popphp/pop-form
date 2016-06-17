@@ -23,7 +23,7 @@ use Pop\Dom\Child;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.2
  */
 abstract class AbstractForm extends Child implements \ArrayAccess
 {
@@ -45,6 +45,18 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      * @var array
      */
     protected $filters = [];
+
+    /**
+     * Fields to exclude filtering by type
+     * @var array
+     */
+    protected $filterExcludeByType = [];
+
+    /**
+     * Fields to exclude filtering by name
+     * @var array
+     */
+    protected $filterExcludeByName = [];
 
     /**
      * Form field groups
@@ -129,14 +141,41 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      *
      * @param  mixed $call
      * @param  mixed $params
+     * @param  mixed $excludeByType
+     * @param  mixed $excludeByName
      * @return AbstractForm
      */
-    public function addFilter($call, $params = null)
+    public function addFilter($call, $params = null, $excludeByType = null, $excludeByName = null)
     {
         $this->filters[] = [
             'call'   => $call,
             'params' => $params
         ];
+
+        if (null !== $excludeByType) {
+            if (!is_array($excludeByType)) {
+                $excludeByType = [$excludeByType];
+            }
+            foreach ($excludeByType as $type) {
+                if (!isset($this->filterExcludeByType[$type])) {
+                    $this->filterExcludeByType[$type] = [];
+                }
+                $this->filterExcludeByType[$type][] = $call;
+            }
+        }
+
+        if (null !== $excludeByName) {
+            if (!is_array($excludeByName)) {
+                $excludeByName = [$excludeByName];
+            }
+            foreach ($excludeByName as $name) {
+                if (!isset($this->filterExcludeByName[$name])) {
+                    $this->filterExcludeByName[$name] = [];
+                }
+                $this->filterExcludeByName[$name][] = $call;
+            }
+        }
+
         return $this;
     }
 
@@ -145,16 +184,18 @@ abstract class AbstractForm extends Child implements \ArrayAccess
      *
      * @param  array $filters
      * @throws Exception
+     * @param  mixed $excludeByType
+     * @param  mixed $excludeByName
      * @return AbstractForm
      */
-    public function addFilters(array $filters)
+    public function addFilters(array $filters, $excludeByType = null, $excludeByName = null)
     {
         foreach ($filters as $filter) {
             if (!isset($filter['call'])) {
                 throw new Exception('Error: The \'call\' key must be set.');
             }
             $params = (isset($filter['params'])) ? $filter['params'] : null;
-            $this->addFilter($filter['call'], $params);
+            $this->addFilter($filter['call'], $params, $excludeByType, $excludeByName);
         }
         return $this;
     }
@@ -218,6 +259,92 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     public function getFields()
     {
         return $this->fields;
+    }
+
+    /**
+     * Alias method to getElements())
+     *
+     * @return array
+     */
+    public function elements()
+    {
+        return $this->getElements();
+    }
+
+    /**
+     * Get the elements of the form object.
+     *
+     * @return array
+     */
+    public function getElements()
+    {
+        $children = $this->getChildren();
+        $elements = [];
+
+        foreach ($children as $child) {
+            if ($child instanceof Element\AbstractElement){
+                $elements[] = $child;
+            }
+        }
+
+        return $elements;
+    }
+
+    /**
+     * Alias method to getElement()
+     *
+     * @param string $elementName
+     * @return Element\AbstractElement
+     */
+    public function element($elementName)
+    {
+        return $this->getElement($elementName);
+    }
+
+    /**
+     * Get an element object of the form by name.
+     *
+     * @param string $elementName
+     * @return Element\AbstractElement
+     */
+    public function getElement($elementName)
+    {
+        $i = $this->getElementIndex($elementName);
+        return (null !== $i) ? $this->getChild($this->getElementIndex($elementName)) : null;
+    }
+
+    /**
+     * Get the index of an element object of the form by name.
+     *
+     * @param string $elementName
+     * @return int
+     */
+    public function getElementIndex($elementName)
+    {
+        $name  = null;
+        $elem  = null;
+        $index = null;
+        $elems = $this->getChildren();
+
+        foreach ($elems as $i => $e) {
+            if ($e->getNodeName() == 'fieldset') {
+                $children = $e->getChildren();
+                foreach ($children as $c) {
+                    if ($c->getNodeName() == 'input') {
+                        $attribs = $c->getAttributes();
+                        $name = str_replace('[]', '', $attribs['name']);
+                    }
+                }
+            } else {
+                $attribs = $e->getAttributes();
+                $name = $attribs['name'];
+            }
+            if ($name == $elementName) {
+                $index = $i;
+            }
+        }
+
+        return $index;
     }
 
     /**
@@ -316,8 +443,17 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     protected function applyFilter(&$array, $call, $params = [])
     {
         array_walk_recursive($array, function(&$value, $key, $userdata) {
-            $params = array_merge([$value], $userdata[1]);
-            $value  = call_user_func_array($userdata[0], $params);
+            $element = $this->getElement($key);
+            $type    = ((null !== $element) && ($element instanceof \Pop\Form\Element\AbstractElement)) ?
+                $element->getType() : -1;
+
+            if (((!isset($this->filterExcludeByType[$type])) ||
+                    (isset($this->filterExcludeByType[$type]) && !in_array($userdata[0], $this->filterExcludeByType[$type]))) &&
+                ((!isset($this->filterExcludeByName[$key])) ||
+                    (isset($this->filterExcludeByName[$key]) && !in_array($userdata[0], $this->filterExcludeByName[$key])))) {
+                $params = array_merge([$value], $userdata[1]);
+                $value = call_user_func_array($userdata[0], $params);
+            }
         }, [$call, $params]);
     }
 
