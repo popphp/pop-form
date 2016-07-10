@@ -222,7 +222,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['text' => ['class' => 'input-field']];
         $values  = ['username' => 'username', 'email' => 'email'];
         $fields  = new Fields();
-        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -232,7 +232,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['textarea' => ['class' => 'input-field']];
         $values  = ['username' => ['type' => 'textarea']];
         $fields  = new Fields();
-        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -242,7 +242,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $attribs = ['text' => ['class' => 'input-field']];
         $values  = ['username' => ['type' => 'hidden']];
         $fields  = new Fields();
-        $fields->addFieldsFromTable((new TestAsset\Users())->getTableInfo(), $attribs, $values, 'id');
+        $fields->addFieldsFromTable(TestAsset\Users::getTableInfo(), $attribs, $values, 'id');
         $this->assertInstanceOf('Pop\Form\Fields', $fields);
         $this->assertEquals(3, count($fields->getFields()));
     }
@@ -250,7 +250,7 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
     public function testAddFieldsFromTableException()
     {
         $this->setExpectedException('Pop\Form\Exception');
-        $table   = (new TestAsset\Users())->getTableInfo();
+        $table   = TestAsset\Users::getTableInfo();
         unset($table['tableName']);
         $fields  = new Fields();
         $fields->addFieldsFromTable($table);
