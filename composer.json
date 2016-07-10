@@ -26,7 +26,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "4.6.*",
-        "popphp/pop-db": "2.1.*"
+        "popphp/pop-db": "3.0.*"
     },
     "suggest": {
         "popphp/pop-db": "To use the dynamic field generation based on database table columns"
@@ -43,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.1.x-dev"
+            "dev-master": "2.2.x-dev"
         }
     }
 }
