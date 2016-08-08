@@ -518,6 +518,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
+        $form->addHeader('Test Header 1');
+        $form->addHeader('Test Header 2', 2);
+
         $form->getElement('colors')->setLabelAttributes([
             'class' => 'label-class'
         ]);
@@ -540,6 +543,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('enctype="multipart/form-data"', $result);
         $this->assertContains('enctype="multipart/form-data"', $form->renderForm(true));
         $this->assertContains('enctype="multipart/form-data"', $string);
+        $this->assertContains('Test Header 1</h1>', $form->renderForm(true));
+        $this->assertContains('Test Header 2</h2>', $form->renderForm(true));
     }
 
     public function testRenderFormNoElementsException()

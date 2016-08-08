@@ -41,6 +41,12 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     protected $fields = [];
 
     /**
+     * Field group headers
+     * @var array
+     */
+    protected $headers = [];
+
+    /**
      * Filters
      * @var array
      */
@@ -208,6 +214,74 @@ abstract class AbstractForm extends Child implements \ArrayAccess
     public function clearFilters()
     {
         $this->filters = [];
+        return $this;
+    }
+
+    /**
+     * Add field group header
+     *
+     * @param  string $header
+     * @param  int    $weight
+     * @param  int    $position
+     * @return AbstractForm
+     */
+    public function addHeader($header, $weight = 1, $position = null)
+    {
+        $weight = (int)$weight;
+
+        if ($weight > 6) {
+            $weight = 6;
+        }
+        if ($weight < 1) {
+            $weight = 1;
+        }
+
+        if (null !== $position) {
+            $this->headers[(int)$position] = [
+                'header' => $header,
+                'weight' => $weight
+            ];
+        } else {
+            $this->headers[] = [
+                'header' => $header,
+                'weight' => $weight
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove field group header
+     *
+     * @param  string $header
+     * @return AbstractForm
+     */
+    public function removeHeader($header)
+    {
+        foreach ($this->headers as $key => $value) {
+            if ($value['header'] == $header) {
+                unset($this->headers[$key]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove field group header
+     *
+     * @param  int $position
+     * @return AbstractForm
+     */
+    public function removeHeaderByPosition($position)
+    {
+        $key = (int)$position;
+
+        if (isset($this->headers[$key])) {
+            unset($this->headers[$key]);
+        }
+
         return $this;
     }
 

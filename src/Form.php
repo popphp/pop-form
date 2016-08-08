@@ -738,6 +738,13 @@ class Form extends AbstractForm
         $dl->setAttribute('id', $id . '-' . $i);
         $dl->setAttribute('class', $id);
 
+        if (isset($this->headers[$i - 1])) {
+            $fieldGroupHeader = new Child('h' . $this->headers[$i - 1]['weight'], $this->headers[$i - 1]['header']);
+            $fieldGroupHeader->setAttribute('class', $id . '-header');
+            $fieldGroupHeader->setIndent(($this->getIndent() . '        '));
+            $dl->addChild($fieldGroupHeader);
+        }
+
         // Loop through the children and create and attach the appropriate DT and DT elements, with labels where applicable.
         foreach ($children as $child) {
             if ($child->getNodeName() == 'fieldset') {
@@ -759,6 +766,13 @@ class Form extends AbstractForm
                     $dl = new Child('dl', null, null, false, $this->getIndent());
                     $dl->setAttribute('id', $id . '-' . $i);
                     $dl->setAttribute('class', $id);
+
+                    if (isset($this->headers[$i - 1])) {
+                        $fieldGroupHeader = new Child('h' . $this->headers[$i - 1]['weight'], $this->headers[$i - 1]['header']);
+                        $fieldGroupHeader->setAttribute('class', $id . '-header');
+                        $fieldGroupHeader->setIndent(($this->getIndent() . '        '));
+                        $dl->addChild($fieldGroupHeader);
+                    }
                 }
             }
 
