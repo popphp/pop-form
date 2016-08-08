@@ -741,8 +741,8 @@ class Form extends AbstractForm
         if (isset($this->headers[$i - 1])) {
             $fieldGroupHeader = new Child('h' . $this->headers[$i - 1]['weight'], $this->headers[$i - 1]['header']);
             $fieldGroupHeader->setAttribute('class', $id . '-header');
-            $fieldGroupHeader->setIndent(($this->getIndent() . '        '));
-            $dl->addChild($fieldGroupHeader);
+            $fieldGroupHeader->setIndent(($this->getIndent()));
+            $this->addChild($fieldGroupHeader);
         }
 
         // Loop through the children and create and attach the appropriate DT and DT elements, with labels where applicable.
@@ -770,8 +770,8 @@ class Form extends AbstractForm
                     if (isset($this->headers[$i - 1])) {
                         $fieldGroupHeader = new Child('h' . $this->headers[$i - 1]['weight'], $this->headers[$i - 1]['header']);
                         $fieldGroupHeader->setAttribute('class', $id . '-header');
-                        $fieldGroupHeader->setIndent(($this->getIndent() . '        '));
-                        $dl->addChild($fieldGroupHeader);
+                        $fieldGroupHeader->setIndent(($this->getIndent()));
+                        $this->addChild($fieldGroupHeader);
                     }
                 }
             }
