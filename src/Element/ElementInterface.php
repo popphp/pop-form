@@ -17,11 +17,11 @@ namespace Pop\Form\Element;
  * Form element interface
  *
  * @category   Pop
- * @package    Pop_Form
+ * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.2.0
+ * @version    3.0.0
  */
 interface ElementInterface
 {
@@ -41,14 +41,6 @@ interface ElementInterface
      * @return AbstractElement
      */
     public function setValue($value);
-
-    /**
-     * Set the marked value(s) of the form element
-     *
-     * @param  mixed $marked
-     * @return AbstractElement
-     */
-    public function setMarked($marked);
 
     /**
      * Set the label of the form element
@@ -135,13 +127,6 @@ interface ElementInterface
      * @return mixed
      */
     public function getValue();
-
-    /**
-     * Get form element marked value(s)
-     *
-     * @return mixed
-     */
-    public function getMarked();
 
     /**
      * Get form element label

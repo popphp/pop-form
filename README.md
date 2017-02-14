@@ -1,9 +1,6 @@
 pop-form
 ========
 
-[![Build Status](https://travis-ci.org/popphp/pop-form.svg?branch=master)](https://travis-ci.org/popphp/pop-form)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
-
 OVERVIEW
 --------
 `pop-form` is a robust component for managing, rendering and validating HTML forms.

@@ -19,11 +19,11 @@ use Pop\Dom\Child;
  * Form checkbox element set class
  *
  * @category   Pop
- * @package    Pop_Form
+ * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.2.0
+ * @version    3.0.0
  */
 
 class CheckboxSet extends AbstractElement

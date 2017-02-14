@@ -20,11 +20,11 @@ use Pop\Validator;
  * Form element class
  *
  * @category   Pop
- * @package    Pop_Form
+ * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.2.0
+ * @version    3.0.0
  */
 abstract class AbstractElement extends Child implements ElementInterface
 {
@@ -46,12 +46,6 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @var string|array
      */
     protected $value = null;
-
-    /**
-     * Form element marked value(s)
-     * @var string|array
-     */
-    protected $marked = null;
 
     /**
      * Form element label
@@ -128,35 +122,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function setValue($value)
     {
         $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * Set the marked value of the form element object
-     *
-     * @param  mixed $marked
-     * @return AbstractElement
-     */
-    public function setMarked($marked)
-    {
-        $markedValues = (!is_array($marked)) ? [$marked] : $marked;
-
-        foreach ($this->childNodes as $child) {
-            if ($child->getNodeName() == 'input') {
-                if (in_array($child->getAttribute('value'), $markedValues)) {
-                    $child->setAttribute('checked', 'checked');
-                } else if (null !== $child->getAttribute('checked')) {
-                    $child->removeAttribute('checked');
-                }
-            } else {
-                if (in_array($child->getAttribute('value'), $markedValues)) {
-                    $child->setAttribute('selected', 'selected');
-                } else if (null !== $child->getAttribute('selected')) {
-                    $child->removeAttribute('selected');
-                }
-            }
-        }
-        $this->marked = $marked;
         return $this;
     }
 
@@ -352,16 +317,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
-     * Get form element object marked values
-     *
-     * @return mixed
-     */
-    public function getMarked()
-    {
-        return $this->marked;
-    }
-
-    /**
      * Get form element object label
      *
      * @return string
@@ -484,98 +439,25 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Validate the form element object
      *
-     * @param  array $fields
-     * @throws Exception
      * @return boolean
      */
-    public function validate(array $fields = [])
-    {
-        $this->errors = [];
-
-        // Check if the element is required.
-        if ($this->required == true) {
-            if (is_array($this->value)) {
-                $curElemValue = $this->marked;
-            } else if (($_FILES) && (isset($_FILES[$this->name]['name']))) {
-                $curElemValue = $_FILES[$this->name]['name'];
-            } else {
-                $curElemValue = $this->value;
-            }
-
-            if (empty($curElemValue) && ($curElemValue != '0')) {
-                $this->errors[] = 'This field is required.';
-            }
-        }
-
-        // Check the element's validators.
-        if (isset($this->validators[0])) {
-            foreach ($this->validators as $validator) {
-                $curElemSize = null;
-                if (is_array($this->value)) {
-                    $curElemValue = $this->marked;
-                } else if (($_FILES) && (isset($_FILES[$this->name]['name']))) {
-                    $curElemValue = $_FILES[$this->name]['name'];
-                    $curElemSize  = $_FILES[$this->name]['size'];
-                } else {
-                    $curElemValue = $this->value;
-                }
-
-                // If Pop\Validator\*
-                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
-                    if (('Pop\Validator\Equal' == get_class($validator)) && array_key_exists($validator->getValue(), $fields)) {
-                        $validator->setValue($fields[$validator->getValue()]);
-                        if (!$validator->evaluate($curElemValue)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
-                    } else if ('Pop\Validator\NotEmpty' == get_class($validator)) {
-                        if (!$validator->evaluate($curElemValue)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
-                    } else if ((null !== $curElemSize) && ('Pop\Validator\LessThanEqual' == get_class($validator))) {
-                        if (!$validator->evaluate($curElemSize)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
-                    } else {
-                        if ((!empty($curElemValue) || ($curElemValue == '0')) && !$validator->evaluate($curElemValue)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
-                    }
-                // Else, if callable
-                } else if (is_callable($validator)) {
-                    if (null !== $curElemSize) {
-                        $result = call_user_func_array($validator, [$curElemSize]);
-                    } else {
-                        $result = call_user_func_array($validator, [$curElemValue]);
-                    }
-                    if (null !== $result) {
-                        $this->errors[] = $result;
-                    }
-                } else {
-                    throw new Exception('That validator is not callable.');
-                }
-            }
-        }
-
-        // If errors are found on any of the form elements, return false.
-        return (count($this->errors) > 0) ? false : true;
-    }
-
+    abstract public function validate();
 
     /**
      * Render the child and its child nodes
      *
-     * @param  boolean $ret
      * @param  int     $depth
      * @param  string  $indent
      * @param  string  $errorIndent
      * @return string
      */
-    public function render($ret = false, $depth = 0, $indent = null, $errorIndent = null)
+    public function render($depth = 0, $indent = null, $errorIndent = null)
     {
         $output    = parent::render(true, $depth, $indent);
         $errors    = null;
         $container = $this->errorDisplay['container'];
         $attribs   = null;
+
         foreach ($this->errorDisplay['attributes'] as $a => $v) {
             $attribs .= ' ' . $a . '="' . $v . '"';
         }
@@ -592,11 +474,17 @@ abstract class AbstractElement extends Child implements ElementInterface
         }
 
         $this->output = ($this->errorDisplay['pre']) ? $errors . $output : $output . $errors;
-        if ($ret) {
-            return $this->output;
-        } else {
-            echo $this->output;
-        }
+        return $this->output;
+    }
+
+    /**
+     * Print form element
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 
 }
