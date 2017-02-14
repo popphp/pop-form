@@ -36,18 +36,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected $name = null;
 
     /**
-     * Element type
-     * @var string
-     */
-    protected $type = null;
-
-    /**
-     * Form element value(s)
-     * @var string|array
-     */
-    protected $value = null;
-
-    /**
      * Form element label
      * @var string
      */
@@ -102,6 +90,20 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected $errors = [];
 
     /**
+     * Constructor
+     *
+     * Instantiate the form element object
+     *
+     * @param  string  $name
+     * @param  string  $value
+     * @param  array   $options
+     */
+    public function __construct($name, $value = null, array $options = [])
+    {
+        parent::__construct($name, $value, $options);
+    }
+
+    /**
      * Set the name of the form element object
      *
      * @param  string $name
@@ -110,18 +112,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function setName($name)
     {
         $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * Set the value of the form element object
-     *
-     * @param  mixed $value
-     * @return AbstractElement
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
         return $this;
     }
 
@@ -207,7 +197,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * Set whether the form element is required
      *
      * @param  boolean $required
-     * @return AbstractElement
+     * @return mixed
      */
     public function setRequired($required)
     {
@@ -294,26 +284,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get form element object type
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Get form element object value
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 
     /**
@@ -453,7 +423,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      */
     public function render($depth = 0, $indent = null, $errorIndent = null)
     {
-        $output    = parent::render(true, $depth, $indent);
+        $output    = parent::render($depth, $indent);
         $errors    = null;
         $container = $this->errorDisplay['container'];
         $attribs   = null;

@@ -37,7 +37,6 @@ class Time extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Time
      */
     public function __construct($name, $value = null, $indent = null)
     {

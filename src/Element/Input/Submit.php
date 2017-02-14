@@ -37,7 +37,6 @@ class Submit extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Submit
      */
     public function __construct($name, $value = null, $indent = null)
     {

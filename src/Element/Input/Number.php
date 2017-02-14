@@ -39,7 +39,6 @@ class Number extends Element\Input
      * @param  int    $max
      * @param  string $value
      * @param  string $indent
-     * @return \Pop\Form\Element\Input\Number
      */
     public function __construct($name, $min, $max, $value = null, $indent = null)
     {

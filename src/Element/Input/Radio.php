@@ -36,7 +36,6 @@ class Radio extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Radio
      */
     public function __construct($name, $value = null, $indent = null)
     {

@@ -28,12 +28,6 @@ class Button extends AbstractElement
 {
 
     /**
-     * Element type
-     * @var string
-     */
-    protected $type = 'button';
-
-    /**
      * Constructor
      *
      * Instantiate the button form element.
@@ -41,11 +35,10 @@ class Button extends AbstractElement
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Button
      */
     public function __construct($name, $value = null, $indent = null)
     {
-        parent::__construct($this->type, $value, null, false, $indent);
+        parent::__construct('button', $value);
 
         $this->setAttributes(['name' => $name, 'id' => $name]);
 
@@ -57,8 +50,43 @@ class Button extends AbstractElement
             $this->setAttribute('type', 'button');
         }
 
-        $this->setValue($value);
         $this->setName($name);
+
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
+    }
+
+    /**
+     * Set the value of the form button element object
+     *
+     * @param  mixed $value
+     * @return Button
+     */
+    public function setValue($value)
+    {
+        $this->setNodeValue($value);
+        return $this;
+    }
+
+    /**
+     * Get the value of the form button element object
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->getNodeValue();
+    }
+
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        return (count($this->errors) == 0);
     }
 
 }

@@ -37,7 +37,6 @@ class Search extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Search
      */
     public function __construct($name, $value = null, $indent = null)
     {

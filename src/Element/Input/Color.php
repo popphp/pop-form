@@ -37,7 +37,6 @@ class Color extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Color
      */
     public function __construct($name, $value = null, $indent = null)
     {

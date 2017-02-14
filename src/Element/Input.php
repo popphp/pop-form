@@ -28,12 +28,6 @@ class Input extends AbstractElement
 {
 
     /**
-     * Element type
-     * @var string
-     */
-    protected $type = 'input';
-
-    /**
      * Constructor
      *
      * Instantiate the form input element, defaults to text
@@ -42,12 +36,12 @@ class Input extends AbstractElement
      * @param  string $type
      * @param  string $value
      * @param  string $indent
-     * @return Input
      */
     public function __construct($name, $type = 'text', $value = null, $indent = null)
     {
-        parent::__construct($this->type, null, null, false, $indent);
+        parent::__construct('input');
 
+        $this->setName($name);
         $this->setAttributes([
             'type'  => $type,
             'name'  => $name,
@@ -55,8 +49,9 @@ class Input extends AbstractElement
             'value' => $value
         ]);
 
-        $this->setValue($value);
-        $this->setName($name);
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
     }
 
     /**
@@ -72,7 +67,7 @@ class Input extends AbstractElement
     }
 
     /**
-     * Set the value of the form element object
+     * Set the value of the form input element object
      *
      * @param  mixed $value
      * @return Input
@@ -80,7 +75,37 @@ class Input extends AbstractElement
     public function setValue($value)
     {
         $this->setAttribute('value', $value);
-        return parent::setValue($value);
+        return $this;
+    }
+
+    /**
+     * Get the value of the form input element object
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->getAttribute('value');
+    }
+
+    /**
+     * Get the type of the form input element object
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->getAttribute('type');
+    }
+
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        return (count($this->errors) == 0);
     }
 
 }

@@ -44,7 +44,6 @@ class Datalist extends Text
      * @param  array  $values
      * @param  string $value
      * @param  string $indent
-     * @return Datalist
      */
     public function __construct($name, array $values, $value = null, $indent = null)
     {
@@ -61,24 +60,26 @@ class Datalist extends Text
     }
 
     /**
-     * Render the child and its child nodes
+     * Render the datalist element
      *
-     * @param  boolean $ret
      * @param  int     $depth
      * @param  string  $indent
      * @param  string  $errorIndent
      * @return mixed
      */
-    public function render($ret = false, $depth = 0, $indent = null, $errorIndent = null)
+    public function render($depth = 0, $indent = null, $errorIndent = null)
     {
-        $datalist = parent::render(true, $depth, $indent) . $this->datalist->render(true, $depth, $indent);
+        return parent::render($depth, $indent, $errorIndent) . $this->datalist->render($depth, $indent);
+    }
 
-        // Return or print the rendered child node output.
-        if ($ret) {
-            return $datalist;
-        } else {
-            echo $datalist;
-        }
+    /**
+     * Print the datalist element
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 
 }

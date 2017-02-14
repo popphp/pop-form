@@ -35,14 +35,6 @@ interface ElementInterface
     public function setName($name);
 
     /**
-     * Set the value of the form element
-     *
-     * @param  mixed $value
-     * @return AbstractElement
-     */
-    public function setValue($value);
-
-    /**
      * Set the label of the form element
      *
      * @param  mixed $label
@@ -62,7 +54,7 @@ interface ElementInterface
      * Set whether the form element is required
      *
      * @param  boolean $required
-     * @return AbstractElement
+     * @return mixed
      */
     public function setRequired($required);
 
@@ -113,20 +105,6 @@ interface ElementInterface
      * @return string
      */
     public function getName();
-
-    /**
-     * Get form element type
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * Get form element value
-     *
-     * @return mixed
-     */
-    public function getValue();
 
     /**
      * Get form element label

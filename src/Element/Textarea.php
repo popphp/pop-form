@@ -28,12 +28,6 @@ class Textarea extends AbstractElement
 {
 
     /**
-     * Element type
-     * @var string
-     */
-    protected $type = 'textarea';
-
-    /**
      * Constructor
      *
      * Instantiate the textarea form element
@@ -41,15 +35,16 @@ class Textarea extends AbstractElement
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return Textarea
      */
     public function __construct($name, $value = null, $indent = null)
     {
-        parent::__construct($this->type, $value, null, false, $indent);
+        parent::__construct('textarea', $value);
 
         $this->setAttributes(['name' => $name, 'id' => $name]);
-        $this->setValue($value);
         $this->setName($name);
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
     }
 
     /**
@@ -65,7 +60,7 @@ class Textarea extends AbstractElement
     }
 
     /**
-     * Set the value of the form element object
+     * Set the value of the form textarea element object
      *
      * @param  mixed $value
      * @return Textarea
@@ -73,7 +68,27 @@ class Textarea extends AbstractElement
     public function setValue($value)
     {
         $this->setNodeValue($value);
-        return parent::setValue($value);
+        return $this;
+    }
+
+    /**
+     * Get the value of the form textarea element object
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->getNodeValue();
+    }
+
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        return (count($this->errors) == 0);
     }
 
 }

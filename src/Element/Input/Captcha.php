@@ -26,6 +26,13 @@ namespace Pop\Form\Element\Input;
 
 class Captcha extends Text
 {
+
+    /**
+     * Current token data
+     * @var array
+     */
+    protected $token = [];
+
     /**
      * Constructor
      *
@@ -34,11 +41,11 @@ class Captcha extends Text
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @param  int    $expire
      * @param  string $captcha
-     * @return Captcha
+     * @param  string $answer
+     * @param  int    $expire
      */
-    public function __construct($name, $value = null, $indent = null, $expire = 300, $captcha = null)
+    public function __construct($name, $value = null, $indent = null, $captcha = null, $answer = null, $expire = 300)
     {
         // Start a session.
         if (session_id() == '') {
@@ -47,39 +54,15 @@ class Captcha extends Text
 
         // If token does not exist, create one
         if (!isset($_SESSION['pop_captcha'])) {
-            if (null === $captcha) {
-                $captcha = $this->generateEquation();
-            } else if (stripos($captcha, '<img') === false) {
-                $captcha = strtoupper($captcha);
-            }
-
-            $this->token = [
-                'captcha' => $captcha,
-                'value'   => null,
-                'expire'  => (int)$expire,
-                'start'   => time()
-            ];
-            $_SESSION['pop_captcha'] = serialize($this->token);
-            // Else, retrieve existing token
+            $this->createNewToken($captcha, $answer, $expire);
+        // Else, retrieve existing token
         } else {
             $this->token = unserialize($_SESSION['pop_captcha']);
 
             // Check to see if the token has expired
             if ($this->token['expire'] > 0) {
                 if (($this->token['expire'] + $this->token['start']) < time()) {
-                    if (null === $captcha) {
-                        $captcha = $this->generateEquation();
-                    } else if (stripos($captcha, '<img') === false) {
-                        $captcha = strtoupper($captcha);
-                    }
-
-                    $this->token = [
-                        'captcha' => $captcha,
-                        'value'   => null,
-                        'expire'  => (int)$expire,
-                        'start'   => time()
-                    ];
-                    $_SESSION['pop_captcha'] = serialize($this->token);
+                    $this->createNewToken($captcha, $value, $expire);
                 }
             }
         }
@@ -90,21 +73,27 @@ class Captcha extends Text
     }
 
     /**
-     * Set the token of the captcha form element
+     * Set the token of the csrf form element
      *
-     * @param  array  $token
-     * @param  string $label
+     * @param  string $captcha
+     * @param  string $answer
+     * @param  int    $expire
      * @return Captcha
      */
-    public function setToken(array $token, $label = null)
+    public function createNewToken($captcha = null, $answer = null, $expire = 300)
     {
-        if (isset($token['captcha']) && isset($token['value']) && isset($token['expire']) && isset($token['start'])) {
-            $this->token = $token;
-            $this->setValue(strtoupper($token['value']))
-                 ->setLabel($label)
-                 ->setValidator();
+        if ((null === $captcha) || (null === $answer)) {
+            $captcha = $this->generateEquation();
+            $answer  = $this->evaluateEquation($captcha);
         }
 
+        $this->token = [
+            'captcha' => $captcha,
+            'answer'  => $answer,
+            'expire'  => (int)$expire,
+            'start'   => time()
+        ];
+        $_SESSION['pop_captcha'] = serialize($this->token);
         return $this;
     }
 
@@ -168,18 +157,9 @@ class Captcha extends Text
         // If there is query data, set validator to check against the token value
         if (count($queryData) > 0) {
             if (isset($queryData[$this->name])) {
-                $captcha = $this->token['captcha'];
-                if (stripos($captcha, '<img') !== false) {
-                    $answer =  $this->token['value'];
-                } else if ((strpos($captcha, '<img') === false) && ((strpos($captcha, ' + ') !== false) || (strpos($captcha, ' - ') !== false) || (strpos($captcha, ' * ') !== false) || (strpos($captcha, ' / ') !== false))) {
-                    $answer = eval("return ($captcha);");
-                } else {
-                    $answer = $captcha;
-                }
-                $this->addValidator(new \Pop\Validator\Equal($answer, 'The answer is incorrect.'));
+                $this->addValidator(new \Pop\Validator\Equal($this->token['answer'], 'The answer is incorrect.'));
             }
         }
-
     }
 
     /**
@@ -209,6 +189,17 @@ class Captcha extends Text
         $equation = ($rand2 > $rand1) ? $rand2 . $op . $rand1 : $rand1 . $op . $rand2;
 
         return $equation;
+    }
+
+    /**
+     * Evaluate equation
+     *
+     * @param  $equation
+     * @return int
+     */
+    protected function evaluateEquation($equation)
+    {
+        return eval("return ($equation);");
     }
 
 }

@@ -37,7 +37,6 @@ class DateTimeLocal extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return DateTimeLocal
      */
     public function __construct($name, $value = null, $indent = null)
     {

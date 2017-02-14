@@ -42,7 +42,6 @@ class Csrf extends Hidden
      * @param  string $value
      * @param  string $indent
      * @param  int    $expire
-     * @return Csrf
      */
     public function __construct($name, $value = null, $indent = null, $expire = 300)
     {
@@ -53,12 +52,7 @@ class Csrf extends Hidden
 
         // If token does not exist, create one
         if (!isset($_SESSION['pop_csrf'])) {
-            $this->token = [
-                'value'  => sha1(rand(10000, getrandmax()) . $value),
-                'expire' => (int)$expire,
-                'start'  => time()
-            ];
-            $_SESSION['pop_csrf'] = serialize($this->token);
+            $this->createNewToken($value, $expire);
         // Else, retrieve existing token
         } else {
             $this->token = unserialize($_SESSION['pop_csrf']);
@@ -66,12 +60,7 @@ class Csrf extends Hidden
             // Check to see if the token has expired
             if ($this->token['expire'] > 0) {
                 if (($this->token['expire'] + $this->token['start']) < time()) {
-                    $this->token = [
-                        'value'  => sha1(rand(10000, getrandmax()) . $value),
-                        'expire' => (int)$expire,
-                        'start'  => time()
-                    ];
-                    $_SESSION['pop_csrf'] = serialize($this->token);
+                    $this->createNewToken($value, $expire);
                 }
             }
         }
@@ -84,17 +73,18 @@ class Csrf extends Hidden
     /**
      * Set the token of the csrf form element
      *
-     * @param  array  $token
-     * @return Captcha
+     * @param  string $value
+     * @param  int    $expire
+     * @return Csrf
      */
-    public function setToken(array $token)
+    public function createNewToken($value, $expire = 300)
     {
-        if (isset($token['value']) && isset($token['expire']) && isset($token['start'])) {
-            $this->token = $token;
-            $this->setValue($token['value'])
-                 ->setValidator();
-        }
-
+        $this->token = [
+            'value'  => sha1(rand(10000, getrandmax()) . $value),
+            'expire' => (int)$expire,
+            'start'  => time()
+        ];
+        $_SESSION['pop_csrf'] = serialize($this->token);
         return $this;
     }
 

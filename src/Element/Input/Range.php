@@ -39,7 +39,6 @@ class Range extends Element\Input
      * @param  int    $max
      * @param  string $value
      * @param  string $indent
-     * @return Range
      */
     public function __construct($name, $min, $max, $value = null, $indent = null)
     {

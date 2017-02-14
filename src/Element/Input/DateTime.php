@@ -37,7 +37,6 @@ class DateTime extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
-     * @return DateTime
      */
     public function __construct($name, $value = null, $indent = null)
     {
