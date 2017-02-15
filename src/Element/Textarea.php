@@ -72,6 +72,17 @@ class Textarea extends AbstractElement
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return Textarea
+     */
+    public function resetValue()
+    {
+        $this->setNodeValue('');
+        return $this;
+    }
+
+    /**
      * Get the value of the form textarea element object
      *
      * @return string

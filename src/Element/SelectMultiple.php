@@ -118,6 +118,17 @@ class SelectMultiple extends AbstractSelect
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return SelectMultiple
+     */
+    public function resetValue()
+    {
+        $this->selected = [];
+        return $this;
+    }
+
+    /**
      * Get select form element selected value
      *
      * @return array

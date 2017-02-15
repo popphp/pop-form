@@ -41,6 +41,32 @@ class Checkbox extends Element\Input
     {
         parent::__construct($name, 'checkbox', $value, $indent);
     }
+    /**
+     * Set the value of the form input element object
+     *
+     * @param  mixed $value
+     * @return Checkbox
+     */
+    public function setValue($value)
+    {
+        if ($value == $this->getAttribute('value')) {
+            $this->check();
+        } else {
+            $this->uncheck();
+        }
+        return $this;
+    }
+
+    /**
+     * Reset the value of the form element
+     *
+     * @return Checkbox
+     */
+    public function resetValue()
+    {
+        $this->uncheck();
+        return $this;
+    }
 
     /**
      * Set the checkbox to checked

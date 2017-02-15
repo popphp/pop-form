@@ -43,6 +43,13 @@ interface ElementInterface
     public function setValue($value);
 
     /**
+     * Reset the value of the form element
+     *
+     * @return ElementInterface
+     */
+    public function resetValue();
+
+    /**
      * Set the label of the form element
      *
      * @param  mixed $label

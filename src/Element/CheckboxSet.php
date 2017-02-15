@@ -155,6 +155,22 @@ class CheckboxSet extends AbstractElement
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return CheckboxSet
+     */
+    public function resetValue()
+    {
+        $this->checked = null;
+        foreach ($this->childNodes as $child) {
+            if ($child instanceof Input\Checkbox) {
+                $child->uncheck();
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Get checkbox form element checked value
      *
      * @return mixed

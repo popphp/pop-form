@@ -43,6 +43,33 @@ class Radio extends Element\Input
     }
 
     /**
+     * Set the value of the form input element object
+     *
+     * @param  mixed $value
+     * @return Radio
+     */
+    public function setValue($value)
+    {
+        if ($value == $this->getAttribute('value')) {
+            $this->check();
+        } else {
+            $this->uncheck();
+        }
+        return $this;
+    }
+
+    /**
+     * Reset the value of the form element
+     *
+     * @return Radio
+     */
+    public function resetValue()
+    {
+        $this->uncheck();
+        return $this;
+    }
+
+    /**
      * Set the checkbox to checked
      *
      * @return Radio

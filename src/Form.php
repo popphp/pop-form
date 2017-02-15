@@ -133,6 +133,25 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Get the form action
+     *
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->getAttribute('action');
+    }
+    /**
+     * Get the form method
+     *
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->getAttribute('method');
+    }
+
+    /**
      * Method to get a field element object
      *
      * @param  string $name
@@ -201,6 +220,88 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     public function getIterator()
     {
         return new \ArrayIterator($this->toArray());
+    }
+
+
+    /**
+     * Determine whether or not the form object is valid
+     *
+     * @return boolean
+     */
+    public function isValid()
+    {
+        $valid = true;
+        // Check each element for validators, validate them and return the result.
+        foreach ($this->fields as $field) {
+            if ($field->validate() == false) {
+                $valid = false;
+            }
+        }
+
+        return $valid;
+    }
+
+    /**
+     * Get form element errors for a field.
+     *
+     * @param  string $name
+     * @return array
+     */
+    public function getErrors($name)
+    {
+        return (isset($this->fields[$name]) && ($this->fields[$name]->hasErrors())) ?
+            $this->fields[$name]->getErrors() : [];
+    }
+
+    /**
+     * Get all form element errors
+     *
+     * @return array
+     */
+    public function getAllErrors()
+    {
+        $errors   = [];
+        foreach ($this->fields as $name => $field) {
+            if ($field->hasErrors()) {
+                $errors[str_replace('[]', '', $field->getName())] = $field->getErrors();
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Method to reset and clear any form field values
+     *
+     * @return Form
+     */
+    public function reset()
+    {
+        foreach ($this->fields as $field) {
+            $field->resetValue();
+        }
+        return $this;
+    }
+
+    /**
+     * Method to clear any security tokens
+     *
+     * @return Form
+     */
+    public function clearTokens()
+    {
+        // Start a session.
+        if (session_id() == '') {
+            session_start();
+        }
+        if (isset($_SESSION['pop_csrf'])) {
+            unset($_SESSION['pop_csrf']);
+        }
+        if (isset($_SESSION['pop_captcha'])) {
+            unset($_SESSION['pop_captcha']);
+        }
+
+        return $this;
     }
 
     /**

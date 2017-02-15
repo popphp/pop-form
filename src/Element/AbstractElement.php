@@ -124,6 +124,13 @@ abstract class AbstractElement extends Child implements ElementInterface
     abstract public function setValue($value);
 
     /**
+     * Reset the value of the form element
+     *
+     * @return AbstractElement
+     */
+    abstract public function resetValue();
+
+    /**
      * Set the label of the form element object
      *
      * @param  string $label

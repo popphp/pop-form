@@ -70,6 +70,17 @@ class Button extends AbstractElement
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return Button
+     */
+    public function resetValue()
+    {
+        $this->setNodeValue('');
+        return $this;
+    }
+
+    /**
      * Get the value of the form button element object
      *
      * @return string

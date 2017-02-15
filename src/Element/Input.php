@@ -79,6 +79,17 @@ class Input extends AbstractElement
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return Input
+     */
+    public function resetValue()
+    {
+        $this->setAttribute('value', '');
+        return $this;
+    }
+
+    /**
      * Get the value of the form input element object
      *
      * @return string

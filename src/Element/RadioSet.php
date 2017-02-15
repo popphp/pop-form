@@ -154,6 +154,22 @@ class RadioSet extends AbstractElement
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return RadioSet
+     */
+    public function resetValue()
+    {
+        $this->checked = null;
+        foreach ($this->childNodes as $child) {
+            if ($child instanceof Input\Radio) {
+                $child->uncheck();
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Get radio form element checked value
      *
      * @return mixed

@@ -113,6 +113,17 @@ class Select extends AbstractSelect
     }
 
     /**
+     * Reset the value of the form element
+     *
+     * @return Select
+     */
+    public function resetValue()
+    {
+        $this->selected = null;
+        return $this;
+    }
+
+    /**
      * Get select form element selected value
      *
      * @return mixed
