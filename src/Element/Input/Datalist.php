@@ -47,11 +47,17 @@ class Datalist extends Text
      */
     public function __construct($name, array $values, $value = null, $indent = null)
     {
-        parent::__construct($name, $value, $indent);
+        parent::__construct($name, $value);
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
         $this->setAttribute('list', $name . '_datalist');
 
         if (null !== $values) {
-            $this->datalist = new Child('datalist', null, null, $this->indent);
+            $this->datalist = new Child('datalist');
+            if (null !== $indent) {
+                $this->datalist->setIndent($indent);
+            }
             $this->datalist->setAttribute('id', $name . '_datalist');
             foreach ($values as $key => $val) {
                 $this->datalist->addChild((new Child('option', $val))->setAttribute('value', $key));
