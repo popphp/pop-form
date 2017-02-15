@@ -40,10 +40,10 @@ class Csrf extends Hidden
      *
      * @param  string $name
      * @param  string $value
-     * @param  string $indent
      * @param  int    $expire
+     * @param  string $indent
      */
-    public function __construct($name, $value = null, $indent = null, $expire = 300)
+    public function __construct($name, $value = null, $expire = 300, $indent = null)
     {
         // Start a session.
         if (session_id() == '') {

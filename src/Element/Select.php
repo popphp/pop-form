@@ -42,16 +42,16 @@ class Select extends AbstractSelect
      */
     public function __construct($name, $values, $selected = null, $xmlFile = null, $indent = null)
     {
-        $this->selected = $selected;
-
         parent::__construct('select');
-
         $this->setName($name);
         $this->setAttributes([
             'name' => $name,
             'id'   => $name
         ]);
 
+        if (null !== $selected) {
+            $this->setValue($selected);
+        }
         if (null !== $indent) {
             $this->setIndent($indent);
         }
@@ -98,6 +98,28 @@ class Select extends AbstractSelect
                 $this->addChild($option);
             }
         }
+    }
+
+    /**
+     * Set the selected value of the select form element
+     *
+     * @param  mixed $value
+     * @return Select
+     */
+    public function setValue($value)
+    {
+        $this->selected = $value;
+        return $this;
+    }
+
+    /**
+     * Get select form element selected value
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->selected;
     }
 
     /**

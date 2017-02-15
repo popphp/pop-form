@@ -116,6 +116,14 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Set the value of the form element
+     *
+     * @param  mixed $value
+     * @return AbstractElement
+     */
+    abstract public function setValue($value);
+
+    /**
      * Set the label of the form element object
      *
      * @param  string $label
@@ -285,6 +293,13 @@ abstract class AbstractElement extends Child implements ElementInterface
     {
         return $this->name;
     }
+
+    /**
+     * Get form element value
+     *
+     * @return mixed
+     */
+    abstract public function getValue();
 
     /**
      * Get form element object label

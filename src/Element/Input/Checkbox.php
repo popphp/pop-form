@@ -58,7 +58,7 @@ class Checkbox extends Element\Input
      *
      * @return Checkbox
      */
-    public function unCheck()
+    public function uncheck()
     {
         $this->removeAttribute('checked');
         return $this;

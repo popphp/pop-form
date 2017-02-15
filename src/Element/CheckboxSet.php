@@ -53,20 +53,14 @@ class CheckboxSet extends AbstractElement
      */
     public function __construct($name, array $values, $checked = null, $indent = null)
     {
-        if (null !== $checked) {
-            if (!is_array($checked)) {
-                $checked = [$checked];
-            }
-        } else {
-            $checked = [];
-        }
-
-        $this->checked = $checked;
-
         parent::__construct('fieldset');
 
         $this->setName($name);
         $this->setAttribute('class', 'checkbox-fieldset');
+
+        if (null !== $checked) {
+            $this->setValue($checked);
+        }
 
         if (null !== $indent) {
             $this->setIndent($indent);
@@ -135,14 +129,60 @@ class CheckboxSet extends AbstractElement
         return $this;
     }
 
+
     /**
-     * Get the checked values
+     * Set the checked value of the checkbox form elements
      *
-     * @return array
+     * @param  $value
+     * @return CheckboxSet
+     */
+    public function setValue($value)
+    {
+        $this->checked = (!is_array($value)) ? [$value] : $value;
+
+        if (!empty($this->checked) && ($this->hasChildren())) {
+            foreach ($this->childNodes as $child) {
+                if ($child instanceof Input\Checkbox) {
+                    if (in_array($child->getValue(), $this->checked)) {
+                        $child->check();
+                    } else {
+                        $child->uncheck();
+                    }
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Get checkbox form element checked value
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->checked;
+    }
+
+    /**
+     * Set the checked value
+     *
+     * @param  mixed $checked
+     * @return CheckboxSet
+     */
+    public function setChecked($checked)
+    {
+        return $this->setValue($checked);
+    }
+
+    /**
+     * Get the checked value
+     *
+     * @return string
      */
     public function getChecked()
     {
-        return $this->checked;
+        return $this->getValue();
     }
 
     /**

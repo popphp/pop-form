@@ -40,12 +40,12 @@ class Captcha extends Text
      *
      * @param  string $name
      * @param  string $value
-     * @param  string $indent
      * @param  string $captcha
      * @param  string $answer
      * @param  int    $expire
+     * @param  string $indent
      */
-    public function __construct($name, $value = null, $indent = null, $captcha = null, $answer = null, $expire = 300)
+    public function __construct($name, $value = null, $captcha = null, $answer = null, $expire = 300, $indent = null)
     {
         // Start a session.
         if (session_id() == '') {

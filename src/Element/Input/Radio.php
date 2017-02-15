@@ -58,7 +58,7 @@ class Radio extends Element\Input
      *
      * @return Radio
      */
-    public function unCheck()
+    public function uncheck()
     {
         $this->removeAttribute('checked');
         return $this;

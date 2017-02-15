@@ -42,12 +42,6 @@ class SelectMultiple extends AbstractSelect
      */
     public function __construct($name, $values, $selected = null, $xmlFile = null, $indent = null)
     {
-        if (null !== $selected) {
-            $this->selected = (!is_array($selected)) ? [$selected] : $selected;
-        } else {
-            $this->selected = [];
-        }
-
         parent::__construct('select');
 
         $this->setName($name);
@@ -56,6 +50,12 @@ class SelectMultiple extends AbstractSelect
             'id'       => $name,
             'multiple' => 'multiple'
         ]);
+
+        if (null !== $selected) {
+            $this->setValue($selected);
+        } else {
+            $this->selected = [];
+        }
 
         if (null !== $indent) {
             $this->setIndent($indent);
@@ -103,6 +103,28 @@ class SelectMultiple extends AbstractSelect
                 $this->addChild($option);
             }
         }
+    }
+
+    /**
+     * Set the selected value of the select form element
+     *
+     * @param  mixed $value
+     * @return SelectMultiple
+     */
+    public function setValue($value)
+    {
+        $this->selected = (!is_array($value)) ? [$value] : $value;
+        return $this;
+    }
+
+    /**
+     * Get select form element selected value
+     *
+     * @return array
+     */
+    public function getValue()
+    {
+        return $this->selected;
     }
 
     /**

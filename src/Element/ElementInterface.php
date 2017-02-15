@@ -30,15 +30,23 @@ interface ElementInterface
      * Set the name of the form element
      *
      * @param  string $name
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setName($name);
+
+    /**
+     * Set the value of the form element
+     *
+     * @param  mixed $value
+     * @return ElementInterface
+     */
+    public function setValue($value);
 
     /**
      * Set the label of the form element
      *
      * @param  mixed $label
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setLabel($label);
 
@@ -46,7 +54,7 @@ interface ElementInterface
      * Set the attributes of the label of the form element
      *
      * @param  array $attribs
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setLabelAttributes(array $attribs);
 
@@ -62,7 +70,7 @@ interface ElementInterface
      * Set error pre-display
      *
      * @param  boolean $pre
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setErrorPre($pre = true);
 
@@ -70,7 +78,7 @@ interface ElementInterface
      * Set error post-display
      *
      * @param  boolean $post
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setErrorPost($post = true);
 
@@ -80,7 +88,7 @@ interface ElementInterface
      * @param  string  $container
      * @param  array   $attribs
      * @param  boolean $pre
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setErrorDisplay($container, array $attribs, $pre = false);
 
@@ -88,14 +96,14 @@ interface ElementInterface
      * Set validators
      *
      * @param  array $validators
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function setValidators(array $validators = []);
 
     /**
      * Clear errors
      *
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function clearErrors();
 
@@ -105,6 +113,13 @@ interface ElementInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Get form element value
+     *
+     * @return mixed
+     */
+    public function getValue();
 
     /**
      * Get form element label
@@ -159,7 +174,7 @@ interface ElementInterface
      * Add a validator the form element
      *
      * @param  mixed $validator
-     * @return AbstractElement
+     * @return ElementInterface
      */
     public function addValidator($validator);
 

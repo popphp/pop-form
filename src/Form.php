@@ -47,19 +47,67 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __construct(array $fields = null, $action = null, $method = 'post')
     {
-        if ((null === $action) && isset($_SERVER['REQUEST_URI'])) {
-            $action = $_SERVER['REQUEST_URI'];
-        }
+        $action = ((null === $action) && isset($_SERVER['REQUEST_URI'])) ?
+            $_SERVER['REQUEST_URI'] : '#';
 
         parent::__construct('form');
         $this->setAttributes([
             'action' => $action,
             'method' => $method
         ]);
+
+        if (null !== $fields) {
+            $this->addFields($fields);
+        }
     }
 
     /**
-     * Method to get the count of elements in the formt
+     * Method to create form object and fields from config
+     *
+     * @param  array  $config
+     * @param  string $action
+     * @param  string $method
+     * @return Form
+     */
+    public static function createFromConfig(array $config, $action = null, $method = 'post')
+    {
+        $fields = [];
+
+        foreach ($config as $name => $field) {
+            $fields[$name] = Field::create($name, $field);
+        }
+
+        return new self($fields, $action, $method);
+    }
+
+    /**
+     * Method to add a form field
+     *
+     * @param  Element\AbstractElement $field
+     * @return Form
+     */
+    public function addField(Element\AbstractElement $field)
+    {
+        $this->fields[$field->getName()] = $field;
+        return $this;
+    }
+
+    /**
+     * Method to add form fields
+     *
+     * @param  array $fields
+     * @return Form
+     */
+    public function addFields(array $fields)
+    {
+        foreach ($fields as $field) {
+            $this->addField($field);
+        }
+        return $this;
+    }
+
+    /**
+     * Method to get the count of elements in the form
      *
      * @return int
      */
@@ -69,13 +117,90 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to get the field values as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $fieldValues = [];
+
+        foreach ($this->fields as $name => $field) {
+            $fieldValues[$name] = $field->getValue();
+        }
+
+        return $fieldValues;
+    }
+
+    /**
+     * Method to get a field element object
+     *
+     * @param  string $name
+     * @return Element\AbstractElement
+     */
+    public function getField($name)
+    {
+        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+    }
+
+    /**
+     * Method to get field element objects
+     *
+     * @return array
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * Method to get a field element value
+     *
+     * @param  string $name
+     * @return mixed
+     */
+    public function getFieldValue($name)
+    {
+        return (isset($this->fields[$name])) ? $this->fields[$name]->getValue() : null;
+    }
+
+    /**
+     * Method to set a field element value
+     *
+     * @param  string $name
+     * @param  mixed  $value
+     * @return Form
+     */
+    public function setFieldValue($name, $value)
+    {
+        if (isset($this->fields[$name])) {
+            $this->fields[$name]->setValue($value);
+        }
+        return $this;
+    }
+
+    /**
+     * Method to set field element values
+     *
+     * @param  array $values
+     * @return Form
+     */
+    public function setFieldValues(array $values)
+    {
+        foreach ($values as $name => $value) {
+            $this->setFieldValue($name, $value);
+        }
+        return $this;
+    }
+
+    /**
      * Method to iterate over the form elements
      *
      * @return \ArrayIterator
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->fields);
+        return new \ArrayIterator($this->toArray());
     }
 
     /**
@@ -83,15 +208,11 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @param  string $name
      * @param  mixed $value
-     * @throws Exception
      * @return void
      */
     public function __set($name, $value)
     {
-        if (!($value instanceof Element\AbstractElement)) {
-            throw new Exception('Error: The form field must be an instance of Pop\Form\AbstractElement');
-        }
-        $this->fields[$name] = $value;
+        $this->setFieldValue($name, $value);
     }
 
     /**
@@ -103,7 +224,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __get($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+        return $this->getFieldValue($name);
     }
 
     /**
