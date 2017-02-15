@@ -31,10 +31,16 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 
     /**
-     * Form field elements
+     * Field groups
      * @var array
      */
-    protected $fields = [];
+    protected $groups = [];
+
+    /**
+     * Current field group
+     * @var int
+     */
+    protected $current = 0;
 
     /**
      * Constructor
@@ -88,7 +94,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function addField(Element\AbstractElement $field)
     {
-        $this->fields[$field->getName()] = $field;
+        if (!isset($this->groups[$this->current])) {
+            $this->groups[$this->current] = new FieldGroup();
+        }
+        $this->groups[$this->current]->addField($field);
         return $this;
     }
 
@@ -107,13 +116,65 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to add field group
+     *
+     * @param  FieldGroup $group
+     * @return Form
+     */
+    public function addFieldGroup(FieldGroup $group)
+    {
+        $this->groups[] = $group;
+        $this->current = count($this->groups) - 1;
+        return $this;
+    }
+
+    /**
+     * Method to get current field group
+     *
+     * @return FieldGroup
+     */
+    public function getFieldGroup()
+    {
+        return (isset($this->groups[$this->current])) ? $this->groups[$this->current] : null;
+    }
+
+    /**
+     * Method to get current field group index
+     *
+     * @return int
+     */
+    public function getCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
+     * Method to get current field group index
+     *
+     * @param  int $i
+     * @return Form
+     */
+    public function setCurrent($i)
+    {
+        if (!isset($this->groups[(int)$i])) {
+            $this->groups[(int)$i] = new FieldGroup();
+        }
+        $this->current = (int)$i;
+        return $this;
+    }
+
+    /**
      * Method to get the count of elements in the form
      *
      * @return int
      */
     public function count()
     {
-        return count($this->fields);
+        $count = 0;
+        foreach ($this->groups as $group) {
+            $count += $group->count();
+        }
+        return $count;
     }
 
     /**
@@ -125,8 +186,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $fieldValues = [];
 
-        foreach ($this->fields as $name => $field) {
-            $fieldValues[$name] = $field->getValue();
+        foreach ($this->groups as $group) {
+            $fieldValues = array_merge($fieldValues, $group->toArray());
         }
 
         return $fieldValues;
@@ -159,7 +220,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getField($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+        return (isset($this->groups[$this->current])) ? $this->groups[$this->current]->getField($name) : null;
     }
 
     /**
@@ -169,7 +230,13 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getFields()
     {
-        return $this->fields;
+        $fields = [];
+
+        foreach ($this->groups as $group) {
+            $fields = array_merge($fields, $group->getFields());
+        }
+
+        return $fields;
     }
 
     /**
@@ -180,7 +247,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getFieldValue($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name]->getValue() : null;
+        return (isset($this->groups[$this->current])) ? $this->groups[$this->current]->getFieldValue($name) : null;
     }
 
     /**
@@ -192,8 +259,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function setFieldValue($name, $value)
     {
-        if (isset($this->fields[$name])) {
-            $this->fields[$name]->setValue($value);
+        if (isset($this->groups[$this->current])) {
+            $this->groups[$this->current]->setFieldValue($name, $value);
         }
         return $this;
     }
@@ -222,7 +289,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         return new \ArrayIterator($this->toArray());
     }
 
-
     /**
      * Determine whether or not the form object is valid
      *
@@ -230,9 +296,11 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function isValid()
     {
-        $valid = true;
+        $valid  = true;
+        $fields = $this->getFields();
+
         // Check each element for validators, validate them and return the result.
-        foreach ($this->fields as $field) {
+        foreach ($fields as $field) {
             if ($field->validate() == false) {
                 $valid = false;
             }
@@ -249,8 +317,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getErrors($name)
     {
-        return (isset($this->fields[$name]) && ($this->fields[$name]->hasErrors())) ?
-            $this->fields[$name]->getErrors() : [];
+        $field  = $this->getField($name);
+        $errors = (null !== $field) ? $field->getErrors() : [];
+
+        return $errors;
     }
 
     /**
@@ -260,8 +330,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getAllErrors()
     {
-        $errors   = [];
-        foreach ($this->fields as $name => $field) {
+        $errors = [];
+        $fields = $this->getFields();
+        foreach ($fields as $name => $field) {
             if ($field->hasErrors()) {
                 $errors[str_replace('[]', '', $field->getName())] = $field->getErrors();
             }
@@ -277,7 +348,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function reset()
     {
-        foreach ($this->fields as $field) {
+        $fields = $this->getFields();
+        foreach ($fields as $field) {
             $field->resetValue();
         }
         return $this;
@@ -336,7 +408,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __isset($name)
     {
-        return isset($this->fields[$name]);
+        return (isset($this->groups[$this->current]) && (null !== $this->groups[$this->current][$name]));
     }
 
     /**
@@ -347,9 +419,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __unset($name)
     {
-        if (isset($this->fields[$name])) {
-            $this->fields[$name] = null;
-            unset($this->fields[$name]);
+        if (isset($this->groups[$this->current])) {
+            $this->groups[$this->current][$name] = null;
+            unset($this->groups[$this->current][$name]);
         }
     }
 
