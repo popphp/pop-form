@@ -16,7 +16,7 @@ namespace Pop\Form\Element;
 use Pop\Dom\Child;
 
 /**
- * Form select element class
+ * Form select multiple element class
  *
  * @category   Pop
  * @package    Pop\Form
@@ -26,7 +26,7 @@ use Pop\Dom\Child;
  * @version    3.0.0
  */
 
-class Select extends AbstractSelect
+class SelectMultiple extends AbstractSelect
 {
 
     /**
@@ -36,20 +36,25 @@ class Select extends AbstractSelect
      *
      * @param  string       $name
      * @param  string|array $values
-     * @param  string       $selected
+     * @param  string|array $selected
      * @param  string       $xmlFile
      * @param  string       $indent
      */
     public function __construct($name, $values, $selected = null, $xmlFile = null, $indent = null)
     {
-        $this->selected = $selected;
+        if (null !== $selected) {
+            $this->selected = (!is_array($selected)) ? [$selected] : $selected;
+        } else {
+            $this->selected = [];
+        }
 
         parent::__construct('select');
 
         $this->setName($name);
         $this->setAttributes([
-            'name' => $name,
-            'id'   => $name
+            'name'     => $name . '[]',
+            'id'       => $name,
+            'multiple' => 'multiple'
         ]);
 
         if (null !== $indent) {
@@ -75,7 +80,7 @@ class Select extends AbstractSelect
                     $option->setAttribute('value', $ky);
 
                     // Determine if the current option element is selected.
-                    if ((null !== $this->selected) && ($ky == $this->selected)) {
+                    if (is_array($this->selected) && in_array($ky, $this->selected, true)) {
                         $option->setAttribute('selected', 'selected');
                     }
                     $option->setNodeValue($vl);
@@ -91,7 +96,7 @@ class Select extends AbstractSelect
                 $option->setAttribute('value', $k);
 
                 // Determine if the current option element is selected.
-                if ((null !== $this->selected) && ($k == $this->selected)) {
+                if (is_array($this->selected) && in_array($k, $this->selected, true)) {
                     $option->setAttribute('selected', 'selected');
                 }
                 $option->setNodeValue($v);

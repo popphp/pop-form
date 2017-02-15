@@ -36,22 +36,33 @@ class RadioSet extends AbstractElement
     protected $radios = [];
 
     /**
+     * Array of checked values
+     * @var string
+     */
+    protected $checked = null;
+
+    /**
      * Constructor
      *
      * Instantiate the radio input form elements
      *
      * @param  string $name
      * @param  array  $values
+     * @param  string $checked
      * @param  string $indent
-     * @param  string $marked
-     * @return RadioSet
      */
-    public function __construct($name, array $values, $indent = null, $marked = null)
+    public function __construct($name, array $values, $checked = null, $indent = null)
     {
-        parent::__construct('fieldset', null, null, false, $indent);
-        $this->attributes['class'] = 'radio-fieldset';
-        $this->setMarked($marked);
+        $this->checked = $checked;
+
+        parent::__construct('fieldset');
+
         $this->setName($name);
+        $this->setAttribute('class', 'radio-fieldset');
+
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
 
         // Create the radio elements and related span elements.
         $i = null;
@@ -64,19 +75,20 @@ class RadioSet extends AbstractElement
             ]);
 
             // Determine if the current radio element is checked.
-            if ((null !== $this->marked) && ($k == $this->marked)) {
-                $radio->setAttribute('checked', 'checked');
+            if ((null !== $this->checked) && ($k == $this->checked)) {
+                $radio->check();
             }
 
-            $span = new Child('span', null, null, false, $indent);
+            $span = new Child('span');
+            if (null !== $indent) {
+                $span->setIndent($indent);
+            }
             $span->setAttribute('class', 'radio-span');
             $span->setNodeValue($v);
             $this->addChildren([$radio, $span]);
             $this->radios[] = $radio;
             $i++;
         }
-
-        $this->value = $values;
     }
 
     /**
@@ -86,7 +98,7 @@ class RadioSet extends AbstractElement
      * @param  string $v
      * @return Child
      */
-    public function setAttribute($a, $v)
+    public function setRadioAttribute($a, $v)
     {
         foreach ($this->radios as $radio) {
             $radio->setAttribute($a, $v);
@@ -104,7 +116,7 @@ class RadioSet extends AbstractElement
      * @param  array $a
      * @return Child
      */
-    public function setAttributes(array $a)
+    public function setRadioAttributes(array $a)
     {
         foreach ($this->radios as $radio) {
             $radio->setAttributes($a);
@@ -115,4 +127,23 @@ class RadioSet extends AbstractElement
         return $this;
     }
 
+    /**
+     * Get the checked value
+     *
+     * @return string
+     */
+    public function getChecked()
+    {
+        return $this->checked;
+    }
+
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        return (count($this->errors) == 0);
+    }
 }

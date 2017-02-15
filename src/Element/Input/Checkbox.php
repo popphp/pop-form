@@ -42,4 +42,26 @@ class Checkbox extends Element\Input
         parent::__construct($name, 'checkbox', $value, $indent);
     }
 
+    /**
+     * Set the checkbox to checked
+     *
+     * @return Checkbox
+     */
+    public function check()
+    {
+        $this->setAttribute('checked', 'checked');
+        return $this;
+    }
+
+    /**
+     * Set the checkbox to checked
+     *
+     * @return Checkbox
+     */
+    public function unCheck()
+    {
+        $this->removeAttribute('checked');
+        return $this;
+    }
+
 }

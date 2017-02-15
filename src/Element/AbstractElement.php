@@ -17,7 +17,7 @@ use Pop\Dom\Child;
 use Pop\Validator;
 
 /**
- * Form element class
+ * Abstract form element class
  *
  * @category   Pop
  * @package    Pop\Form

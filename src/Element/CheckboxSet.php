@@ -36,30 +36,41 @@ class CheckboxSet extends AbstractElement
     protected $checkboxes = [];
 
     /**
+     * Array of checked values
+     * @var array
+     */
+    protected $checked = [];
+
+    /**
      * Constructor
      *
-     * Instantiate the set of checkbox input form elements
+     * Instantiate a fieldset of checkbox input form elements
      *
      * @param  string       $name
      * @param  array        $values
+     * @param  string|array $checked
      * @param  string       $indent
-     * @param  string|array $marked
-     * @return CheckboxSet
      */
-    public function __construct($name, array $values, $indent = null, $marked = null)
+    public function __construct($name, array $values, $checked = null, $indent = null)
     {
-        if (null !== $marked) {
-            if (!is_array($marked)) {
-                $marked = [$marked];
+        if (null !== $checked) {
+            if (!is_array($checked)) {
+                $checked = [$checked];
             }
         } else {
-            $marked = [];
+            $checked = [];
         }
 
-        parent::__construct('fieldset', null, null, false, $indent);
-        $this->attributes['class'] = 'checkbox-fieldset';
-        $this->setMarked($marked);
-        $this->setName($name . '[]');
+        $this->checked = $checked;
+
+        parent::__construct('fieldset');
+
+        $this->setName($name);
+        $this->setAttribute('class', 'checkbox-fieldset');
+
+        if (null !== $indent) {
+            $this->setIndent($indent);
+        }
 
         // Create the checkbox elements and related span elements.
         $i = null;
@@ -72,19 +83,20 @@ class CheckboxSet extends AbstractElement
             ]);
 
             // Determine if the current radio element is checked.
-            if (in_array($k, $this->marked)) {
-                $checkbox->setAttribute('checked', 'checked');
+            if (in_array($k, $this->checked)) {
+                $checkbox->check();
             }
 
-            $span = new Child('span', null, null, false, $indent);
+            $span = new Child('span');
+            if (null !== $indent) {
+                $span->setIndent($indent);
+            }
             $span->setAttribute('class', 'checkbox-span');
             $span->setNodeValue($v);
             $this->addChildren([$checkbox, $span]);
             $this->checkboxes[] = $checkbox;
             $i++;
         }
-
-        $this->value = $values;
     }
 
     /**
@@ -94,7 +106,7 @@ class CheckboxSet extends AbstractElement
      * @param  string $v
      * @return Child
      */
-    public function setAttribute($a, $v)
+    public function setCheckboxAttribute($a, $v)
     {
         foreach ($this->checkboxes as $checkbox) {
             $checkbox->setAttribute($a, $v);
@@ -112,7 +124,7 @@ class CheckboxSet extends AbstractElement
      * @param  array $a
      * @return Child
      */
-    public function setAttributes(array $a)
+    public function setCheckboxAttributes(array $a)
     {
         foreach ($this->checkboxes as $checkbox) {
             $checkbox->setAttributes($a);
@@ -121,6 +133,26 @@ class CheckboxSet extends AbstractElement
             }
         }
         return $this;
+    }
+
+    /**
+     * Get the checked values
+     *
+     * @return array
+     */
+    public function getChecked()
+    {
+        return $this->checked;
+    }
+
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        return (count($this->errors) == 0);
     }
 
 }

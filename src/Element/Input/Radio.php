@@ -42,4 +42,26 @@ class Radio extends Element\Input
         parent::__construct($name, 'radio', $value, $indent);
     }
 
+    /**
+     * Set the checkbox to checked
+     *
+     * @return Radio
+     */
+    public function check()
+    {
+        $this->setAttribute('checked', 'checked');
+        return $this;
+    }
+
+    /**
+     * Set the checkbox to checked
+     *
+     * @return Radio
+     */
+    public function unCheck()
+    {
+        $this->removeAttribute('checked');
+        return $this;
+    }
+
 }
