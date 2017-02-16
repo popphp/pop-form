@@ -42,6 +42,12 @@ class RadioSet extends AbstractElement
     protected $checked = null;
 
     /**
+     * Fieldset legend
+     * @var string
+     */
+    protected $legend = null;
+
+    /**
      * Constructor
      *
      * Instantiate the radio input form elements
@@ -201,6 +207,28 @@ class RadioSet extends AbstractElement
     }
 
     /**
+     * Method to set fieldset legend
+     *
+     * @param  string $legend
+     * @return RadioSet
+     */
+    public function setLegend($legend)
+    {
+        $this->legend = $legend;
+        return $this;
+    }
+
+    /**
+     * Method to get fieldset legend
+     *
+     * @return string
+     */
+    public function getLegend()
+    {
+        return $this->legend;
+    }
+
+    /**
      * Validate the form element object
      *
      * @return boolean
@@ -209,4 +237,21 @@ class RadioSet extends AbstractElement
     {
         return (count($this->errors) == 0);
     }
+
+    /**
+     * Render the child and its child nodes
+     *
+     * @param  int     $depth
+     * @param  string  $indent
+     * @param  string  $errorIndent
+     * @return string
+     */
+    public function render($depth = 0, $indent = null, $errorIndent = null)
+    {
+        if (!empty($this->legend)) {
+            $this->addChild(new Child('legend', $this->legend));
+        }
+        return parent::render($depth, $indent, $errorIndent);
+    }
+
 }

@@ -43,7 +43,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     protected $legend = null;
 
     /**
-     * Fieldset container (dl, table, div, p)
+     * Fieldset container (dl, table, div or p)
      * @var string
      */
     protected $container = 'dl';
@@ -256,7 +256,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function prepare()
     {
-        if (null !== $this->legend) {
+        if (!empty($this->legend)) {
             $this->addChild(new Child('legend', $this->legend));
         }
 

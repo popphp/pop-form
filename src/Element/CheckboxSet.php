@@ -42,6 +42,12 @@ class CheckboxSet extends AbstractElement
     protected $checked = [];
 
     /**
+     * Fieldset legend
+     * @var string
+     */
+    protected $legend = null;
+
+    /**
      * Constructor
      *
      * Instantiate a fieldset of checkbox input form elements
@@ -202,6 +208,28 @@ class CheckboxSet extends AbstractElement
     }
 
     /**
+     * Method to set fieldset legend
+     *
+     * @param  string $legend
+     * @return CheckboxSet
+     */
+    public function setLegend($legend)
+    {
+        $this->legend = $legend;
+        return $this;
+    }
+
+    /**
+     * Method to get fieldset legend
+     *
+     * @return string
+     */
+    public function getLegend()
+    {
+        return $this->legend;
+    }
+
+    /**
      * Validate the form element object
      *
      * @return boolean
@@ -209,6 +237,22 @@ class CheckboxSet extends AbstractElement
     public function validate()
     {
         return (count($this->errors) == 0);
+    }
+
+    /**
+     * Render the child and its child nodes
+     *
+     * @param  int     $depth
+     * @param  string  $indent
+     * @param  string  $errorIndent
+     * @return string
+     */
+    public function render($depth = 0, $indent = null, $errorIndent = null)
+    {
+        if (!empty($this->legend)) {
+            $this->addChild(new Child('legend', $this->legend));
+        }
+        return parent::render($depth, $indent, $errorIndent);
     }
 
 }
