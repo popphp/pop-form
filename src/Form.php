@@ -89,21 +89,27 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Method to create a new fieldset object
      *
+     * @param  string  $legend
      * @return Fieldset
      */
-    public function createFieldset()
+    public function createFieldset($legend = null)
     {
+        $fieldset = new Fieldset();
+        if (null !== $legend) {
+            $fieldset->setLegend($legend);
+        }
+
+        $this->addFieldset($fieldset);
+
         $id = (null !== $this->getAttribute('id')) ?
             $this->getAttribute('id') . '-fieldset-' . ($this->current + 1) : 'pop-form-fieldset-' . ($this->current + 1);
 
         $class = (null !== $this->getAttribute('class')) ?
             $this->getAttribute('id') . '-fieldset' : 'pop-form-fieldset';
 
-        $fieldset = new Fieldset();
         $fieldset->setAttribute('id', $id);
         $fieldset->setAttribute('class', $class);
 
-        $this->addFieldset($fieldset);
         return $fieldset;
     }
 
@@ -169,6 +175,31 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         $this->current = (int)$i;
         if (!isset($this->fieldsets[$this->current])) {
             $this->fieldsets[$this->current] = $this->createFieldset();
+        }
+        return $this;
+    }
+
+    /**
+     * Method to get the legend of the current fieldset
+     *
+     * @return string
+     */
+    public function getLegend()
+    {
+        return (isset($this->fieldsets[$this->current])) ?
+            $this->fieldsets[$this->current]->getLegend() : null;
+    }
+
+    /**
+     * Method to set the legend of the current fieldset
+     *
+     * @param  string $legend
+     * @return Form
+     */
+    public function setLegend($legend)
+    {
+        if (isset($this->fieldsets[$this->current])) {
+            $this->fieldsets[$this->current]->setLegend($legend);
         }
         return $this;
     }
