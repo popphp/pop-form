@@ -43,15 +43,23 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     protected $legend = null;
 
     /**
+     * Fieldset container (dl, table, div, p)
+     * @var string
+     */
+    protected $container = 'dl';
+
+    /**
      * Constructor
      *
      * Instantiate the form fieldset object
      *
      * @param  array  $fields
+     * @param  string $container
      */
-    public function __construct(array $fields = null)
+    public function __construct(array $fields = null, $container = 'dl')
     {
         parent::__construct('fieldset');
+        $this->setContainer($container);
         if (null !== $fields) {
             $this->addFields($fields);
         }
@@ -72,6 +80,18 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
         }
 
         return new self($fields);
+    }
+
+    /**
+     * Method to set container
+     *
+     * @param  string $container
+     * @return Fieldset
+     */
+    public function setContainer($container)
+    {
+        $this->container = strtolower($container);
+        return $this;
     }
 
     /**
@@ -134,6 +154,16 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     public function getLegend()
     {
         return $this->legend;
+    }
+
+    /**
+     * Method to get container
+     *
+     * @return string
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**
@@ -230,40 +260,113 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $this->addChild(new Child('legend', $this->legend));
         }
 
-        $dl = new Child('dl');
+        switch ($this->container) {
+            case 'table':
+                $table = new Child('table');
 
-        foreach ($this->fields as $field) {
-            if (null !== $field->getLabel()) {
-                $dt = new Child('dt');
-                $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                foreach ($this->fields as $field) {
+                    $tr = new Child('tr');
+                    if (null !== $field->getLabel()) {
+                        $td = new Child('td');
+                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
-                $label = new Child('label', $field->getLabel());
-                $label->setAttribute('for', $labelFor);
-                if (null !== $field->getLabelAttributes()) {
-                    $label->setAttributes($field->getLabelAttributes());
+                        $label = new Child('label', $field->getLabel());
+                        $label->setAttribute('for', $labelFor);
+                        if (null !== $field->getLabelAttributes()) {
+                            $label->setAttributes($field->getLabelAttributes());
+                        }
+                        if ($field->isRequired()) {
+                            $label->setAttribute('class', 'required');
+                        }
+                        $td->addChild($label);
+                        $tr->addChild($td);
+                    }
+
+                    $td = new Child('td');
+                    $td->addChild($field);
+
+                    if (null !== $field->getHint()) {
+                        $hint = new Child('span', $field->getHint());
+                        if (null !== $field->getHintAttributes()) {
+                            $hint->setAttributes($field->getHintAttributes());
+                        }
+                        $td->addChild($hint);
+                    }
+
+                    if (null === $field->getLabel()) {
+                        $td->setAttribute('colspan', 2);
+                    }
+                    $tr->addChild($td);
+                    $table->addChild($tr);
                 }
-                if ($field->isRequired()) {
-                    $label->setAttribute('class', 'required');
+
+                $this->addChild($table);
+                break;
+            case 'div':
+            case 'p':
+                foreach ($this->fields as $field) {
+                    $container = new Child($this->container);
+                    if (null !== $field->getLabel()) {
+                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                        $label    = new Child('label', $field->getLabel());
+                        $label->setAttribute('for', $labelFor);
+                        if (null !== $field->getLabelAttributes()) {
+                            $label->setAttributes($field->getLabelAttributes());
+                        }
+                        if ($field->isRequired()) {
+                            $label->setAttribute('class', 'required');
+                        }
+                        $container->addChild($label);
+                    }
+
+                    $container->addChild($field);
+
+                    if (null !== $field->getHint()) {
+                        $hint = new Child('span', $field->getHint());
+                        if (null !== $field->getHintAttributes()) {
+                            $hint->setAttributes($field->getHintAttributes());
+                        }
+                        $container->addChild($hint);
+                    }
+                    $this->addChild($container);
                 }
-                $dt->addChild($label);
-                $dl->addChild($dt);
-            }
+                break;
+            default:
+                $dl = new Child('dl');
 
-            $dd = new Child('dd');
-            $dd->addChild($field);
+                foreach ($this->fields as $field) {
+                    if (null !== $field->getLabel()) {
+                        $dt = new Child('dt');
+                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
-            if (null !== $field->getHint()) {
-                $hint = new Child('span', $field->getHint());
-                if (null !== $field->getHintAttributes()) {
-                    $hint->setAttributes($field->getHintAttributes());
+                        $label = new Child('label', $field->getLabel());
+                        $label->setAttribute('for', $labelFor);
+                        if (null !== $field->getLabelAttributes()) {
+                            $label->setAttributes($field->getLabelAttributes());
+                        }
+                        if ($field->isRequired()) {
+                            $label->setAttribute('class', 'required');
+                        }
+                        $dt->addChild($label);
+                        $dl->addChild($dt);
+                    }
+
+                    $dd = new Child('dd');
+                    $dd->addChild($field);
+
+                    if (null !== $field->getHint()) {
+                        $hint = new Child('span', $field->getHint());
+                        if (null !== $field->getHintAttributes()) {
+                            $hint->setAttributes($field->getHintAttributes());
+                        }
+                        $dd->addChild($hint);
+                    }
+
+                    $dl->addChild($dd);
                 }
-                $dd->addChild($hint);
-            }
 
-            $dl->addChild($dd);
+                $this->addChild($dl);
         }
-
-        $this->addChild($dl);
 
         return $this;
     }

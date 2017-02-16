@@ -90,13 +90,17 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      * Method to create a new fieldset object
      *
      * @param  string  $legend
+     * @param  string  $container
      * @return Fieldset
      */
-    public function createFieldset($legend = null)
+    public function createFieldset($legend = null, $container = null)
     {
         $fieldset = new Fieldset();
         if (null !== $legend) {
             $fieldset->setLegend($legend);
+        }
+        if (null !== $container) {
+            $fieldset->setContainer($container);
         }
 
         $this->addFieldset($fieldset);
