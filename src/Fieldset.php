@@ -13,10 +13,11 @@
  */
 namespace Pop\Form;
 
+use Pop\Dom\Child;
 use Pop\Form\Element;
 
 /**
- * Form class
+ * Form fieldset class
  *
  * @category   Pop
  * @package    Pop\Form
@@ -26,7 +27,7 @@ use Pop\Form\Element;
  * @version    3.0.0
  */
 
-class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
+class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 
     /**
@@ -36,24 +37,31 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
     protected $fields = [];
 
     /**
+     * Fieldset legend
+     * @var string
+     */
+    protected $legend = null;
+
+    /**
      * Constructor
      *
-     * Instantiate the form group object
+     * Instantiate the form fieldset object
      *
      * @param  array  $fields
      */
     public function __construct(array $fields = null)
     {
+        parent::__construct('fieldset');
         if (null !== $fields) {
             $this->addFields($fields);
         }
     }
 
     /**
-     * Method to create form group object and fields from config
+     * Method to create form fieldset object and fields from config
      *
      * @param  array  $config
-     * @return FieldGroup
+     * @return Fieldset
      */
     public static function createFromConfig(array $config)
     {
@@ -70,7 +78,7 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
      * Method to add a form field
      *
      * @param  Element\AbstractElement $field
-     * @return FieldGroup
+     * @return Fieldset
      */
     public function addField(Element\AbstractElement $field)
     {
@@ -82,7 +90,7 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
      * Method to add form fields
      *
      * @param  array $fields
-     * @return FieldGroup
+     * @return Fieldset
      */
     public function addFields(array $fields)
     {
@@ -93,7 +101,7 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
-     * Method to get the count of elements in the form group
+     * Method to get the count of elements in the form fieldset
      *
      * @return int
      */
@@ -116,6 +124,16 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
         }
 
         return $fieldValues;
+    }
+
+    /**
+     * Method to get fieldset legend
+     *
+     * @return string
+     */
+    public function getLegend()
+    {
+        return $this->legend;
     }
 
     /**
@@ -151,11 +169,23 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to set fieldset legend
+     *
+     * @param  string $legend
+     * @return Fieldset
+     */
+    public function setLegend($legend)
+    {
+        $this->legend = $legend;
+        return $this;
+    }
+
+    /**
      * Method to set a field element value
      *
      * @param  string $name
      * @param  mixed  $value
-     * @return FieldGroup
+     * @return Fieldset
      */
     public function setFieldValue($name, $value)
     {
@@ -169,7 +199,7 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
      * Method to set field element values
      *
      * @param  array $values
-     * @return FieldGroup
+     * @return Fieldset
      */
     public function setFieldValues(array $values)
     {
@@ -187,6 +217,55 @@ class FieldGroup implements \ArrayAccess, \Countable, \IteratorAggregate
     public function getIterator()
     {
         return new \ArrayIterator($this->toArray());
+    }
+
+    /**
+     * Prepare fieldset object for rendering
+     *
+     * @return Fieldset
+     */
+    public function prepare()
+    {
+        if (null !== $this->legend) {
+            $this->addChild(new Child('legend', $this->legend));
+        }
+
+        $dl = new Child('dl');
+
+        foreach ($this->fields as $field) {
+            if (null !== $field->getLabel()) {
+                $dt = new Child('dt');
+                $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+
+                $label = new Child('label', $field->getLabel());
+                $label->setAttribute('for', $labelFor);
+                if (null !== $field->getLabelAttributes()) {
+                    $label->setAttributes($field->getLabelAttributes());
+                }
+                if ($field->isRequired()) {
+                    $label->setAttribute('class', 'required');
+                }
+                $dt->addChild($label);
+                $dl->addChild($dt);
+            }
+
+            $dd = new Child('dd');
+            $dd->addChild($field);
+
+            if (null !== $field->getHint()) {
+                $hint = new Child('span', $field->getHint());
+                if (null !== $field->getHintAttributes()) {
+                    $hint->setAttributes($field->getHintAttributes());
+                }
+                $dd->addChild($hint);
+            }
+
+            $dl->addChild($dd);
+        }
+
+        $this->addChild($dl);
+
+        return $this;
     }
 
     /**

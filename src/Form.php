@@ -31,13 +31,13 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 
     /**
-     * Field groups
+     * Field fieldsets
      * @var array
      */
-    protected $groups = [];
+    protected $fieldsets = [];
 
     /**
-     * Current field group
+     * Current field fieldset
      * @var int
      */
     protected $current = 0;
@@ -87,6 +87,93 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to create a new fieldset object
+     *
+     * @return Fieldset
+     */
+    public function createFieldset()
+    {
+        $id = (null !== $this->getAttribute('id')) ?
+            $this->getAttribute('id') . '-fieldset-' . ($this->current + 1) : 'pop-form-fieldset-' . ($this->current + 1);
+
+        $class = (null !== $this->getAttribute('class')) ?
+            $this->getAttribute('id') . '-fieldset' : 'pop-form-fieldset';
+
+        $fieldset = new Fieldset();
+        $fieldset->setAttribute('id', $id);
+        $fieldset->setAttribute('class', $class);
+
+        $this->addFieldset($fieldset);
+        return $fieldset;
+    }
+
+    /**
+     * Method to add fieldset
+     *
+     * @param  Fieldset $fieldset
+     * @return Form
+     */
+    public function addFieldset(Fieldset $fieldset)
+    {
+        $this->fieldsets[] = $fieldset;
+        $this->current     = count($this->fieldsets) - 1;
+        return $this;
+    }
+
+    /**
+     * Method to remove fieldset
+     *
+     * @param  int $i
+     * @return Form
+     */
+    public function removeFieldset($i)
+    {
+        if (isset($this->fieldsets[(int)$i])) {
+            unset($this->fieldsets[(int)$i]);
+        }
+        $this->fieldsets = array_values($this->fieldsets);
+        if (!isset($this->fieldsets[$this->current])) {
+            $this->current = (count($this->fieldsets) > 0) ? count($this->fieldsets) - 1 : 0;
+        }
+        return $this;
+    }
+
+    /**
+     * Method to get current fieldset
+     *
+     * @return Fieldset
+     */
+    public function getFieldset()
+    {
+        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current] : null;
+    }
+
+    /**
+     * Method to get current fieldset index
+     *
+     * @return int
+     */
+    public function getCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
+     * Method to get current fieldset index
+     *
+     * @param  int $i
+     * @return Form
+     */
+    public function setCurrent($i)
+    {
+        $this->current = (int)$i;
+        if (!isset($this->fieldsets[$this->current])) {
+            $this->fieldsets[$this->current] = $this->createFieldset();
+        }
+        return $this;
+    }
+
+    /**
      * Method to add a form field
      *
      * @param  Element\AbstractElement $field
@@ -94,10 +181,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function addField(Element\AbstractElement $field)
     {
-        if (!isset($this->groups[$this->current])) {
-            $this->groups[$this->current] = new FieldGroup();
+        if (count($this->fieldsets) == 0) {
+            $this->createFieldset();
         }
-        $this->groups[$this->current]->addField($field);
+        $this->fieldsets[$this->current]->addField($field);
         return $this;
     }
 
@@ -116,54 +203,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
-     * Method to add field group
-     *
-     * @param  FieldGroup $group
-     * @return Form
-     */
-    public function addFieldGroup(FieldGroup $group)
-    {
-        $this->groups[] = $group;
-        $this->current = count($this->groups) - 1;
-        return $this;
-    }
-
-    /**
-     * Method to get current field group
-     *
-     * @return FieldGroup
-     */
-    public function getFieldGroup()
-    {
-        return (isset($this->groups[$this->current])) ? $this->groups[$this->current] : null;
-    }
-
-    /**
-     * Method to get current field group index
-     *
-     * @return int
-     */
-    public function getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Method to get current field group index
-     *
-     * @param  int $i
-     * @return Form
-     */
-    public function setCurrent($i)
-    {
-        if (!isset($this->groups[(int)$i])) {
-            $this->groups[(int)$i] = new FieldGroup();
-        }
-        $this->current = (int)$i;
-        return $this;
-    }
-
-    /**
      * Method to get the count of elements in the form
      *
      * @return int
@@ -171,8 +210,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     public function count()
     {
         $count = 0;
-        foreach ($this->groups as $group) {
-            $count += $group->count();
+        foreach ($this->fieldsets as $fieldset) {
+            $count += $fieldset->count();
         }
         return $count;
     }
@@ -186,8 +225,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $fieldValues = [];
 
-        foreach ($this->groups as $group) {
-            $fieldValues = array_merge($fieldValues, $group->toArray());
+        foreach ($this->fieldsets as $fieldset) {
+            $fieldValues = array_merge($fieldValues, $fieldset->toArray());
         }
 
         return $fieldValues;
@@ -220,7 +259,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getField($name)
     {
-        return (isset($this->groups[$this->current])) ? $this->groups[$this->current]->getField($name) : null;
+        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current]->getField($name) : null;
     }
 
     /**
@@ -232,8 +271,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $fields = [];
 
-        foreach ($this->groups as $group) {
-            $fields = array_merge($fields, $group->getFields());
+        foreach ($this->fieldsets as $fieldset) {
+            $fields = array_merge($fields, $fieldset->getFields());
         }
 
         return $fields;
@@ -247,7 +286,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getFieldValue($name)
     {
-        return (isset($this->groups[$this->current])) ? $this->groups[$this->current]->getFieldValue($name) : null;
+        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current]->getFieldValue($name) : null;
     }
 
     /**
@@ -259,8 +298,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function setFieldValue($name, $value)
     {
-        if (isset($this->groups[$this->current])) {
-            $this->groups[$this->current]->setFieldValue($name, $value);
+        if (isset($this->fieldsets[$this->current])) {
+            $this->fieldsets[$this->current]->setFieldValue($name, $value);
         }
         return $this;
     }
@@ -377,6 +416,53 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Prepare form object for rendering
+     *
+     * @return Form
+     */
+    public function prepare()
+    {
+        if (null !== $this->getAttribute('id')) {
+            $this->setAttribute('id', 'pop-form');
+        }
+        if (null !== $this->getAttribute('class')) {
+            $this->setAttribute('class', 'pop-form');
+        }
+
+        foreach ($this->fieldsets as $fieldset) {
+            $fieldset->prepare();
+            $this->addChild($fieldset);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Render the form object
+     *
+     * @param  int     $depth
+     * @param  string  $indent
+     * @return mixed
+     */
+    public function render($depth = 0, $indent = null)
+    {
+        if (!($this->hasChildren())) {
+            $this->prepare();
+        }
+        return parent::render($depth, $indent);
+    }
+
+    /**
+     * Render and return the form object as a string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
+    }
+
+    /**
      * Set method to set the property to the value of fields[$name]
      *
      * @param  string $name
@@ -408,7 +494,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __isset($name)
     {
-        return (isset($this->groups[$this->current]) && (null !== $this->groups[$this->current][$name]));
+        return (isset($this->fieldsets[$this->current]) && (null !== $this->fieldsets[$this->current][$name]));
     }
 
     /**
@@ -419,9 +505,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __unset($name)
     {
-        if (isset($this->groups[$this->current])) {
-            $this->groups[$this->current][$name] = null;
-            unset($this->groups[$this->current][$name]);
+        if (isset($this->fieldsets[$this->current])) {
+            $this->fieldsets[$this->current][$name] = null;
+            unset($this->fieldsets[$this->current][$name]);
         }
     }
 
