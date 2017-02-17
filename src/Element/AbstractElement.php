@@ -72,16 +72,10 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected $validators = [];
 
     /**
-     * Form element error display format
-     * @var array
+     * Form element error display position
+     * @var boolean
      */
-    protected $errorDisplay = [
-        'container'  => 'div',
-        'attributes' => [
-            'class' => 'error'
-        ],
-        'pre' => false
-    ];
+    protected $errorPre = false;
 
     /**
      * Form element errors
@@ -226,45 +220,9 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  boolean $pre
      * @return AbstractElement
      */
-    public function setErrorPre($pre = true)
+    public function setErrorPre($pre)
     {
-        $this->errorDisplay['pre'] = (boolean)$pre;
-        return $this;
-    }
-
-    /**
-     * Set error post-display
-     *
-     * @param  boolean $post
-     * @return AbstractElement
-     */
-    public function setErrorPost($post = true)
-    {
-        $this->errorDisplay['pre'] = !((boolean)$post);
-        return $this;
-    }
-
-    /**
-     * Set error display values
-     *
-     * @param  string  $container
-     * @param  array   $attribs
-     * @param  boolean $pre
-     * @return AbstractElement
-     */
-    public function setErrorDisplay($container, array $attribs = null, $pre = false)
-    {
-        $this->errorDisplay['container'] = $container;
-        $this->errorDisplay['pre']       = (boolean)$pre;
-
-        if (null !== $attribs) {
-            foreach ($attribs as $a => $v) {
-                $this->errorDisplay['attributes'][$a] = $v;
-            }
-        } else {
-            $this->errorDisplay['attributes'] = [];
-        }
-
+        $this->errorPre = (boolean)$pre;
         return $this;
     }
 
@@ -359,16 +317,6 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
-     * Get error display values
-     *
-     * @return array
-     */
-    public function getErrorDisplay()
-    {
-        return $this->errorDisplay;
-    }
-
-    /**
      * Get whether the form element object is required
      *
      * @return boolean
@@ -447,25 +395,19 @@ abstract class AbstractElement extends Child implements ElementInterface
     {
         $output    = parent::render($depth, $indent);
         $errors    = null;
-        $container = $this->errorDisplay['container'];
-        $attribs   = null;
-
-        foreach ($this->errorDisplay['attributes'] as $a => $v) {
-            $attribs .= ' ' . $a . '="' . $v . '"';
-        }
 
         // Add error messages if there are any.
         if (count($this->errors) > 0) {
             foreach ($this->errors as $msg) {
-                if ($this->errorDisplay['pre']) {
-                    $errors .= "{$indent}{$this->indent}<" . $container . $attribs . ">{$msg}</" . $container . ">\n{$errorIndent}";
+                if ($this->errorPre) {
+                    $errors .= "{$indent}{$this->indent}<div class=\"error\">{$msg}</div>" . PHP_EOL . "{$errorIndent}";
                 } else {
-                    $errors .= "{$errorIndent}{$indent}{$this->indent}<" . $container . $attribs . ">{$msg}</" . $container . ">\n";
+                    $errors .= "{$errorIndent}{$indent}{$this->indent}<div class=\"error\">{$msg}</div>" . PHP_EOL;
                 }
             }
         }
 
-        $this->output = ($this->errorDisplay['pre']) ? $errors . $output : $output . $errors;
+        $this->output = ($this->errorPre) ? $errors . $output : $output . $errors;
         return $this->output;
     }
 

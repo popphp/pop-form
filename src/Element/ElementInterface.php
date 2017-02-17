@@ -74,30 +74,12 @@ interface ElementInterface
     public function setRequired($required);
 
     /**
-     * Set error pre-display
+     * Set error to display before the element
      *
      * @param  boolean $pre
      * @return ElementInterface
      */
-    public function setErrorPre($pre = true);
-
-    /**
-     * Set error post-display
-     *
-     * @param  boolean $post
-     * @return ElementInterface
-     */
-    public function setErrorPost($post = true);
-
-    /**
-     * Set error display values
-     *
-     * @param  string  $container
-     * @param  array   $attribs
-     * @param  boolean $pre
-     * @return ElementInterface
-     */
-    public function setErrorDisplay($container, array $attribs, $pre = false);
+    public function setErrorPre($pre);
 
     /**
      * Set validators
@@ -148,13 +130,6 @@ interface ElementInterface
      * @return array
      */
     public function getValidators();
-
-    /**
-     * Get error display values
-     *
-     * @return array
-     */
-    public function getErrorDisplay();
 
     /**
      * Get whether the form element is required

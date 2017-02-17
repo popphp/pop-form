@@ -43,4 +43,52 @@ class File extends Element\Input
         parent::__construct($name, 'file', $value, $indent);
     }
 
+    /**
+     * Validate the form element object
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        if (($_FILES) && (isset($_FILES[$this->name]['name']))) {
+            $value = $_FILES[$this->name]['name'];
+            $size  = $_FILES[$this->name]['size'];
+        } else {
+            $value = null;
+            $size  = null;
+        }
+
+        // Check if the element is required
+        if (($this->required) && empty($value)) {
+            $this->errors[] = 'This field is required.';
+        }
+
+        // Check field validators
+        if (count($this->validators) > 0) {
+            foreach ($this->validators as $validator) {
+                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
+                    $class =  get_class($validator);
+                    if ((null !== $size) &&
+                        (('Pop\Validator\LessThanEqual' == $class) || ('Pop\Validator\GreaterThanEqual' == $class) ||
+                         ('Pop\Validator\LessThan' == $class) || ('Pop\Validator\GreaterThan' == $class))) {
+                        if (!$validator->evaluate($size)) {
+                            $this->errors[] = $validator->getMessage();
+                        }
+                    } else {
+                        if (!$validator->evaluate($value)) {
+                            $this->errors[] = $validator->getMessage();
+                        }
+                    }
+                } else if (is_callable($validator)) {
+                    $result = call_user_func_array($validator, [$value]);
+                    if (null !== $result) {
+                        $this->errors[] = $result;
+                    }
+                }
+            }
+        }
+
+        return (count($this->errors) == 0);
+    }
+
 }

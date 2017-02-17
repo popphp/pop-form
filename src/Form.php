@@ -333,8 +333,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function setFieldValue($name, $value)
     {
-        if (isset($this->fieldsets[$this->current])) {
-            $this->fieldsets[$this->current]->setFieldValue($name, $value);
+        foreach ($this->fieldsets as $fieldset) {
+            if (isset($fieldset[$name])) {
+                $fieldset[$name] = $value;
+            }
         }
         return $this;
     }
@@ -370,17 +372,17 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function isValid()
     {
-        $valid  = true;
+        $result = true;
         $fields = $this->getFields();
 
         // Check each element for validators, validate them and return the result.
         foreach ($fields as $field) {
             if ($field->validate() == false) {
-                $valid = false;
+                $result = false;
             }
         }
 
-        return $valid;
+        return $result;
     }
 
     /**
@@ -484,6 +486,18 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         if (!($this->hasChildren())) {
             $this->prepare();
         }
+
+        foreach ($this->fieldsets as $fieldset) {
+            foreach ($fieldset->getFields() as $field) {
+                if ($field instanceof Element\Input\File) {
+                    $this->setAttribute('enctype', 'multipart/form-data');
+                    break;
+                }
+            }
+        }
+
+
+
         return parent::render($depth, $indent);
     }
 

@@ -138,14 +138,4 @@ class SelectMultiple extends AbstractSelect
         return $this->selected;
     }
 
-    /**
-     * Validate the form element object
-     *
-     * @return boolean
-     */
-    public function validate()
-    {
-        return (count($this->errors) == 0);
-    }
-
 }

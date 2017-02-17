@@ -236,6 +236,29 @@ class CheckboxSet extends AbstractElement
      */
     public function validate()
     {
+        $value = $this->getValue();
+
+        // Check if the element is required
+        if (($this->required) && empty($value)) {
+            $this->errors[] = 'This field is required.';
+        }
+
+        // Check field validators
+        if (count($this->validators) > 0) {
+            foreach ($this->validators as $validator) {
+                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
+                    if (!$validator->evaluate($value)) {
+                        $this->errors[] = $validator->getMessage();
+                    }
+                } else if (is_callable($validator)) {
+                    $result = call_user_func_array($validator, [$value]);
+                    if (null !== $result) {
+                        $this->errors[] = $result;
+                    }
+                }
+            }
+        }
+
         return (count($this->errors) == 0);
     }
 
