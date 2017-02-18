@@ -186,6 +186,16 @@ class RadioSet extends AbstractElement
     }
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'radio';
+    }
+
+    /**
      * Set the checked value
      *
      * @param  mixed $checked

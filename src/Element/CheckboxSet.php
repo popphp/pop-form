@@ -230,6 +230,16 @@ class CheckboxSet extends AbstractElement
     }
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'checkbox';
+    }
+
+    /**
      * Validate the form element object
      *
      * @return boolean

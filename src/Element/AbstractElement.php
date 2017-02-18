@@ -260,6 +260,13 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    abstract public function getType();
+
+    /**
      * Get form element value
      *
      * @return mixed

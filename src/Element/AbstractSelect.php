@@ -94,6 +94,16 @@ abstract class AbstractSelect extends AbstractElement
     }
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'select';
+    }
+
+    /**
      * Validate the form element object
      *
      * @return boolean

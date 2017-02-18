@@ -43,6 +43,12 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     protected $current = 0;
 
     /**
+     * Filters
+     * @var array
+     */
+    protected $filters = [];
+
+    /**
      * Constructor
      *
      * Instantiate the form object
@@ -366,6 +372,127 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Add filter
+     *
+     * @param  mixed $call
+     * @param  mixed $params
+     * @param  mixed $excludeByType
+     * @param  mixed $excludeByName
+     * @return Form
+     */
+    public function addFilter($call, $params = null, $excludeByType = null, $excludeByName = null)
+    {
+        if (null !== $params) {
+            if (!is_array($params)) {
+                $params = [$params];
+            }
+        } else {
+            $params = [];
+        }
+
+        if (null !== $excludeByType) {
+            if (!is_array($excludeByType)) {
+                $excludeByName = [$excludeByType];
+            }
+        } else {
+            $excludeByName = [];
+        }
+
+        if (null !== $excludeByName) {
+            if (!is_array($excludeByName)) {
+                $excludeByName = [$excludeByName];
+            }
+        } else {
+            $excludeByName = [];
+        }
+
+        $this->filters[] = [
+            'call'          => $call,
+            'params'        => $params,
+            'excludeByType' => $excludeByType,
+            'excludeByName' => $excludeByName
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Add filters
+     *
+     * @param  array $filters
+     * @throws Exception
+     * @param  mixed $excludeByType
+     * @param  mixed $excludeByName
+     * @return Form
+     */
+    public function addFilters(array $filters, $excludeByType = null, $excludeByName = null)
+    {
+        foreach ($filters as $filter) {
+            if (!isset($filter['call'])) {
+                throw new Exception('Error: The \'call\' key must be set.');
+            }
+            $params = (isset($filter['params'])) ? $filter['params'] : null;
+            $this->addFilter($filter['call'], $params, $excludeByType, $excludeByName);
+        }
+        return $this;
+    }
+
+    /**
+     * Clear filters
+     *
+     * @return Form
+     */
+    public function clearFilters()
+    {
+        $this->filters = [];
+        return $this;
+    }
+
+    /**
+     * Filter value with the filters in the form object
+     *
+     * @param  mixed $value
+     * @return mixed
+     */
+    public function filterValue($value)
+    {
+        $type = null;
+        $name = null;
+
+        if ($value instanceof Element\AbstractElement) {
+            $name = $value->getName();
+            $type = $value->getType();
+        }
+
+        foreach ($this->filters as $filter) {
+            if (((null === $type) || (!in_array($type, $filter['excludeByType']))) &&
+                ((null === $name) || (!in_array($name, $filter['excludeByName'])))) {
+                $params = array_merge([$value], $filter['params']);
+                $value  = call_user_func_array($filter['call'], $params);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Filter values with the filters in the form object
+     *
+     * @param  array $values
+     * @return mixed
+     */
+    public function filterValues(array $values = null)
+    {
+        if (null === $values) {
+            $values = $this->getFields();
+        }
+        foreach ($values as $key => $value) {
+            $values[$key] = $this->filterValue($value);
+        }
+        return $values;
+    }
+
+    /**
      * Determine whether or not the form object is valid
      *
      * @return boolean
@@ -495,8 +622,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
                 }
             }
         }
-
-
 
         return parent::render($depth, $indent);
     }

@@ -104,6 +104,13 @@ interface ElementInterface
     public function getName();
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    public function getType();
+
+    /**
      * Get form element value
      *
      * @return mixed

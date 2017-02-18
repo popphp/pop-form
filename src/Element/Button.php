@@ -81,6 +81,16 @@ class Button extends AbstractElement
     }
 
     /**
+     * Get form element object type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'button';
+    }
+
+    /**
      * Get the value of the form button element object
      *
      * @return string
