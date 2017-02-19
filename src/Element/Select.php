@@ -109,6 +109,19 @@ class Select extends AbstractSelect
     public function setValue($value)
     {
         $this->selected = $value;
+
+        if ($this->hasChildren()) {
+            foreach ($this->childNodes as $child) {
+                if (($child instanceof Child) && ($child->nodeName == 'option')) {
+                    if ($child->getAttribute('value') == $this->selected) {
+                        $child->setAttribute('selected', 'selected');
+                    } else {
+                        $child->removeAttribute('selected');
+                    }
+                }
+            }
+        }
+
         return $this;
     }
 

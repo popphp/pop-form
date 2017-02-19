@@ -114,6 +114,18 @@ class SelectMultiple extends AbstractSelect
     public function setValue($value)
     {
         $this->selected = (!is_array($value)) ? [$value] : $value;
+
+        if ($this->hasChildren()) {
+            foreach ($this->childNodes as $child) {
+                if (($child instanceof Child) && ($child->nodeName == 'option')) {
+                    if (in_array($child->getAttribute('value'), $this->selected)) {
+                        $child->setAttribute('selected', 'selected');
+                    } else {
+                        $child->removeAttribute('selected');
+                    }
+                }
+            }
+        }
         return $this;
     }
 

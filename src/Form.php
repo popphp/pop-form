@@ -92,14 +92,15 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      * Method to create form object and fields from config
      *
      * @param  array  $config
+     * @param  string $container
      * @param  string $action
      * @param  string $method
      * @return Form
      */
-    public static function createFromFieldsetConfig(array $config, $action = null, $method = 'post')
+    public static function createFromFieldsetConfig(array $config, $container = null, $action = null, $method = 'post')
     {
         $form = new self(null, $action, $method);
-        $form->addFieldsetsFromConfig($config);
+        $form->addFieldsetsFromConfig($config, $container);
         return $form;
     }
 
@@ -289,16 +290,17 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Method to add form fieldsets from config
      *
-     * @param  array $fieldsets
+     * @param  array  $fieldsets
+     * @param  string $container
      * @return Form
      */
-    public function addFieldsetsFromConfig(array $fieldsets)
+    public function addFieldsetsFromConfig(array $fieldsets, $container = null)
     {
         foreach ($fieldsets as $legend => $config) {
             if (!is_numeric($legend)) {
-                $this->createFieldset($legend);
+                $this->createFieldset($legend, $container);
             } else {
-                $this->createFieldset();
+                $this->createFieldset(null, $container);
             }
             $this->addFieldsFromConfig($config);
         }

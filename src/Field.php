@@ -55,8 +55,8 @@ class Field
         $answer       = (isset($field['answer']))     ? $field['answer']     : null;
         $min          = (isset($field['min']))        ? $field['min']        : false;
         $max          = (isset($field['max']))        ? $field['max']        : false;
-        $hint         = (isset($field['hint']))       ? $field['hint']       : null;
         $xmlFile      = (isset($field['xml']))        ? $field['xml']        : null;
+        $hint         = (isset($field['hint']))       ? $field['hint']       : null;
         $hintAttribs  = (isset($field['hint-attributes'])) ? $field['hint-attributes']   : null;
         $labelAttribs = (isset($field['label-attributes'])) ? $field['label-attributes'] : null;
 
@@ -77,9 +77,11 @@ class Field
                 $element = new Element\Textarea($name, $value, $indent);
                 break;
             case 'checkbox':
+            case 'checkboxset':
                 $element = new Element\CheckboxSet($name, $values, $checked, $indent);
                 break;
             case 'radio':
+            case 'radioset':
                 $element = new Element\RadioSet($name, $values, $checked, $indent);
                 break;
             case 'csrf':
