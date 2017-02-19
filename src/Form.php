@@ -358,6 +358,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         foreach ($values as $name => $value) {
             $this->setFieldValue($name, $value);
         }
+
+        $this->filterValues();
+
         return $this;
     }
 
@@ -392,10 +395,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
 
         if (null !== $excludeByType) {
             if (!is_array($excludeByType)) {
-                $excludeByName = [$excludeByType];
+                $excludeByType = [$excludeByType];
             }
         } else {
-            $excludeByName = [];
+            $excludeByType = [];
         }
 
         if (null !== $excludeByName) {
@@ -456,23 +459,29 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function filterValue($value)
     {
-        $type = null;
-        $name = null;
-
         if ($value instanceof Element\AbstractElement) {
-            $name = $value->getName();
-            $type = $value->getType();
+            $name      = $value->getName();
+            $type      = $value->getType();
+            $realValue = $value->getValue();
+        } else {
+            $type      = null;
+            $name      = null;
+            $realValue = $value;
         }
 
         foreach ($this->filters as $filter) {
             if (((null === $type) || (!in_array($type, $filter['excludeByType']))) &&
                 ((null === $name) || (!in_array($name, $filter['excludeByName'])))) {
-                $params = array_merge([$value], $filter['params']);
-                $value  = call_user_func_array($filter['call'], $params);
+                $params    = array_merge([$realValue], $filter['params']);
+                $realValue = call_user_func_array($filter['call'], $params);
             }
         }
 
-        return $value;
+        if ($value instanceof Element\AbstractElement) {
+            $value->setValue($realValue);
+        }
+
+        return $realValue;
     }
 
     /**
