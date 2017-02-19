@@ -83,13 +83,24 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public static function createFromConfig(array $config, $action = null, $method = 'post')
     {
-        $fields = [];
+        $form = new self(null, $action, $method);
+        $form->addFieldsFromConfig($config);
+        return $form;
+    }
 
-        foreach ($config as $name => $field) {
-            $fields[$name] = Field::create($name, $field);
-        }
-
-        return new self($fields, $action, $method);
+    /**
+     * Method to create form object and fields from config
+     *
+     * @param  array  $config
+     * @param  string $action
+     * @param  string $method
+     * @return Form
+     */
+    public static function createFromFieldsetConfig(array $config, $action = null, $method = 'post')
+    {
+        $form = new self(null, $action, $method);
+        $form->addFieldsetsFromConfig($config);
+        return $form;
     }
 
     /**
@@ -240,6 +251,58 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         foreach ($fields as $field) {
             $this->addField($field);
         }
+        return $this;
+    }
+
+    /**
+     * Method to add a form field from a config
+     *
+     * @param  string $name
+     * @param  array  $field
+     * @return Form
+     */
+    public function addFieldFromConfig($name, $field)
+    {
+        $this->addField(Field::create($name, $field));
+        return $this;
+    }
+
+    /**
+     * Method to add form fields from config
+     *
+     * @param  array $config
+     * @return Form
+     */
+    public function addFieldsFromConfig(array $config)
+    {
+        $fields = [];
+
+        foreach ($config as $name => $field) {
+            $fields[$name] = Field::create($name, $field);
+        }
+
+        $this->addFields($fields);
+
+        return $this;
+    }
+
+    /**
+     * Method to add form fieldsets from config
+     *
+     * @param  array $fieldsets
+     * @return Form
+     */
+    public function addFieldsetsFromConfig(array $fieldsets)
+    {
+        foreach ($fieldsets as $legend => $config) {
+            if (!is_numeric($legend)) {
+                $this->createFieldset($legend);
+            } else {
+                $this->createFieldset();
+            }
+            $this->addFieldsFromConfig($config);
+        }
+
         return $this;
     }
 

@@ -60,23 +60,7 @@ class Field
         $hintAttribs  = (isset($field['hint-attributes'])) ? $field['hint-attributes']   : null;
         $labelAttribs = (isset($field['label-attributes'])) ? $field['label-attributes'] : null;
 
-        if (isset($field['error'])) {
-            $error = [
-                'container'  => 'div',
-                'attributes' => ['class' => 'error'],
-                'pre'        => false
-            ];
-            foreach ($field['error'] as $key => $value) {
-                if ($key != 'pre') {
-                    $error['container']  = $key;
-                    $error['attributes'] = $value;
-                } else if ($key == 'pre') {
-                    $error['pre'] = $value;
-                }
-            }
-        } else {
-            $error = null;
-        }
+        $errorPre = (isset($field['error']) && ($field['error'] == 'pre'));
 
         // Initialize the form element.
         switch (strtolower($type)) {
@@ -105,26 +89,26 @@ class Field
                 $element = new Element\Input\Captcha($name, $value, $captcha, $answer, $expire, $indent);
                 break;
             case 'input-button':
-                $element = new Element\Input\Button($name);
+                $element = new Element\Input\Button($name, $value);
                 break;
             case 'datetime':
-                $element = new Element\Input\DateTime($name);
+                $element = new Element\Input\DateTime($name, $value);
                 break;
             case 'datetime-local':
-                $element = new Element\Input\DateTimeLocal($name);
+                $element = new Element\Input\DateTimeLocal($name, $value);
                 break;
             case 'number':
-                $element = new Element\Input\Number($name, $min, $max);
+                $element = new Element\Input\Number($name, $min, $max, $value);
                 break;
             case 'range':
-                $element = new Element\Input\Range($name, $min, $max);
+                $element = new Element\Input\Range($name, $min, $max, $value);
                 break;
             default:
                 $class = 'Pop\\Form\\Element\\Input\\' . ucfirst(strtolower($type));
                 if (!class_exists($class)) {
                     throw new Exception('Error: That class for that form element does not exist.');
                 }
-                $element = new $class($name);
+                $element = new $class($name, $value);
         }
 
         // Set the label.
@@ -147,10 +131,9 @@ class Field
         if ((null !== $required) && ($required)) {
             $element->setRequired($required);
         }
-        // Set if error display.
-        if (null !== $error) {
-            $element->setErrorDisplay($error['container'], $error['attributes'], $error['pre']);
-        }
+
+        $element->setErrorPre($errorPre);
+
         // Set any attributes.
         if (null !== $attributes) {
             $element->setAttributes($attributes);
