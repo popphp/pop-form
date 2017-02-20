@@ -13,8 +13,6 @@
  */
 namespace Pop\Form\Element;
 
-use Pop\Dom\Child;
-
 /**
  * Form select multiple element class
  *
@@ -66,40 +64,34 @@ class SelectMultiple extends AbstractSelect
         // Create the child option elements.
         foreach ($values as $k => $v) {
             if (is_array($v)) {
-                $optGroup = new Child('optgroup');
+                $optGroup = new Select\Optgroup();
                 if (null !== $indent) {
                     $optGroup->setIndent($indent);
                 }
                 $optGroup->setAttribute('label', $k);
                 foreach ($v as $ky => $vl) {
-                    $option = new Child('option');
+                    $option = new Select\Option($ky, $vl);
                     if (null !== $indent) {
                         $option->setIndent($indent);
                     }
 
-                    $option->setAttribute('value', $ky);
-
                     // Determine if the current option element is selected.
                     if (is_array($this->selected) && in_array($ky, $this->selected, true)) {
-                        $option->setAttribute('selected', 'selected');
+                        $option->select();
                     }
-                    $option->setNodeValue($vl);
                     $optGroup->addChild($option);
                 }
                 $this->addChild($optGroup);
             } else {
-                $option = new Child('option');
+                $option = new Select\Option($k, $v);
                 if (null !== $indent) {
                     $option->setIndent($indent);
                 }
 
-                $option->setAttribute('value', $k);
-
                 // Determine if the current option element is selected.
                 if (is_array($this->selected) && in_array($k, $this->selected, true)) {
-                    $option->setAttribute('selected', 'selected');
+                    $option->select();
                 }
-                $option->setNodeValue($v);
                 $this->addChild($option);
             }
         }
@@ -117,15 +109,25 @@ class SelectMultiple extends AbstractSelect
 
         if ($this->hasChildren()) {
             foreach ($this->childNodes as $child) {
-                if (($child instanceof Child) && ($child->nodeName == 'option')) {
-                    if (in_array($child->getAttribute('value'), $this->selected)) {
-                        $child->setAttribute('selected', 'selected');
+                if ($child instanceof Select\Option) {
+                    if ($child->getValue() == $this->selected) {
+                        $child->select();
                     } else {
-                        $child->removeAttribute('selected');
+                        $child->deselect();
+                    }
+                } else if ($child instanceof Select\Optgroup) {
+                    $options = $child->getOptions();
+                    foreach ($options as $option) {
+                        if ($option->getValue() == $this->selected) {
+                            $option->select();
+                        } else {
+                            $option->deselect();
+                        }
                     }
                 }
             }
         }
+
         return $this;
     }
 
@@ -137,6 +139,20 @@ class SelectMultiple extends AbstractSelect
     public function resetValue()
     {
         $this->selected = [];
+
+        if ($this->hasChildren()) {
+            foreach ($this->childNodes as $child) {
+                if ($child instanceof Select\Option) {
+                    $child->deselect();
+                } else if ($child instanceof Select\Optgroup) {
+                    $options = $child->getOptions();
+                    foreach ($options as $option) {
+                        $option->deselect();
+                    }
+                }
+            }
+        }
+
         return $this;
     }
 

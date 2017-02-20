@@ -13,8 +13,6 @@
  */
 namespace Pop\Form\Element;
 
-use Pop\Dom\Child;
-
 /**
  * Form select element class
  *
@@ -61,40 +59,34 @@ class Select extends AbstractSelect
         // Create the child option elements.
         foreach ($values as $k => $v) {
             if (is_array($v)) {
-                $optGroup = new Child('optgroup');
+                $optGroup = new Select\Optgroup();
                 if (null !== $indent) {
                     $optGroup->setIndent($indent);
                 }
                 $optGroup->setAttribute('label', $k);
                 foreach ($v as $ky => $vl) {
-                    $option = new Child('option');
+                    $option = new Select\Option($ky, $vl);
                     if (null !== $indent) {
                         $option->setIndent($indent);
                     }
 
-                    $option->setAttribute('value', $ky);
-
                     // Determine if the current option element is selected.
                     if ((null !== $this->selected) && ($ky == $this->selected)) {
-                        $option->setAttribute('selected', 'selected');
+                        $option->select();
                     }
-                    $option->setNodeValue($vl);
                     $optGroup->addChild($option);
                 }
                 $this->addChild($optGroup);
             } else {
-                $option = new Child('option');
+                $option = new Select\Option($k, $v);
                 if (null !== $indent) {
                     $option->setIndent($indent);
                 }
 
-                $option->setAttribute('value', $k);
-
                 // Determine if the current option element is selected.
                 if ((null !== $this->selected) && ($k == $this->selected)) {
-                    $option->setAttribute('selected', 'selected');
+                    $option->select();
                 }
-                $option->setNodeValue($v);
                 $this->addChild($option);
             }
         }
@@ -112,11 +104,20 @@ class Select extends AbstractSelect
 
         if ($this->hasChildren()) {
             foreach ($this->childNodes as $child) {
-                if (($child instanceof Child) && ($child->nodeName == 'option')) {
-                    if ($child->getAttribute('value') == $this->selected) {
-                        $child->setAttribute('selected', 'selected');
+                if ($child instanceof Select\Option) {
+                    if ($child->getValue() == $this->selected) {
+                        $child->select();
                     } else {
-                        $child->removeAttribute('selected');
+                        $child->deselect();
+                    }
+                } else if ($child instanceof Select\Optgroup) {
+                    $options = $child->getOptions();
+                    foreach ($options as $option) {
+                        if ($option->getValue() == $this->selected) {
+                            $option->select();
+                        } else {
+                            $option->deselect();
+                        }
                     }
                 }
             }
@@ -133,6 +134,20 @@ class Select extends AbstractSelect
     public function resetValue()
     {
         $this->selected = null;
+
+        if ($this->hasChildren()) {
+            foreach ($this->childNodes as $child) {
+                if ($child instanceof Select\Option) {
+                    $child->deselect();
+                } else if ($child instanceof Select\Optgroup) {
+                    $options = $child->getOptions();
+                    foreach ($options as $option) {
+                        $option->deselect();
+                    }
+                }
+            }
+        }
+
         return $this;
     }
 

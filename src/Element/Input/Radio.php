@@ -91,4 +91,14 @@ class Radio extends Element\Input
         return $this;
     }
 
+    /**
+     * Determine if the radio value is checked
+     *
+     * @return boolean
+     */
+    public function isChecked()
+    {
+        return ($this->getAttribute('checked') == 'checked');
+    }
+
 }
