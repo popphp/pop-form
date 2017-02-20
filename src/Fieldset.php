@@ -76,7 +76,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
         $fields = [];
 
         foreach ($config as $name => $field) {
-            $fields[$name] = Field::create($name, $field);
+            $fields[$name] = Fields::create($name, $field);
         }
 
         return new self($fields);

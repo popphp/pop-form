@@ -104,6 +104,67 @@ abstract class AbstractSelect extends AbstractElement
     }
 
     /**
+     * Get select form element selected value
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->selected;
+    }
+
+    /**
+     * Get select form element selected value (alias)
+     *
+     * @return mixed
+     */
+    public function getSelected()
+    {
+        return $this->getValue();
+    }
+
+    /**
+     * Get select options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        $options = [];
+
+        foreach ($this->childNodes as $child) {
+            if ($child instanceof Select\Option) {
+                $options[] = $child;
+            } else if ($child instanceof Select\Optgroup) {
+                foreach ($child->getChildren() as $c) {
+                    if ($c instanceof Select\Option) {
+                        $options[] = $c;
+                    }
+                }
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get select options as array
+     *
+     * @return array
+     */
+    public function getOptionsAsArray()
+    {
+        $options      = $this->getOptions();
+        $optionsArray = [];
+
+        foreach ($options as $option) {
+            $optionsArray[$option->getValue()] = $option->getNodeValue();
+        }
+
+        return $optionsArray;
+    }
+
+    /**
      * Validate the form element object
      *
      * @return boolean

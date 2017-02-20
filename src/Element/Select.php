@@ -151,14 +151,4 @@ class Select extends AbstractSelect
         return $this;
     }
 
-    /**
-     * Get select form element selected value
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->selected;
-    }
-
 }

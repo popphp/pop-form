@@ -3,14 +3,13 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Form;
-use Pop\Form\Element;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testConstructor()
+    public function testSetStreamTemplate()
     {
-        $_SERVER['REQUEST_URI'] = '/process';
+
         $form = Form::createFromConfig([
             'username' => [
                 'type'     => 'text',
@@ -26,8 +25,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
                 'value' => 'SUBMIT'
             ]
         ]);
-        $this->assertInstanceOf('Pop\Form\Form', $form);
-        $this->assertEquals(3, count($form->getFields()));
+        $formData = $form->prepareForView();
+        $this->assertEquals(5, count($formData));
     }
 
 }

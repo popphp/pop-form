@@ -156,14 +156,4 @@ class SelectMultiple extends AbstractSelect
         return $this;
     }
 
-    /**
-     * Get select form element selected value
-     *
-     * @return array
-     */
-    public function getValue()
-    {
-        return $this->selected;
-    }
-
 }

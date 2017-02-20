@@ -14,7 +14,7 @@
 namespace Pop\Form;
 
 /**
- * Form field config class
+ * Form fields config class
  *
  * @category   Pop
  * @package    Pop\Form
@@ -23,7 +23,7 @@ namespace Pop\Form;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.0.0
  */
-class Field
+class Fields
 {
 
     /**

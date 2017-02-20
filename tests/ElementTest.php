@@ -12,14 +12,11 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         $element = new Element\Input('my_input');
         $element->setRequired(true);
         $element->setErrorPre(true);
-        $element->setErrorPost(true);
-        $element->setErrorDisplay('div', ['class' => 'error']);
         $element->clearErrors();
         $this->assertInstanceOf('Pop\Form\Element\AbstractElement', $element);
-        $this->assertEquals('div', $element->getErrorDisplay()['container']);
+        $this->assertTrue($element->isErrorPre());
         $this->assertEquals('my_input', $element->getName());
-        $this->assertEquals('input', $element->getType());
-        $this->assertNull($element->getMarked());
+        $this->assertEquals('text', $element->getType());
         $this->assertTrue($element->isRequired());
         $this->assertEquals(0, count($element->getErrors()));
         $this->assertFalse($element->hasErrors());
@@ -29,7 +26,6 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     {
         $element = new Element\Input('my_input');
         $element->setLabel('my_label');
-        $element->setErrorDisplay('div');
         $this->assertEquals('my_label', $element->getLabel());
     }
 
@@ -55,7 +51,6 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     {
         $element = new Element\Input('my_input');
         $element->setHint('my_hint');
-        $element->setErrorDisplay('div');
         $this->assertEquals('my_hint', $element->getHint());
     }
 
@@ -105,7 +100,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
 
     public function testAddValidatorException()
     {
-        $this->setExpectedException('Pop\Form\Element\Exception');
+        $this->expectException('Pop\Form\Element\Exception');
         $element = new Element\Input('my_input');
         $element->addValidator('badvalidator');
     }
@@ -115,7 +110,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         $element = new Element\Input('my_input');
 
         ob_start();
-        $element->render();
+        echo $element;
         $result = ob_get_clean();
 
         $this->assertContains('<input', $result);
@@ -142,7 +137,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         $element->setErrorPre(true);
         $element->addValidator(new \Pop\Validator\NotEmpty());
         $this->assertFalse($element->validate());
-        $this->assertContains('class="error"', $element->render(true));
+        $this->assertEquals(1, count($element->getErrors()));
     }
 
     public function testValidateClosure()
@@ -152,7 +147,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
             return (null !== $value);
         });
         $this->assertFalse($element->validate());
-        $this->assertContains('class="error"', $element->render(true));
+        $this->assertEquals(1, count($element->getErrors()));
     }
 
 }

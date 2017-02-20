@@ -55,111 +55,10 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Week', $input);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCaptchaNoMethodException()
-    {
-        $this->setExpectedException('Pop\Form\Element\Input\Exception');
-        $input = new Input\Captcha('my_captcha');
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCaptcha()
-    {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $input = new Input\Captcha('my_captcha');
-        $input->setToken([
-            'captcha' => '5 x 2',
-            'value'   => 'test',
-            'expire'  => 300,
-            'start'   => time()
-        ]);
-        $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $input);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCaptchaPost()
-    {
-        session_start();
-        $token = [
-            'captcha' => '5 x 2',
-            'value'  => sha1(rand(10000, getrandmax()) . 'test'),
-            'expire' => 1,
-            'start'  => 1435250400
-        ];
-        $_SESSION['pop_captcha'] = serialize($token);
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $input = new Input\Captcha('my_captcha');
-        $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $input);
-        unset($_SESSION['pop_captcha']);
-    }
-
     public function testCheckbox()
     {
         $input = new Input\Checkbox('my_checkbox');
         $this->assertInstanceOf('Pop\Form\Element\Input\Checkbox', $input);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCsrfNoMethodException()
-    {
-        $this->setExpectedException('Pop\Form\Element\Input\Exception');
-        $input = new Input\Csrf('my_csrf');
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCsrf()
-    {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $input = new Input\Csrf('my_csrf');
-        $input->setToken([
-            'value'  => 'test',
-            'expire' => 300,
-            'start'  => time()
-        ]);
-        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $input);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCsrfPost()
-    {
-        session_start();
-        $token = [
-            'value'  => sha1(rand(10000, getrandmax()) . 'test'),
-            'expire' => 1,
-            'start'  => 1435250400
-        ];
-        $_SESSION['pop_csrf'] = serialize($token);
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $input = new Input\Csrf('my_csrf');
-        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $input);
-        unset($_SESSION['pop_csrf']);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testCsrfOtherMethod()
-    {
-        $_SERVER['REQUEST_METHOD'] = 'PUT';
-        $input = new Input\Csrf('my_csrf');
-        $input->setToken([
-            'value'  => 'test',
-            'expire' => 300,
-            'start'  => time()
-        ]);
-        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $input);
     }
 
     public function testDatalist()
@@ -170,11 +69,11 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Datalist', $input);
 
         ob_start();
-        $input->render();
+        echo $input;
         $result = ob_get_clean();
 
         $this->assertContains('<datalist', $result);
-        $this->assertContains('<datalist', $input->render(true));
+        $this->assertContains('<datalist', $input->render());
     }
 
     public function testEmail()
