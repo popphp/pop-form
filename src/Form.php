@@ -309,6 +309,42 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to insert a field before another one
+     *
+     * @param  string                  $name
+     * @param  Element\AbstractElement $field
+     * @return Form
+     */
+    public function insertFieldBefore($name, Element\AbstractElement $field)
+    {
+        foreach ($this->fieldsets as $fieldset) {
+            if ($fieldset->hasField($name)) {
+                $fieldset->insertFieldBefore($name, $field);
+                break;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Method to insert a field after another one
+     *
+     * @param  string                  $name
+     * @param  Element\AbstractElement $field
+     * @return Form
+     */
+    public function insertFieldAfter($name, Element\AbstractElement $field)
+    {
+        foreach ($this->fieldsets as $fieldset) {
+            if ($fieldset->hasField($name)) {
+                $fieldset->insertFieldAfter($name, $field);
+                break;
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Method to get the count of elements in the form
      *
      * @return int
@@ -682,13 +718,13 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function prepareForView()
     {
-        $form   = [];
+        $formData = [];
 
         foreach ($this->fieldsets as $fieldset) {
-            $form = array_merge($form, $fieldset->prepareForView());
+            $formData = array_merge($formData, $fieldset->prepareForView());
         }
 
-        return $form;
+        return $formData;
     }
 
     /**

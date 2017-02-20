@@ -121,6 +121,54 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     }
 
     /**
+     * Method to insert a field before another one
+     *
+     * @param  string                  $name
+     * @param  Element\AbstractElement $field
+     * @return Fieldset
+     */
+    public function insertFieldBefore($name, Element\AbstractElement $field)
+    {
+        $fields = [];
+
+        foreach ($this->fields as $key => $value) {
+            if ($key == $name) {
+                $fields[$field->getName()] = $field;
+                $fields[$key] = $value;
+            } else {
+                $fields[$key] = $value;
+            }
+        }
+
+        $this->fields = $fields;
+        return $this;
+    }
+
+    /**
+     * Method to insert a field after another one
+     *
+     * @param  string                  $name
+     * @param  Element\AbstractElement $field
+     * @return Fieldset
+     */
+    public function insertFieldAfter($name, Element\AbstractElement $field)
+    {
+        $fields = [];
+
+        foreach ($this->fields as $key => $value) {
+            if ($key == $name) {
+                $fields[$key] = $value;
+                $fields[$field->getName()] = $field;
+            } else {
+                $fields[$key] = $value;
+            }
+        }
+
+        $this->fields = $fields;
+        return $this;
+    }
+
+    /**
      * Method to get the count of elements in the form fieldset
      *
      * @return int
@@ -164,6 +212,17 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * Method to determine if the fieldset has a field
+     *
+     * @param  string $name
+     * @return boolean
+     */
+    public function hasField($name)
+    {
+        return (isset($this->fields[$name]));
     }
 
     /**
