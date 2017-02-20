@@ -265,6 +265,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 $table = new Child('table');
 
                 foreach ($this->fields as $field) {
+                    $errors = [];
+                    if ($field->hasErrors()) {
+                        foreach ($field->getErrors() as $error) {
+                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        }
+                    }
+
                     $tr = new Child('tr');
                     if (null !== $field->getLabel()) {
                         $td = new Child('td');
@@ -283,6 +290,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
 
                     $td = new Child('td');
+                    if ($field->isErrorPre()) {
+                        $td->addChildren($errors);
+                    }
                     $td->addChild($field);
 
                     if (null !== $field->getHint()) {
@@ -296,6 +306,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     if (null === $field->getLabel()) {
                         $td->setAttribute('colspan', 2);
                     }
+                    if (!$field->isErrorPre()) {
+                        $td->addChildren($errors);
+                    }
                     $tr->addChild($td);
                     $table->addChild($tr);
                 }
@@ -305,6 +318,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             case 'div':
             case 'p':
                 foreach ($this->fields as $field) {
+                    $errors = [];
+                    if ($field->hasErrors()) {
+                        foreach ($field->getErrors() as $error) {
+                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        }
+                    }
+
                     $container = new Child($this->container);
                     if (null !== $field->getLabel()) {
                         $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
@@ -319,6 +339,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                         $container->addChild($label);
                     }
 
+                    if ($field->isErrorPre()) {
+                        $container->addChildren($errors);
+                    }
                     $container->addChild($field);
 
                     if (null !== $field->getHint()) {
@@ -328,6 +351,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                         }
                         $container->addChild($hint);
                     }
+                    if (!$field->isErrorPre()) {
+                        $container->addChildren($errors);
+                    }
                     $this->addChild($container);
                 }
                 break;
@@ -335,6 +361,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 $dl = new Child('dl');
 
                 foreach ($this->fields as $field) {
+                    $errors = [];
+                    if ($field->hasErrors()) {
+                        foreach ($field->getErrors() as $error) {
+                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        }
+                    }
+
                     if (null !== $field->getLabel()) {
                         $dt = new Child('dt');
                         $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
@@ -352,6 +385,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
 
                     $dd = new Child('dd');
+                    if ($field->isErrorPre()) {
+                        $dd->addChildren($errors);
+                    }
                     $dd->addChild($field);
 
                     if (null !== $field->getHint()) {
@@ -361,7 +397,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                         }
                         $dd->addChild($hint);
                     }
-
+                    if (!$field->isErrorPre()) {
+                        $dd->addChildren($errors);
+                    }
                     $dl->addChild($dd);
                 }
 
@@ -369,6 +407,47 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
         }
 
         return $this;
+    }
+
+    /**
+     * Prepare fieldset elements for rendering with a view
+     *
+     * @return array
+     */
+    public function prepareForView()
+    {
+        $fields = [];
+
+        foreach ($this->fields as $field) {
+            if (null !== $field->getLabel()) {
+                $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                $label    = new Child('label', $field->getLabel());
+                $label->setAttribute('for', $labelFor);
+                if (null !== $field->getLabelAttributes()) {
+                    $label->setAttributes($field->getLabelAttributes());
+                }
+                if ($field->isRequired()) {
+                    $label->setAttribute('class', 'required');
+                }
+                $fields[$field->getName() . '_label'] = $label->render();
+            }
+
+            if (null !== $field->getHint()) {
+                $hint = new Child('span', $field->getHint());
+                if (null !== $field->getHintAttributes()) {
+                    $hint->setAttributes($field->getHintAttributes());
+                }
+                $fields[$field->getName() . '_hint'] = $hint->render();
+            }
+
+            if ($field->hasErrors()) {
+                $fields[$field->getName() . '_errors'] = $field->getErrors();
+            }
+
+            $fields[$field->getName()] = $field->render();
+        }
+
+        return $fields;
     }
 
     /**

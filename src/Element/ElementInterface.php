@@ -82,6 +82,13 @@ interface ElementInterface
     public function setErrorPre($pre);
 
     /**
+     * Determine if error to display before the element
+     *
+     * @return boolean
+     */
+    public function isErrorPre();
+
+    /**
      * Set validators
      *
      * @param  array $validators

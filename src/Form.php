@@ -682,7 +682,13 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function prepareForView()
     {
+        $form   = [];
 
+        foreach ($this->fieldsets as $fieldset) {
+            $form = array_merge($form, $fieldset->prepareForView());
+        }
+
+        return $form;
     }
 
     /**

@@ -227,6 +227,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Determine if error to display before the element
+     *
+     * @return boolean
+     */
+    public function isErrorPre()
+    {
+        return $this->errorPre;
+    }
+
+    /**
      * Set validators
      *
      * @param  array $validators
@@ -389,34 +399,6 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @return boolean
      */
     abstract public function validate();
-
-    /**
-     * Render the child and its child nodes
-     *
-     * @param  int     $depth
-     * @param  string  $indent
-     * @param  string  $errorIndent
-     * @return string
-     */
-    public function render($depth = 0, $indent = null, $errorIndent = null)
-    {
-        $output    = parent::render($depth, $indent);
-        $errors    = null;
-
-        // Add error messages if there are any.
-        if (count($this->errors) > 0) {
-            foreach ($this->errors as $msg) {
-                if ($this->errorPre) {
-                    $errors .= "{$indent}{$this->indent}<div class=\"error\">{$msg}</div>" . PHP_EOL . "{$errorIndent}";
-                } else {
-                    $errors .= "{$errorIndent}{$indent}{$this->indent}<div class=\"error\">{$msg}</div>" . PHP_EOL;
-                }
-            }
-        }
-
-        $this->output = ($this->errorPre) ? $errors . $output : $output . $errors;
-        return $this->output;
-    }
 
     /**
      * Print form element

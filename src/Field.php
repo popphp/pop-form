@@ -14,7 +14,7 @@
 namespace Pop\Form;
 
 /**
- * Form fields class
+ * Form field config class
  *
  * @category   Pop
  * @package    Pop\Form
