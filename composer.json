@@ -26,10 +26,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "5.5.*",
-        "popphp/pop-db": "4.0.*"
+        "popphp/pop-db": "4.0.*",
+        "popphp/pop-view": "3.0.*"
     },
     "suggest": {
-        "popphp/pop-db": "To use the dynamic field generation based on database table columns"
+        "popphp/pop-db": "To use the dynamic field generation based on database table columns",
+        "popphp/pop-view": "To use render the form fields with a view"
     },
     "autoload": {
         "psr-4": {

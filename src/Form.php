@@ -676,6 +676,16 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Prepare form object for rendering with a view
+     *
+     * @return array
+     */
+    public function prepareForView()
+    {
+
+    }
+
+    /**
      * Render the form object
      *
      * @param  int     $depth

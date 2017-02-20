@@ -157,16 +157,16 @@ class Field
      *
      * @param  array $tableInfo
      * @param  array $attribs
-     * @param  array $values
+     * @param  array $config
      * @param  mixed $omit
      * @throws Exception
      * @return array
      */
-    public static function getConfigFromTable(array $tableInfo, array $attribs = null, array $values = [], $omit = null)
+    public static function getConfigFromTable(array $tableInfo, array $attribs = null, array $config = null, $omit = null)
     {
         $fields = [];
 
-        if (!isset($tableInfo['tableName']) || !isset($tableInfo['primaryId']) || !isset($tableInfo['columns'])) {
+        if (!isset($tableInfo['tableName']) || !isset($tableInfo['columns'])) {
             throw new Exception('Error: The table info parameter is not in the correct format');
         }
 
@@ -178,21 +178,25 @@ class Field
             $omit = [];
         }
 
+        if (null === $config) {
+            $config = [];
+        }
+
         foreach ($tableInfo['columns'] as $name => $value) {
             if (!in_array($name, $omit)) {
                 $fieldValue = null;
                 $fieldLabel = null;
                 $attributes = null;
 
-                if (isset($values[$name]['validators'])) {
-                    $validators = (!is_array($values[$name]['validators'])) ?
-                        [$values[$name]['validators']] : $values[$name]['validators'];
+                if (isset($config[$name]) && isset($config[$name]['validators'])) {
+                    $validators = (!is_array($config[$name]['validators'])) ?
+                        [$config[$name]['validators']] : $config[$name]['validators'];
                 } else {
                     $validators = null;
                 }
 
-                if (isset($values[$name]['type'])) {
-                    $fieldType = $values[$name]['type'];
+                if (isset($config[$name]) && isset($config[$name]['type'])) {
+                    $fieldType = $config[$name]['type'];
                 } else if (stripos($name, 'password') !== false) {
                     $fieldType = 'password';
                 } else if ((stripos($name, 'email') !== false) || (stripos($name, 'e-mail') !== false) ||
@@ -207,9 +211,7 @@ class Field
                     $fieldType = (stripos($value['type'], 'text') !== false) ? 'textarea' : 'text';
                 }
 
-                if ((null !== $values) && isset($values[$name])) {
-                    $fieldValue = (isset($values[$name]['value'])) ? $values[$name]['value'] : null;
-                }
+                $fieldValue = (isset($config[$name]) && isset($config[$name]['value'])) ? $config[$name]['value'] : null;
 
                 if ($fieldType != 'hidden') {
                     $fieldLabel = ucwords(str_replace('_', ' ', $name)) . ':';
@@ -221,11 +223,14 @@ class Field
                     }
                 }
 
+                $required = (isset($config[$name]) && isset($config[$name]['required'])) ?
+                    (bool)$config[$name]['required'] : !($value['null']);
+
                 $fields[$name] = [
                     'type'       => $fieldType,
                     'label'      => $fieldLabel,
                     'value'      => $fieldValue,
-                    'required'   => !($value['null']),
+                    'required'   => $required,
                     'attributes' => $attributes,
                     'validators' => $validators
                 ];
