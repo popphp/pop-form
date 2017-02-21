@@ -4,6 +4,7 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Element\Select;
 use Pop\Form\Element\SelectMultiple;
+use Pop\Validator;
 
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,18 +13,56 @@ class SelectTest extends \PHPUnit_Framework_TestCase
     {
         $select = new Select('my_select', [
             'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
-        ]);
+        ], 'Red', null, '    ');
         $select->setAttribute('class', 'select-menu');
         $select->setRequired(true);
         $this->assertInstanceOf('Pop\Form\Element\Select', $select);
+        $this->assertEquals('select', $select->getType());
+        $select->resetValue();
+        $this->assertTrue(empty($select->getValue()));
     }
 
-    public function testMultiple()
+
+    public function testConstructorMultiple()
     {
-        $select = new SelectMultiple('my_select[]', [
+        $select = new SelectMultiple('my_select', [
             'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
-        ]);
+        ], 'Red', null, '    ');
+        $select->setAttribute('class', 'select-menu');
+        $select->setRequired(true);
+        $select->setValue(['White', 'Blue']);
         $this->assertInstanceOf('Pop\Form\Element\SelectMultiple', $select);
+        $this->assertEquals('select', $select->getType());
+        $select->resetValue();
+        $this->assertTrue(empty($select->getValue()));
+    }
+
+    public function testOptGroup()
+    {
+        $select = new Select('my_select', [
+            'Colors 1' => ['Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'],
+            'Colors 2' => ['Yellow' => 'Yellow', 'Green' => 'Green', 'Purple' => 'Purple']
+        ], 'Red', null, '    ');
+        $select->setValue('Yellow');
+        $this->assertEquals(6, count($select->getOptions()));
+        $this->assertEquals(6, count($select->getOptionsAsArray()));
+        $this->assertEquals('Yellow', $select->getSelected());
+        $select->resetValue();
+        $this->assertTrue(empty($select->getValue()));
+    }
+
+    public function testOptGroupMultiple()
+    {
+        $select = new SelectMultiple('my_select', [
+            'Colors 1' => ['Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'],
+            'Colors 2' => ['Yellow' => 'Yellow', 'Green' => 'Green', 'Purple' => 'Purple']
+        ], ['Red'], null, '    ');
+        $select->setValue(['Yellow']);
+        $this->assertEquals(6, count($select->getOptions()));
+        $this->assertEquals(6, count($select->getOptionsAsArray()));
+        $this->assertEquals(['Yellow'], $select->getSelected());
+        $select->resetValue();
+        $this->assertTrue(empty($select->getValue()));
     }
 
     public function testSelected()
@@ -40,6 +79,31 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
         ], ['Red', 'Blue']);
         $this->assertEquals(['Red', 'Blue'], $select->getSelected());
+    }
+
+    public function testValidate()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->addValidator(new Validator\NotEqual('Blue'));
+        $select->addValidator(function($value){
+            return 'This is wrong.';
+        });
+
+        $select->setValue('Blue');
+        $this->assertFalse($select->validate());
+        $this->assertEquals(2, count($select->getErrors()));
+    }
+
+    public function testValidateRequired()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->setRequired(true);
+        $this->assertFalse($select->validate());
+        $this->assertEquals(1, count($select->getErrors()));
     }
 
     public function testParseYear1()
