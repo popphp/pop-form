@@ -59,8 +59,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __construct(array $fields = null, $action = null, $method = 'post')
     {
-        $action = ((null === $action) && isset($_SERVER['REQUEST_URI'])) ?
-            $_SERVER['REQUEST_URI'] : '#';
+        if (null === $action) {
+            $action = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '#';
+        }
 
         parent::__construct('form');
         $this->setAttributes([
@@ -517,27 +518,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
             'excludeByName' => $excludeByName
         ];
 
-        return $this;
-    }
-
-    /**
-     * Add filters
-     *
-     * @param  array $filters
-     * @throws Exception
-     * @param  mixed $excludeByType
-     * @param  mixed $excludeByName
-     * @return Form
-     */
-    public function addFilters(array $filters, $excludeByType = null, $excludeByName = null)
-    {
-        foreach ($filters as $filter) {
-            if (!isset($filter['call'])) {
-                throw new Exception('Error: The \'call\' key must be set.');
-            }
-            $params = (isset($filter['params'])) ? $filter['params'] : null;
-            $this->addFilter($filter['call'], $params, $excludeByType, $excludeByName);
-        }
         return $this;
     }
 

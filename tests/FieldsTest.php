@@ -4,6 +4,7 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Fields;
 use Pop\Db;
+use Pop\Validator;
 
 class FieldsTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,12 +48,26 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $number = Fields::create('number', [
             'type'  => 'number',
             'min'   => 1,
-            'max'   => 10
+            'max'   => 10,
+            'validators' => new Validator\LessThan(2)
         ]);
         $range = Fields::create('range', [
             'type'  => 'range',
             'min'   => 1,
-            'max'   => 10
+            'max'   => 10,
+            'label-attributes' => [
+                'class' => 'label'
+            ],
+            'hint' => 'This is a hint',
+            'hint-attributes' => [
+                'class' => 'hint'
+            ],
+            'attributes' => [
+                'class' => 'element'
+            ],
+            'validators' => [
+                new Validator\LessThan(2)
+            ]
         ]);
         $this->assertInstanceOf('Pop\Form\Element\Button', $button);
         $this->assertInstanceOf('Pop\Form\Element\Select', $select);
@@ -65,6 +80,22 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\DateTimeLocal', $dateTimeLocal);
         $this->assertInstanceOf('Pop\Form\Element\Input\Number', $number);
         $this->assertInstanceOf('Pop\Form\Element\Input\Range', $range);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testCreateCsrfAndCaptcha()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $csrf = Fields::create('csrf', [
+            'type'   => 'csrf'
+        ]);
+        $captcha = Fields::create('captcha', [
+            'type'   => 'captcha'
+        ]);
+        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $csrf);
+        $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $captcha);
     }
 
     public function testTypeNotSetException()
@@ -87,8 +118,42 @@ class FieldsTest extends \PHPUnit_Framework_TestCase
     public function testGetConfigFromTable()
     {
         TestAsset\Users::setDb(Db\Db::sqliteConnect(['database' => __DIR__ . '/tmp/db.sqlite']));
-        $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo());
+        $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo(), null, null, ['id']);
         $this->assertEquals(4, count($fields));
+    }
+
+    public function testTableNameNotSetException()
+    {
+        $this->expectException('Pop\Form\Exception');
+        $fields = Fields::getConfigFromTable([]);
+    }
+
+    public function testGetConfigFromTableAttribsAndConfig()
+    {
+        $attribs = [
+            'text' => [
+                'class' => 'text-field'
+            ]
+        ];
+        $config = [
+            'info' => [
+                'type' => 'textarea',
+                'validators' => new Validator\NotEmpty()
+            ]
+        ];
+        $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo(), $attribs, $config);
+        $this->assertEquals(5, count($fields));
+    }
+
+    public function testGetConfigFromTableConfig()
+    {
+        $config = [
+            'email' => [
+                'validators' => new Validator\NotEmpty()
+            ]
+        ];
+        $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo(), null, $config);
+        $this->assertEquals(5, count($fields));
     }
 
 }
