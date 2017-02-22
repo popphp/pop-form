@@ -89,7 +89,7 @@ On the first pass, the form will render like this:
 
 ```html
 <form action="/" method="post" id="my-form">
-    <fieldseti d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
+    <fieldset d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
         <dl >
             <dt>
                 <label for="username" class="required">Username:</label>
@@ -115,7 +115,7 @@ If it fails validation, it will render with the errors. In this case, the userna
 
 ```html
 <form action="/" method="post" id="my-form">
-    <fieldseti d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
+    <fieldset d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
         <dl >
             <dt>
                 <label for="username" class="required">Username:</label>
