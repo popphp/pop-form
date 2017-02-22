@@ -171,4 +171,24 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Url', $input);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testCaptcha()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $input = new Input\Captcha('my_captcha');
+        $input->setLabel('Enter Code');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $input);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testCsrf()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $input = new Input\Csrf('my_csrf');
+        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $input);
+    }
 }
