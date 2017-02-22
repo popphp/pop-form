@@ -1,6 +1,9 @@
 pop-form
 ========
 
+[![Build Status](https://travis-ci.org/popphp/pop-form.svg?branch=master)](https://travis-ci.org/popphp/pop-form)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
+
 OVERVIEW
 --------
 `pop-form` is a robust component for managing, rendering and validating HTML forms.
@@ -11,7 +14,6 @@ as granular control over field validation. Features include:
 * Validation
     + Use any callable validation object, such as `pop-validator` or custom validators
 * Filtering
-* Form templates
 * Dynamic field generation based on the fields of a database table
 
 `pop-form`is a component of the [Pop PHP Framework](http://www.popphp.org/).
@@ -27,7 +29,6 @@ Install `pop-form` using Composer.
 
 * [Using field element objects](#using-field-element-objects)
 * [Using field configurations](#using-field-configurations)
-* [Templates](#templates)
 * [Filtering](#filtering)
 * [Validation](#validation)
 * [Dynamic fields from a database table](#dynamic-fields-from-a-database-table)
@@ -88,23 +89,25 @@ On the first pass, the form will render like this:
 
 ```html
 <form action="/" method="post" id="my-form">
-    <dl id="my-form-field-group-1" class="my-form-field-group">
-    <dt>
-        <label for="username" class="required">Username:</label>
-    </dt>
-    <dd>
-        <input type="text" name="username" id="username" value="" required="required" size="40" />
-    </dd>
-    <dt>
-        <label for="email" class="required">Email:</label>
-    </dt>
-    <dd>
-        <input type="email" name="email" id="email" value="" required="required" size="40" />
-    </dd>
-    <dd>
-        <input type="submit" name="submit" id="submit" value="SUBMIT" />
-    </dd>
-    </dl>
+    <fieldseti d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
+        <dl >
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" size="40" />
+            </dd>
+            <dt>
+                <label for="email" class="required">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" required="required" size="40" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
 </form>
 ```
 
@@ -112,24 +115,26 @@ If it fails validation, it will render with the errors. In this case, the userna
 
 ```html
 <form action="/" method="post" id="my-form">
-    <dl id="my-form-field-group-1" class="my-form-field-group">
-    <dt>
-        <label for="username" class="required">Username:</label>
-    </dt>
-    <dd>
-        <input type="text" name="username" id="username" value="sdcsdc#$2345" required="required" size="40" />
-        <div class="error">The value must only contain alphanumeric characters.</div>
-    </dd>
-    <dt>
-        <label for="email" class="required">Email:</label>
-    </dt>
-    <dd>
-        <input type="email" name="email" id="email" value="test@test.com" required="required" size="40" />
-    </dd>
-    <dd>
-        <input type="submit" name="submit" id="submit" value="SUBMIT" />
-    </dd>
-    </dl>
+    <fieldseti d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
+        <dl >
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" size="40" />
+                <div class="error">The value must only contain alphanumeric characters.</div>
+            </dd>
+            <dt>
+                <label for="email" class="required">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" required="required" size="40" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
 </form>
 ```
 
@@ -170,7 +175,7 @@ $fields = [
     ]
 ];
 
-$form = new Form($fields);
+$form = Form::createFromConfig($fields);
 $form->setAttribute('id', 'my-form');
 
 if ($_POST) {
@@ -183,160 +188,6 @@ if ($_POST) {
 } else {
     echo $form;
 }
-```
-
-[Top](#basic-usage)
-
-### Templates
-
-By default, the form object will render using a DL element with a 1:1 matching DT and DD
-elements for field labels and elements. However, you can easily expand your control over
-the rendering and display of the form object by using templates.
-
-#### Using a stream template
-
-Consider the following stream template for the above example `form.html`:
-
-```html
-    <table>
-        <tr>
-            <td>
-                [{username_label}]
-            </td>
-            <td>
-                [{username}]
-            </td>
-        </tr>
-        <tr>
-            <td>
-                [{email_label}]
-            </td>
-            <td>
-                [{email}]
-            </td>
-        </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                [{submit}]
-            </td>
-        </tr>
-    </table>
-```
-
-We can then set the template for the form object like this:
-
-```php
-$form->setTemplate('form.html');
-```
-
-And it will render like this:
-
-```html
-<form action="/" method="post" id="my-form">
-    <table>
-        <tr>
-            <td>
-                <label for="username" class="required">Username:</label>
-            </td>
-            <td>
-                <input type="text" name="username" id="username" value="" required="required" size="40" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label for="email" class="required">Email:</label>
-            </td>
-            <td>
-                <input type="email" name="email" id="email" value="" required="required" size="40" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                <input type="submit" name="submit" id="submit" value="SUBMIT" />
-            </td>
-        </tr>
-    </table>
-</form>
-```
-
-#### Using a file template
-
-Similarly, you could use a PHP file template. Consider the PHTML file `form.phtml`:
-
-```php
-<form action="<?=$action; ?>" method="<?=$method; ?>">
-    <table>
-        <tr>
-            <td>
-                <?=$username_label . PHP_EOL; ?>
-            </td>
-            <td>
-                <?=$username . PHP_EOL; ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <?=$email_label . PHP_EOL; ?>
-            </td>
-            <td>
-                <?=$email . PHP_EOL; ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                <?=$submit . PHP_EOL; ?>
-            </td>
-        </tr>
-    </table>
-</form>
-```
-
-Set that as the template:
-
-```php
-$form->setTemplate('form.phtml');
-```
-
-and it would render like this:
-
-```html
-<form action="/" method="post">
-    <table>
-        <tr>
-            <td>
-                <label for="username" class="required">Username:</label>
-            </td>
-            <td>
-                <input type="text" name="username" id="username" value="" required="required" size="40" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label for="email" class="required">Email:</label>
-            </td>
-            <td>
-                <input type="email" name="email" id="email" value="" required="required" size="40" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                <input type="submit" name="submit" id="submit" value="SUBMIT" />
-            </td>
-        </tr>
-    </table>
-</form>
 ```
 
 [Top](#basic-usage)
@@ -446,23 +297,25 @@ This will render like:
 
 ```html
 <form action="/fields2.php" method="post">
-    <dl id="pop-form-field-group-1" class="pop-form-field-group">
-    <dt>
-        <label for="username" class="required">Username:</label>
-    </dt>
-    <dd>
-        <input type="text" name="username" id="username" value="" required="required" />
-    </dd>
-    <dt>
-        <label for="password" class="required">Password:</label>
-    </dt>
-    <dd>
-        <input type="password" name="password" id="password" value="" required="required" />
-    </dd>
-    <dd>
-        <input type="submit" name="submit" id="submit" value="SUBMIT" />
-    </dd>
-    </dl>
+    <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="password" class="required">Password:</label>
+            </dt>
+            <dd>
+                <input type="password" name="password" id="password" value="" required="required" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
 </form>
 ```
 
