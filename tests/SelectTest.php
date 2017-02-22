@@ -51,6 +51,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(empty($select->getValue()));
     }
 
+    public function testOptGroupAddOptions()
+    {
+        $optGroup = new Select\Optgroup();
+        $optGroup->addOptions([
+            new Select\Option('Red', 'Red')
+        ]);
+        $optGroup->addOption(new Select\Option('White', 'White'));
+        $this->assertEquals(2, count($optGroup->getOptions()));
+    }
+
     public function testOptGroupMultiple()
     {
         $select = new SelectMultiple('my_select', [
@@ -59,6 +69,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         ], ['Red'], null, '    ');
         $select->setValue(['Yellow']);
         $this->assertEquals(6, count($select->getOptions()));
+        $this->assertFalse($select->getOptions()[0]->isSelected());
         $this->assertEquals(6, count($select->getOptionsAsArray()));
         $this->assertEquals(['Yellow'], $select->getSelected());
         $select->resetValue();

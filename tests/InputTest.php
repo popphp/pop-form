@@ -3,6 +3,7 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Element\Input;
+use Pop\Validator;
 
 class InputTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,15 +58,19 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckbox()
     {
-        $input = new Input\Checkbox('my_checkbox');
+        $input = new Input\Checkbox('my_checkbox', 'Red');
+        $input->setValue('Red');
+        $input->setValue('Green');
+        $input->resetValue();
         $this->assertInstanceOf('Pop\Form\Element\Input\Checkbox', $input);
+        $this->assertFalse($input->isChecked());
     }
 
     public function testDatalist()
     {
         $input = new Input\Datalist('my_datalist', [
             'foo', 'bar', 'baz'
-        ]);
+        ], null, '    ');
         $this->assertInstanceOf('Pop\Form\Element\Input\Datalist', $input);
 
         ob_start();
@@ -84,8 +89,28 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     public function testFile()
     {
+        $_FILES['my_file'] = [
+            'name' => 'foo.txt',
+            'size' => 1000
+        ];
         $input = new Input\File('my_file');
+        $input->addValidator(new Validator\LessThan(500));
+        $input->addValidator(new Validator\NotEqual('foo.txt'));
+        $input->addValidator(function($value){
+            return 'This is wrong';
+        });
         $this->assertInstanceOf('Pop\Form\Element\Input\File', $input);
+        $this->assertFalse($input->validate());
+        $this->assertEquals(3, count($input->getErrors()));
+    }
+
+    public function testFileValidateRequired()
+    {
+        $input = new Input\File('my_file');
+        $input->setRequired(true);
+        $this->assertInstanceOf('Pop\Form\Element\Input\File', $input);
+        $this->assertFalse($input->validate());
+        $this->assertEquals(1, count($input->getErrors()));
     }
 
     public function testHidden()
@@ -108,8 +133,12 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     public function testRadio()
     {
-        $input = new Input\Radio('my_radio');
+        $input = new Input\Radio('my_radio', 'Red');
+        $input->setValue('Red');
+        $input->setValue('Green');
+        $input->resetValue();
         $this->assertInstanceOf('Pop\Form\Element\Input\Radio', $input);
+        $this->assertFalse($input->isChecked());
     }
 
     public function testRange()
