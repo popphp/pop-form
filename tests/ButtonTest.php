@@ -9,8 +9,14 @@ class ButtonTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $button = new Button('my_button', 'Press This');
+        $button = new Button('my_button', 'Press This', '    ');
+        $button->setValue('Press That');
         $this->assertInstanceOf('Pop\Form\Element\Button', $button);
+        $this->assertEquals('Press That', $button->getValue());
+        $this->assertEquals('button', $button->getType());
+        $button->resetValue();
+        $this->assertTrue(empty($button->getValue()));
+        $this->assertTrue($button->validate());
     }
 
     public function testSubmit()
