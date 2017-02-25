@@ -64,10 +64,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         }
 
         parent::__construct('form');
-        $this->setAttributes([
-            'action' => $action,
-            'method' => $method
-        ]);
+        $this->setAction($action);
+        $this->setMethod($method);
 
         if (null !== $fields) {
             $this->addFields($fields);
@@ -134,6 +132,50 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         $fieldset->setAttribute('class', $class);
 
         return $fieldset;
+    }
+
+    /**
+     * Method to set action
+     *
+     * @param  string $action
+     * @return Form
+     */
+    public function setAction($action)
+    {
+        $this->setAttribute('action', $action);
+        return $this;
+    }
+
+    /**
+     * Method to set method
+     *
+     * @param  string $method
+     * @return Form
+     */
+    public function setMethod($method)
+    {
+        $this->setAttribute('method', $method);
+        return $this;
+    }
+
+    /**
+     * Method to get action
+     *
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->getAttribute('action');
+    }
+
+    /**
+     * Method to get method
+     *
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->getAttribute('method');
     }
 
     /**
@@ -373,25 +415,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         }
 
         return $fieldValues;
-    }
-
-    /**
-     * Get the form action
-     *
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->getAttribute('action');
-    }
-    /**
-     * Get the form method
-     *
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->getAttribute('method');
     }
 
     /**
