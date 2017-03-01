@@ -425,7 +425,17 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getField($name)
     {
-        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current]->getField($name) : null;
+        $namedField = null;
+        $fields     = $this->getFields();
+
+        foreach ($fields as $field) {
+            if ($field->getName() == $name) {
+                $namedField = $field;
+                break;
+            }
+        }
+
+        return $namedField;
     }
 
     /**
