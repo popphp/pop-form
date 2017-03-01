@@ -452,7 +452,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getFieldValue($name)
     {
-        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current]->getFieldValue($name) : null;
+        $fieldValues = $this->toArray();
+        return (isset($fieldValues[$name])) ? $fieldValues[$name] : null;
     }
 
     /**
