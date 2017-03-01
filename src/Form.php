@@ -699,10 +699,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function prepare()
     {
-        if (null !== $this->getAttribute('id')) {
+        if (null === $this->getAttribute('id')) {
             $this->setAttribute('id', 'pop-form');
         }
-        if (null !== $this->getAttribute('class')) {
+        if (null === $this->getAttribute('class')) {
             $this->setAttribute('class', 'pop-form');
         }
 
