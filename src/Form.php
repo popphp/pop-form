@@ -808,7 +808,8 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __isset($name)
     {
-        return (isset($this->fieldsets[$this->current]) && (null !== $this->fieldsets[$this->current][$name]));
+        $fieldValues = $this->toArray();
+        return isset($fieldValues[$name]);
     }
 
     /**
@@ -819,9 +820,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function __unset($name)
     {
-        if (isset($this->fieldsets[$this->current])) {
-            $this->fieldsets[$this->current][$name] = null;
-            unset($this->fieldsets[$this->current][$name]);
+        $fieldValues = $this->toArray();
+        if (isset($fieldValues[$name])) {
+            $this->getField($name)->resetValue();
         }
     }
 
