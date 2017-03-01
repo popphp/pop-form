@@ -79,7 +79,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $fields[$name] = Fields::create($name, $field);
         }
 
-        return new self($fields);
+        return new static($fields);
     }
 
     /**

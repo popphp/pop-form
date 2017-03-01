@@ -82,7 +82,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public static function createFromConfig(array $config, $action = null, $method = 'post')
     {
-        $form = new self(null, $action, $method);
+        $form = new static(null, $action, $method);
         $form->addFieldsFromConfig($config);
         return $form;
     }
@@ -98,7 +98,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public static function createFromFieldsetConfig(array $config, $container = null, $action = null, $method = 'post')
     {
-        $form = new self(null, $action, $method);
+        $form = new static(null, $action, $method);
         $form->addFieldsetsFromConfig($config, $container);
         return $form;
     }
