@@ -183,12 +183,16 @@ abstract class AbstractSelect extends AbstractElement
             foreach ($this->validators as $validator) {
                 if ($validator instanceof \Pop\Validator\ValidatorInterface) {
                     if (!$validator->evaluate($value)) {
-                        $this->errors[] = $validator->getMessage();
+                        if (!in_array($validator->getMessage(), $this->errors)) {
+                            $this->errors[] = $validator->getMessage();
+                        }
                     }
                 } else if (is_callable($validator)) {
                     $result = call_user_func_array($validator, [$value]);
                     if (null !== $result) {
-                        $this->errors[] = $result;
+                        if (!in_array($result, $this->errors)) {
+                            $this->errors[] = $result;
+                        }
                     }
                 }
             }
