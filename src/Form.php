@@ -587,8 +587,15 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         foreach ($this->filters as $filter) {
             if (((null === $type) || (!in_array($type, $filter['excludeByType']))) &&
                 ((null === $name) || (!in_array($name, $filter['excludeByName'])))) {
-                $params    = array_merge([$realValue], $filter['params']);
-                $realValue = call_user_func_array($filter['call'], $params);
+                if (is_array($realValue)) {
+                    foreach ($realValue as $k => $v) {
+                        $params        = array_merge([$v], $filter['params']);
+                        $realValue[$k] = call_user_func_array($filter['call'], $params);
+                    }
+                } else {
+                    $params    = array_merge([$realValue], $filter['params']);
+                    $realValue = call_user_func_array($filter['call'], $params);
+                }
             }
         }
 
