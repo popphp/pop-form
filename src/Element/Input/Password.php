@@ -43,4 +43,17 @@ class Password extends Element\Input
         parent::__construct($name, 'password', $value, $indent);
     }
 
+    /**
+     * Render the password element
+     *
+     * @param  int     $depth
+     * @param  string  $indent
+     * @return mixed
+     */
+    public function render($depth = 0, $indent = null)
+    {
+        $this->setAttribute('value', '');
+        return parent::render($depth, $indent);
+    }
+
 }
