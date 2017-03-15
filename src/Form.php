@@ -179,6 +179,47 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to set an attribute
+     *
+     * @param  string $a
+     * @param  string $v
+     * @return Form
+     */
+    public function setAttribute($a, $v)
+    {
+        parent::setAttribute($a, $v);
+
+        if ($a == 'id') {
+            foreach ($this->fieldsets as $i => $fieldset) {
+                $id = $v . '-fieldset-' . ($i + 1);
+                $fieldset->setAttribute('id', $id);
+            }
+
+        } else if ($a == 'class') {
+            foreach ($this->fieldsets as $i => $fieldset) {
+                $class = $v . '-fieldset';
+                $fieldset->setAttribute('class', $class);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Method to set attributes
+     *
+     * @param  array $a
+     * @return Form
+     */
+    public function setAttributes(array $a)
+    {
+        foreach ($a as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
+        return $this;
+    }
+
+    /**
      * Method to add fieldset
      *
      * @param  Fieldset $fieldset
