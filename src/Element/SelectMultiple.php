@@ -49,12 +49,6 @@ class SelectMultiple extends AbstractSelect
             'multiple' => 'multiple'
         ]);
 
-        if (null !== $selected) {
-            $this->setValue($selected);
-        } else {
-            $this->selected = [];
-        }
-
         if (null !== $indent) {
             $this->setIndent($indent);
         }
@@ -95,6 +89,12 @@ class SelectMultiple extends AbstractSelect
                 $this->addChild($option);
             }
         }
+
+        if (null !== $selected) {
+            $this->setValue($selected);
+        } else {
+            $this->selected = [];
+        }
     }
 
     /**
@@ -110,7 +110,7 @@ class SelectMultiple extends AbstractSelect
         if ($this->hasChildren()) {
             foreach ($this->childNodes as $child) {
                 if ($child instanceof Select\Option) {
-                    if ($child->getValue() == $this->selected) {
+                    if (in_array($child->getValue(), $this->selected)) {
                         $child->select();
                     } else {
                         $child->deselect();
@@ -118,7 +118,7 @@ class SelectMultiple extends AbstractSelect
                 } else if ($child instanceof Select\Optgroup) {
                     $options = $child->getOptions();
                     foreach ($options as $option) {
-                        if ($option->getValue() == $this->selected) {
+                        if (in_array($option->getValue(), $this->selected)) {
                             $option->select();
                         } else {
                             $option->deselect();
