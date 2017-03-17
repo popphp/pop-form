@@ -37,6 +37,12 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     protected $fields = [];
 
     /**
+     * Current field group
+     * @var int
+     */
+    protected $current = 0;
+
+    /**
      * Fieldset legend
      * @var string
      */
@@ -95,6 +101,33 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     }
 
     /**
+     * Method to get current group index
+     *
+     * @param  int $i
+     * @return Fieldset
+     */
+    public function setCurrent($i)
+    {
+        $this->current = (int)$i;
+        if (!isset($this->fields[$this->current])) {
+            $this->fields[$this->current] = [];
+        }
+        return $this;
+    }
+
+    /**
+     * Method to create new group
+     *
+     * @return Fieldset
+     */
+    public function createGroup()
+    {
+        $this->current++;
+        $this->fields[$this->current] = [];
+        return $this;
+    }
+
+    /**
      * Method to add a form field
      *
      * @param  Element\AbstractElement $field
@@ -102,7 +135,10 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function addField(Element\AbstractElement $field)
     {
-        $this->fields[$field->getName()] = $field;
+        if (!isset($this->fields[$this->current])) {
+            $this->fields[$this->current] = [];
+        }
+        $this->fields[$this->current][$field->getName()] = $field;
         return $this;
     }
 
@@ -129,18 +165,19 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function insertFieldBefore($name, Element\AbstractElement $field)
     {
-        $fields = [];
-
-        foreach ($this->fields as $key => $value) {
-            if ($key == $name) {
-                $fields[$field->getName()] = $field;
-                $fields[$key] = $value;
-            } else {
-                $fields[$key] = $value;
+        foreach ($this->fields as $i => $group) {
+            $fields = [];
+            foreach ($group as $key => $value) {
+                if ($key == $name) {
+                    $fields[$field->getName()] = $field;
+                    $fields[$key] = $value;
+                } else {
+                    $fields[$key] = $value;
+                }
             }
+            $this->fields[$i] = $fields;
         }
 
-        $this->fields = $fields;
         return $this;
     }
 
@@ -153,18 +190,19 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function insertFieldAfter($name, Element\AbstractElement $field)
     {
-        $fields = [];
-
-        foreach ($this->fields as $key => $value) {
-            if ($key == $name) {
-                $fields[$key] = $value;
-                $fields[$field->getName()] = $field;
-            } else {
-                $fields[$key] = $value;
+        foreach ($this->fields as $i => $group) {
+            $fields = [];
+            foreach ($group as $key => $value) {
+                if ($key == $name) {
+                    $fields[$key] = $value;
+                    $fields[$field->getName()] = $field;
+                } else {
+                    $fields[$key] = $value;
+                }
             }
+            $this->fields[$i] = $fields;
         }
 
-        $this->fields = $fields;
         return $this;
     }
 
@@ -175,7 +213,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function count()
     {
-        return count($this->fields);
+        $count = 0;
+        foreach ($this->fields as $group) {
+            $count += count($group);
+        }
+        return $count;
     }
 
     /**
@@ -187,8 +229,10 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     {
         $fieldValues = [];
 
-        foreach ($this->fields as $name => $field) {
-            $fieldValues[$name] = $field->getValue();
+        foreach ($this->fields as $group) {
+            foreach ($group as $name => $field) {
+                $fieldValues[$name] = $field->getValue();
+            }
         }
 
         return $fieldValues;
@@ -215,6 +259,16 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     }
 
     /**
+     * Method to get current group index
+     *
+     * @return int
+     */
+    public function getCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
      * Method to determine if the fieldset has a field
      *
      * @param  string $name
@@ -222,7 +276,14 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function hasField($name)
     {
-        return (isset($this->fields[$name]));
+        $result = false;
+        foreach ($this->fields as $key => $fields) {
+            if (isset($fields[$name])) {
+                $result = true;
+                break;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -233,17 +294,50 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function getField($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name] : null;
+        $result = null;
+        foreach ($this->fields as $key => $fields) {
+            if (isset($fields[$name])) {
+                $result = $fields[$name];
+            }
+        }
+        return $result;
     }
 
     /**
-     * Method to get field element objects
+     * Method to get field element objects in a group
+     *
+     * @param  int  $i
+     * @return array
+     */
+    public function getFields($i)
+    {
+        return (isset($this->fields[$i])) ? $this->fields[$i] : null;
+    }
+
+    /**
+     * Method to get all field element groups
      *
      * @return array
      */
-    public function getFields()
+    public function getFieldGroups()
     {
         return $this->fields;
+    }
+
+    /**
+     * Method to get all field elements
+     *
+     * @return array
+     */
+    public function getAllFields()
+    {
+        $fields = [];
+        foreach ($this->fields as $group) {
+            foreach ($group as $field) {
+                $fields[$field->getName()] = $field;
+            }
+        }
+        return $fields;
     }
 
     /**
@@ -254,7 +348,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function getFieldValue($name)
     {
-        return (isset($this->fields[$name])) ? $this->fields[$name]->getValue() : null;
+        $result = null;
+        foreach ($this->fields as $key => $fields) {
+            if (isset($fields[$name])) {
+                $result = $this->fields[$key][$name]->getValue();
+            }
+        }
+        return $result;
     }
 
     /**
@@ -278,8 +378,10 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function setFieldValue($name, $value)
     {
-        if (isset($this->fields[$name])) {
-            $this->fields[$name]->setValue($value);
+        foreach ($this->fields as $key => $fields) {
+            if (isset($fields[$name])) {
+                $this->fields[$key][$name]->setValue($value);
+            }
         }
         return $this;
     }
@@ -321,148 +423,154 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
         switch ($this->container) {
             case 'table':
-                $table = new Child('table');
+                foreach ($this->fields as $fields) {
+                    $table = new Child('table');
 
-                foreach ($this->fields as $field) {
-                    $errors = [];
-                    if ($field->hasErrors()) {
-                        foreach ($field->getErrors() as $error) {
-                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                    foreach ($fields as $field) {
+                        $errors = [];
+                        if ($field->hasErrors()) {
+                            foreach ($field->getErrors() as $error) {
+                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                            }
                         }
-                    }
 
-                    $tr = new Child('tr');
-                    if (null !== $field->getLabel()) {
+                        $tr = new Child('tr');
+                        if (null !== $field->getLabel()) {
+                            $td = new Child('td');
+                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+
+                            $label = new Child('label', $field->getLabel());
+                            $label->setAttribute('for', $labelFor);
+                            if (null !== $field->getLabelAttributes()) {
+                                $label->setAttributes($field->getLabelAttributes());
+                            }
+                            if ($field->isRequired()) {
+                                $label->setAttribute('class', 'required');
+                            }
+                            $td->addChild($label);
+                            $tr->addChild($td);
+                        }
+
                         $td = new Child('td');
-                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                        if ($field->isErrorPre()) {
+                            $td->addChildren($errors);
+                        }
+                        $td->addChild($field);
 
-                        $label = new Child('label', $field->getLabel());
-                        $label->setAttribute('for', $labelFor);
-                        if (null !== $field->getLabelAttributes()) {
-                            $label->setAttributes($field->getLabelAttributes());
+                        if (null !== $field->getHint()) {
+                            $hint = new Child('span', $field->getHint());
+                            if (null !== $field->getHintAttributes()) {
+                                $hint->setAttributes($field->getHintAttributes());
+                            }
+                            $td->addChild($hint);
                         }
-                        if ($field->isRequired()) {
-                            $label->setAttribute('class', 'required');
+
+                        if (null === $field->getLabel()) {
+                            $td->setAttribute('colspan', 2);
                         }
-                        $td->addChild($label);
+                        if (!$field->isErrorPre()) {
+                            $td->addChildren($errors);
+                        }
                         $tr->addChild($td);
+                        $table->addChild($tr);
                     }
 
-                    $td = new Child('td');
-                    if ($field->isErrorPre()) {
-                        $td->addChildren($errors);
-                    }
-                    $td->addChild($field);
-
-                    if (null !== $field->getHint()) {
-                        $hint = new Child('span', $field->getHint());
-                        if (null !== $field->getHintAttributes()) {
-                            $hint->setAttributes($field->getHintAttributes());
-                        }
-                        $td->addChild($hint);
-                    }
-
-                    if (null === $field->getLabel()) {
-                        $td->setAttribute('colspan', 2);
-                    }
-                    if (!$field->isErrorPre()) {
-                        $td->addChildren($errors);
-                    }
-                    $tr->addChild($td);
-                    $table->addChild($tr);
+                    $this->addChild($table);
                 }
-
-                $this->addChild($table);
                 break;
             case 'div':
             case 'p':
-                foreach ($this->fields as $field) {
-                    $errors = [];
-                    if ($field->hasErrors()) {
-                        foreach ($field->getErrors() as $error) {
-                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                foreach ($this->fields as $fields) {
+                    foreach ($fields as $field) {
+                        $errors = [];
+                        if ($field->hasErrors()) {
+                            foreach ($field->getErrors() as $error) {
+                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                            }
                         }
-                    }
 
-                    $container = new Child($this->container);
-                    if (null !== $field->getLabel()) {
-                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
-                        $label    = new Child('label', $field->getLabel());
-                        $label->setAttribute('for', $labelFor);
-                        if (null !== $field->getLabelAttributes()) {
-                            $label->setAttributes($field->getLabelAttributes());
+                        $container = new Child($this->container);
+                        if (null !== $field->getLabel()) {
+                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                            $label    = new Child('label', $field->getLabel());
+                            $label->setAttribute('for', $labelFor);
+                            if (null !== $field->getLabelAttributes()) {
+                                $label->setAttributes($field->getLabelAttributes());
+                            }
+                            if ($field->isRequired()) {
+                                $label->setAttribute('class', 'required');
+                            }
+                            $container->addChild($label);
                         }
-                        if ($field->isRequired()) {
-                            $label->setAttribute('class', 'required');
-                        }
-                        $container->addChild($label);
-                    }
 
-                    if ($field->isErrorPre()) {
-                        $container->addChildren($errors);
-                    }
-                    $container->addChild($field);
-
-                    if (null !== $field->getHint()) {
-                        $hint = new Child('span', $field->getHint());
-                        if (null !== $field->getHintAttributes()) {
-                            $hint->setAttributes($field->getHintAttributes());
+                        if ($field->isErrorPre()) {
+                            $container->addChildren($errors);
                         }
-                        $container->addChild($hint);
+                        $container->addChild($field);
+
+                        if (null !== $field->getHint()) {
+                            $hint = new Child('span', $field->getHint());
+                            if (null !== $field->getHintAttributes()) {
+                                $hint->setAttributes($field->getHintAttributes());
+                            }
+                            $container->addChild($hint);
+                        }
+                        if (!$field->isErrorPre()) {
+                            $container->addChildren($errors);
+                        }
+                        $this->addChild($container);
                     }
-                    if (!$field->isErrorPre()) {
-                        $container->addChildren($errors);
-                    }
-                    $this->addChild($container);
                 }
                 break;
             default:
-                $dl = new Child('dl');
+                foreach ($this->fields as $fields) {
+                    $dl = new Child('dl');
 
-                foreach ($this->fields as $field) {
-                    $errors = [];
-                    if ($field->hasErrors()) {
-                        foreach ($field->getErrors() as $error) {
-                            $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                    foreach ($fields as $field) {
+                        $errors = [];
+                        if ($field->hasErrors()) {
+                            foreach ($field->getErrors() as $error) {
+                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                            }
                         }
-                    }
 
-                    if (null !== $field->getLabel()) {
-                        $dt = new Child('dt');
-                        $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                        if (null !== $field->getLabel()) {
+                            $dt = new Child('dt');
+                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
-                        $label = new Child('label', $field->getLabel());
-                        $label->setAttribute('for', $labelFor);
-                        if (null !== $field->getLabelAttributes()) {
-                            $label->setAttributes($field->getLabelAttributes());
+                            $label = new Child('label', $field->getLabel());
+                            $label->setAttribute('for', $labelFor);
+                            if (null !== $field->getLabelAttributes()) {
+                                $label->setAttributes($field->getLabelAttributes());
+                            }
+                            if ($field->isRequired()) {
+                                $label->setAttribute('class', 'required');
+                            }
+                            $dt->addChild($label);
+                            $dl->addChild($dt);
                         }
-                        if ($field->isRequired()) {
-                            $label->setAttribute('class', 'required');
+
+                        $dd = new Child('dd');
+                        if ($field->isErrorPre()) {
+                            $dd->addChildren($errors);
                         }
-                        $dt->addChild($label);
-                        $dl->addChild($dt);
+                        $dd->addChild($field);
+
+                        if (null !== $field->getHint()) {
+                            $hint = new Child('span', $field->getHint());
+                            if (null !== $field->getHintAttributes()) {
+                                $hint->setAttributes($field->getHintAttributes());
+                            }
+                            $dd->addChild($hint);
+                        }
+                        if (!$field->isErrorPre()) {
+                            $dd->addChildren($errors);
+                        }
+                        $dl->addChild($dd);
                     }
 
-                    $dd = new Child('dd');
-                    if ($field->isErrorPre()) {
-                        $dd->addChildren($errors);
-                    }
-                    $dd->addChild($field);
-
-                    if (null !== $field->getHint()) {
-                        $hint = new Child('span', $field->getHint());
-                        if (null !== $field->getHintAttributes()) {
-                            $hint->setAttributes($field->getHintAttributes());
-                        }
-                        $dd->addChild($hint);
-                    }
-                    if (!$field->isErrorPre()) {
-                        $dd->addChildren($errors);
-                    }
-                    $dl->addChild($dd);
+                    $this->addChild($dl);
                 }
-
-                $this->addChild($dl);
         }
 
         return $this;
@@ -477,33 +585,35 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     {
         $fields = [];
 
-        foreach ($this->fields as $field) {
-            if (null !== $field->getLabel()) {
-                $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
-                $label    = new Child('label', $field->getLabel());
-                $label->setAttribute('for', $labelFor);
-                if (null !== $field->getLabelAttributes()) {
-                    $label->setAttributes($field->getLabelAttributes());
+        foreach ($this->fields as $groups) {
+            foreach ($groups as $field) {
+                if (null !== $field->getLabel()) {
+                    $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                    $label    = new Child('label', $field->getLabel());
+                    $label->setAttribute('for', $labelFor);
+                    if (null !== $field->getLabelAttributes()) {
+                        $label->setAttributes($field->getLabelAttributes());
+                    }
+                    if ($field->isRequired()) {
+                        $label->setAttribute('class', 'required');
+                    }
+                    $fields[$field->getName() . '_label'] = $label->render();
                 }
-                if ($field->isRequired()) {
-                    $label->setAttribute('class', 'required');
+
+                if (null !== $field->getHint()) {
+                    $hint = new Child('span', $field->getHint());
+                    if (null !== $field->getHintAttributes()) {
+                        $hint->setAttributes($field->getHintAttributes());
+                    }
+                    $fields[$field->getName() . '_hint'] = $hint->render();
                 }
-                $fields[$field->getName() . '_label'] = $label->render();
-            }
 
-            if (null !== $field->getHint()) {
-                $hint = new Child('span', $field->getHint());
-                if (null !== $field->getHintAttributes()) {
-                    $hint->setAttributes($field->getHintAttributes());
+                if ($field->hasErrors()) {
+                    $fields[$field->getName() . '_errors'] = $field->getErrors();
                 }
-                $fields[$field->getName() . '_hint'] = $hint->render();
-            }
 
-            if ($field->hasErrors()) {
-                $fields[$field->getName() . '_errors'] = $field->getErrors();
+                $fields[$field->getName()] = $field->render();
             }
-
-            $fields[$field->getName()] = $field->render();
         }
 
         return $fields;
@@ -541,7 +651,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function __isset($name)
     {
-        return isset($this->fields[$name]);
+        return $this->hasField($name);
     }
 
     /**
@@ -552,9 +662,12 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      */
     public function __unset($name)
     {
-        if (isset($this->fields[$name])) {
-            $this->fields[$name] = null;
-            unset($this->fields[$name]);
+        foreach ($this->fields as $i => $group) {
+            foreach ($group as $key => $value) {
+                if ($key == $name) {
+                    unset($this->fields[$i][$key]);
+                }
+            }
         }
     }
 

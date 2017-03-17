@@ -31,7 +31,7 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
                 'label' => 'File:'
             ]
         ]);
-        $this->assertEquals(2, count($fieldset->getFields()));
+        $this->assertEquals(2, count($fieldset->getAllFields()));
     }
 
 }

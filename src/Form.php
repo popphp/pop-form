@@ -360,14 +360,23 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function addFieldsFromConfig(array $config)
     {
-        $fields = [];
 
+        $i = 1;
         foreach ($config as $name => $field) {
-            $fields[$name] = Fields::create($name, $field);
+            if (is_numeric($name) && !isset($field[$name]['type'])) {
+                $fields = [];
+                foreach ($field as $n => $f) {
+                    $fields[$n] = Fields::create($n, $f);
+                }
+                if ($i > 1) {
+                    $this->fieldsets[$this->current]->createGroup();
+                }
+                $this->fieldsets[$this->current]->addFields($fields);
+                $i++;
+            } else {
+                $this->addField(Fields::create($name, $field));
+            }
         }
-
-        $this->addFields($fields);
-
         return $this;
     }
 
@@ -489,7 +498,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         $fields = [];
 
         foreach ($this->fieldsets as $fieldset) {
-            $fields = array_merge($fields, $fieldset->getFields());
+            $fields = array_merge($fields, $fieldset->getAllFields());
         }
 
         return $fields;
@@ -803,7 +812,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         }
 
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->getFields() as $field) {
+            foreach ($fieldset->getAllFields() as $field) {
                 if ($field instanceof Element\Input\File) {
                     $this->setAttribute('enctype', 'multipart/form-data');
                     break;
