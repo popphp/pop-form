@@ -505,6 +505,22 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Method to remove a form field
+     *
+     * @param  string $field
+     * @return Form
+     */
+    public function removeField($field)
+    {
+        foreach ($this->fieldsets as $fieldset) {
+            if ($fieldset->hasField($field)) {
+                unset($fieldset[$field]);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Method to get a field element value
      *
      * @param  string $name
