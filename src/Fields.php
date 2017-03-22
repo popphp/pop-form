@@ -138,7 +138,13 @@ class Fields
 
         // Set any attributes.
         if (null !== $attributes) {
-            $element->setAttributes($attributes);
+            if ($element instanceof Element\CheckboxSet) {
+                $element->setCheckboxAttributes($attributes);
+            } else if ($element instanceof Element\RadioSet) {
+                $element->setRadioAttributes($attributes);
+            } else {
+                $element->setAttributes($attributes);
+            }
         }
         // Set any validators.
         if (null !== $validators) {
