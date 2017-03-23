@@ -557,8 +557,13 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function setFieldValues(array $values)
     {
-        foreach ($values as $name => $value) {
-            $this->setFieldValue($name, $value);
+        $fields = $this->toArray();
+        foreach ($fields as $name => $value) {
+            if (isset($values[$name])) {
+                $this->setFieldValue($name, $values[$name]);
+            } else {
+                $this->getField($name)->resetValue();
+            }
         }
 
         $this->filterValues();
