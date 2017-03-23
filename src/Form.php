@@ -561,7 +561,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         foreach ($fields as $name => $value) {
             if (isset($values[$name])) {
                 $this->setFieldValue($name, $values[$name]);
-            } else {
+            } else if (!($this->getField($name) instanceof Element\Button) &&
+                !($this->getField($name) instanceof Element\Input\Button) &&
+                !($this->getField($name) instanceof Element\Input\Submit) &&
+                !($this->getField($name) instanceof Element\Input\Reset)) {
                 $this->getField($name)->resetValue();
             }
         }
