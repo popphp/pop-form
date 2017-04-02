@@ -146,7 +146,7 @@ class CheckboxSet extends AbstractElement
     {
         $this->checked = (!is_array($value)) ? [$value] : $value;
 
-        if (!empty($this->checked) && ($this->hasChildren())) {
+        if ((count($this->checked) > 0) && ($this->hasChildren())) {
             foreach ($this->childNodes as $child) {
                 if ($child instanceof Input\Checkbox) {
                     if (in_array($child->getValue(), $this->checked)) {

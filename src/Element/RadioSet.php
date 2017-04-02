@@ -145,7 +145,7 @@ class RadioSet extends AbstractElement
     {
         $this->checked = $value;
 
-        if (!empty($this->checked) && ($this->hasChildren())) {
+        if ((null !== $this->checked) && ($this->hasChildren())) {
             foreach ($this->childNodes as $child) {
                 if ($child instanceof Input\Radio) {
                     if ($child->getValue() == $this->checked) {
