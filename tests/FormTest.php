@@ -168,6 +168,35 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form->clearFilters();
     }
 
+    public function testAddColumn()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ]
+        ],
+            [
+            'email' => [
+                'type'  => 'email',
+                'label' => 'Email:'
+            ]
+        ],
+        [
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $form->addColumn([1, 2], 'left-column');
+        $form->addColumn(3,'right-column');
+        $this->assertTrue($form->hasColumn('left-column'));
+        $this->assertEquals(2, count($form->getColumn('left-column')));
+        $form->removeColumn('right-column');
+        $this->assertFalse($form->hasColumn('right-column'));
+    }
+
     public function testIsValid()
     {
         $form = Form::createFromConfig([

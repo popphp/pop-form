@@ -37,6 +37,12 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     protected $fieldsets = [];
 
     /**
+     * Form columns
+     * @var array
+     */
+    protected $columns = [];
+
+    /**
      * Current field fieldset
      * @var int
      */
@@ -258,6 +264,80 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     public function getFieldset()
     {
         return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current] : null;
+    }
+
+    /**
+     * Method to add form column
+     *
+     * @param  mixed  $fieldsets
+     * @param  string $class
+     * @return Form
+     */
+    public function addColumn($fieldsets, $class = null)
+    {
+        if (!is_array($fieldsets)) {
+            $fieldsets = [$fieldsets];
+        }
+
+        foreach ($fieldsets as $i => $num) {
+            $fieldsets[$i] = (int)$num - 1;
+        }
+
+        if (null === $class) {
+            $class = 'pop-form-column-' . (count($this->columns) + 1);
+        }
+
+        $this->columns[$class] = $fieldsets;
+        return $this;
+    }
+
+    /**
+     * Method to determine if form has a column
+     *
+     * @param  string $class
+     * @return boolean
+     */
+    public function hasColumn($class)
+    {
+        if (is_numeric($class)) {
+            $class = 'pop-form-column-' . $class;
+        }
+
+        return isset($this->columns[$class]);
+    }
+
+    /**
+     * Method to get form column
+     *
+     * @param  string $class
+     * @return array
+     */
+    public function getColumn($class)
+    {
+        if (is_numeric($class)) {
+            $class = 'pop-form-column-' . $class;
+        }
+
+        return (isset($this->columns[$class])) ? $this->columns[$class] : null;
+    }
+
+    /**
+     * Method to remove form column
+     *
+     * @param  string $class
+     * @return Form
+     */
+    public function removeColumn($class)
+    {
+        if (is_numeric($class)) {
+            $class = 'pop-form-column-' . $class;
+        }
+
+        if (isset($this->columns[$class])) {
+            unset($this->columns[$class]);
+        }
+
+        return $this;
     }
 
     /**
@@ -798,9 +878,24 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
             $this->setAttribute('class', 'pop-form');
         }
 
-        foreach ($this->fieldsets as $fieldset) {
-            $fieldset->prepare();
-            $this->addChild($fieldset);
+        if (count($this->columns) > 0) {
+            foreach ($this->columns as $class => $fieldsets) {
+                $column = new Child('div');
+                $column->setAttribute('class', $class);
+                foreach ($fieldsets as $i) {
+                    if (isset($this->fieldsets[$i])) {
+                        $fieldset = $this->fieldsets[$i];
+                        $fieldset->prepare();
+                        $column->addChild($fieldset);
+                    }
+                }
+                $this->addChild($column);
+            }
+        } else {
+            foreach ($this->fieldsets as $fieldset) {
+                $fieldset->prepare();
+                $this->addChild($fieldset);
+            }
         }
 
         return $this;
