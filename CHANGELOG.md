@@ -34,3 +34,8 @@ are the addition of fieldsets to support more syntactically correct HTML within 
 | `insertGroupConfigBefore()` | **REMOVED**                        |
 | `insertGroupConfigAfter()`  | **REMOVED**                        |
 | `getElementIndex()`         | **REMOVED**                        |
+
+Please reference the documentation for further information on the changes to the component:
+
+- http://docs.popphp.org/en/latest/user_guide/forms.html
+- http://api.popphp.org/3.6/namespaces/Pop.Form.html
