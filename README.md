@@ -56,7 +56,11 @@ $email->setLabel('Email:')
 
 $submit = new Input\Submit('submit', 'SUBMIT');
 
-$form->addElements([$username, $email, $submit]);
+// Add a single field
+$form->addField($username);
+
+// Add multiple fields
+$form->addFields([$email, $submit]);
 
 if ($_POST) {
     $form->setFieldValues($_POST);
@@ -70,7 +74,7 @@ if ($_POST) {
 }
 ```
 
-So a few  things are going on in the above example:
+So a few things are going on in the above example:
 
 1. We created the form object and gave it an 'id' attribute.
 2. We created the individual field elements setting their name, label, attributes, validators, etc.
