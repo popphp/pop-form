@@ -98,6 +98,16 @@ class Captcha extends Text
     }
 
     /**
+     * Get token
+     *
+     * @return array
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
      * Set the label of the captcha form element
      *
      * @param  string $label
@@ -109,8 +119,12 @@ class Captcha extends Text
 
         if (isset($this->token['captcha'])) {
             if ((strpos($this->token['captcha'], '<img') === false) &&
-                ((strpos($this->token['captcha'], ' + ') !== false) || (strpos($this->token['captcha'], ' - ') !== false) || (strpos($this->token['captcha'], ' * ') !== false) || (strpos($this->token['captcha'], ' / ') !== false))) {
-                $this->label = $this->label . '(' . str_replace([' * ', ' / '], [' &#215; ', ' &#247; '], $this->token['captcha'] .')');
+                ((strpos($this->token['captcha'], ' + ') !== false) ||
+                 (strpos($this->token['captcha'], ' - ') !== false) ||
+                 (strpos($this->token['captcha'], ' * ') !== false) ||
+                 (strpos($this->token['captcha'], ' / ') !== false))) {
+                $this->label = $this->label . '(' .
+                    str_replace([' * ', ' / '], [' &#215; ', ' &#247; '], $this->token['captcha'] .')');
             } else {
                 $this->label = $this->label . $this->token['captcha'];
             }
@@ -157,7 +171,14 @@ class Captcha extends Text
         // If there is query data, set validator to check against the token value
         if (count($queryData) > 0) {
             if (isset($queryData[$this->name])) {
-                $this->addValidator(new \Pop\Validator\Equal($this->token['answer'], 'The answer is incorrect.'));
+                $this->addValidator(function($value){
+                    $token = $this->getToken();
+                    if (isset($token['answer']) && (strtoupper($token['answer']) == strtoupper($value))) {
+                        return null;
+                    } else {
+                        return 'The answer is incorrect.';
+                    }
+                });
             }
         }
     }
