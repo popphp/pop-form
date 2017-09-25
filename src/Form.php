@@ -148,7 +148,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function setAction($action)
     {
-        $this->setAttribute('action', $action);
+        $this->setAttribute('action', str_replace(['?captcha=1', '&captcha=1'], ['', ''], $action));
         return $this;
     }
 

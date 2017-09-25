@@ -53,7 +53,7 @@ class Captcha extends Text
         }
 
         // If token does not exist, create one
-        if (!isset($_SESSION['pop_captcha'])) {
+        if (!isset($_SESSION['pop_captcha']) || (isset($_GET['captcha']) && ((int)$_GET['captcha'] == 1))) {
             $this->createNewToken($captcha, $answer, $expire);
         // Else, retrieve existing token
         } else {
@@ -73,7 +73,7 @@ class Captcha extends Text
     }
 
     /**
-     * Set the token of the csrf form element
+     * Set the token of the CAPTCHA form element
      *
      * @param  string $captcha
      * @param  string $answer
