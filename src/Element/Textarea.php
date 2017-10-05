@@ -55,8 +55,44 @@ class Textarea extends AbstractElement
      */
     public function setRequired($required)
     {
-        $this->setAttribute('required', 'required');
+        if ($required) {
+            $this->setAttribute('required', 'required');
+        } else {
+            $this->removeAttribute('required');
+        }
         return parent::setRequired($required);
+    }
+
+    /**
+     * Set whether the form element is disabled
+     *
+     * @param  boolean $disabled
+     * @return Textarea
+     */
+    public function setDisabled($disabled)
+    {
+        if ($disabled) {
+            $this->setAttribute('disabled', 'disabled');
+        } else {
+            $this->removeAttribute('disabled');
+        }
+        return parent::setDisabled($disabled);
+    }
+
+    /**
+     * Set whether the form element is readonly
+     *
+     * @param  boolean $readonly
+     * @return Textarea
+     */
+    public function setReadonly($readonly)
+    {
+        if ($readonly) {
+            $this->setAttribute('readonly', 'readonly');
+        } else {
+            $this->removeAttribute('readonly');
+        }
+        return parent::setReadonly($readonly);
     }
 
     /**

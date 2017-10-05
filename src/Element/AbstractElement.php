@@ -66,6 +66,18 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected $required = false;
 
     /**
+     * Form element disabled property
+     * @var boolean
+     */
+    protected $disabled = false;
+
+    /**
+     * Form element readonly property
+     * @var boolean
+     */
+    protected $readonly = false;
+
+    /**
      * Form element validators
      * @var array
      */
@@ -215,6 +227,30 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Set whether the form element is disabled
+     *
+     * @param  boolean $disabled
+     * @return mixed
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = (boolean)$disabled;
+        return $this;
+    }
+
+    /**
+     * Set whether the form element is readonly
+     *
+     * @param  boolean $readonly
+     * @return mixed
+     */
+    public function setReadonly($readonly)
+    {
+        $this->readonly = (boolean)$readonly;
+        return $this;
+    }
+
+    /**
      * Set error pre-display
      *
      * @param  boolean $pre
@@ -341,6 +377,26 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function isRequired()
     {
         return $this->required;
+    }
+
+    /**
+     * Get whether the form element object is disabled
+     *
+     * @return boolean
+     */
+    public function isDisabled()
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * Get whether the form element object is readonly
+     *
+     * @return boolean
+     */
+    public function isReadonly()
+    {
+        return $this->readonly;
     }
 
     /**

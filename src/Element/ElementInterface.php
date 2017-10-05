@@ -74,6 +74,22 @@ interface ElementInterface
     public function setRequired($required);
 
     /**
+     * Set whether the form element is disabled
+     *
+     * @param  boolean $disabled
+     * @return mixed
+     */
+    public function setDisabled($disabled);
+
+    /**
+     * Set whether the form element is readonly
+     *
+     * @param  boolean $readonly
+     * @return mixed
+     */
+    public function setReadonly($readonly);
+
+    /**
      * Set error to display before the element
      *
      * @param  boolean $pre
@@ -151,6 +167,20 @@ interface ElementInterface
      * @return boolean
      */
     public function isRequired();
+
+    /**
+     * Get whether the form element is disabled
+     *
+     * @return boolean
+     */
+    public function isDisabled();
+
+    /**
+     * Get whether the form element is readonly
+     *
+     * @return boolean
+     */
+    public function isReadonly();
 
     /**
      * Get form element errors

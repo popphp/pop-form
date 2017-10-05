@@ -11,6 +11,8 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     {
         $element = new Element\Input('my_input');
         $element->setRequired(true);
+        $element->setDisabled(true);
+        $element->setReadonly(true);
         $element->setErrorPre(true);
         $element->clearErrors();
         $this->assertInstanceOf('Pop\Form\Element\AbstractElement', $element);
@@ -18,6 +20,8 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('my_input', $element->getName());
         $this->assertEquals('text', $element->getType());
         $this->assertTrue($element->isRequired());
+        $this->assertTrue($element->isDisabled());
+        $this->assertTrue($element->isReadonly());
         $this->assertEquals(0, count($element->getErrors()));
         $this->assertFalse($element->hasErrors());
     }

@@ -48,6 +48,8 @@ class Fields
         $checked      = (isset($field['checked']))    ? $field['checked']    : null;
         $selected     = (isset($field['selected']))   ? $field['selected']   : null;
         $required     = (isset($field['required']))   ? $field['required']   : null;
+        $disabled     = (isset($field['disabled']))   ? $field['disabled']   : null;
+        $readonly     = (isset($field['readonly']))   ? $field['readonly']   : null;
         $attributes   = (isset($field['attributes'])) ? $field['attributes'] : null;
         $validators   = (isset($field['validators'])) ? $field['validators'] : null;
         $expire       = (isset($field['expire']))     ? $field['expire']     : 300;
@@ -132,6 +134,14 @@ class Fields
         // Set if required.
         if ((null !== $required) && ($required)) {
             $element->setRequired($required);
+        }
+        // Set if disabled.
+        if ((null !== $disabled) && ($disabled)) {
+            $element->setDisabled($disabled);
+        }
+        // Set if readonly.
+        if ((null !== $readonly) && ($readonly)) {
+            $element->setReadonly($readonly);
         }
 
         $element->setErrorPre($errorPre);
