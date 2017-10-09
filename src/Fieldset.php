@@ -445,7 +445,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                $label->setAttribute('class', 'required');
+                                if (!empty($label->getAttribute('class'))) {
+                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                                } else {
+                                    $label->setAttribute('class', 'required');
+                                }
                             }
                             $td->addChild($label);
                             $tr->addChild($td);
@@ -498,7 +502,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                $label->setAttribute('class', 'required');
+                                if (!empty($label->getAttribute('class'))) {
+                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                                } else {
+                                    $label->setAttribute('class', 'required');
+                                }
                             }
                             $container->addChild($label);
                         }
@@ -544,7 +552,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                $label->setAttribute('class', 'required');
+                                if (!empty($label->getAttribute('class'))) {
+                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                                } else {
+                                    $label->setAttribute('class', 'required');
+                                }
                             }
                             $dt->addChild($label);
                             $dl->addChild($dt);
@@ -595,7 +607,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
-                        $label->setAttribute('class', 'required');
+                        if (!empty($label->getAttribute('class'))) {
+                            $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                        } else {
+                            $label->setAttribute('class', 'required');
+                        }
                     }
                     $fields[$field->getName() . '_label'] = $label->render();
                 }

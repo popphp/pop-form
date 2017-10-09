@@ -52,6 +52,10 @@ class Button extends AbstractElement
 
         $this->setName($name);
 
+        if (null !== $value) {
+            $this->setValue($value);
+        }
+
         if (null !== $indent) {
             $this->setIndent($indent);
         }
@@ -66,6 +70,7 @@ class Button extends AbstractElement
     public function setValue($value)
     {
         $this->setNodeValue($value);
+        $this->setAttribute('value', $value);
         return $this;
     }
 
