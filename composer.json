@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "popphp/pop-dom": ">=3.0.0",
+        "popphp/pop-dom": ">=3.1.0",
         "popphp/pop-validator": ">=3.0.0"
     },
     "require-dev": {

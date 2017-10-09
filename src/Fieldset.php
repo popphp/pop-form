@@ -445,7 +445,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                if (!empty($label->getAttribute('class'))) {
+                                if ($label->hasAttribute('class')) {
                                     $label->setAttribute('class', $label->getAttribute('class') . ' required');
                                 } else {
                                     $label->setAttribute('class', 'required');
@@ -502,7 +502,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                if (!empty($label->getAttribute('class'))) {
+                                if ($label->hasAttribute('class')) {
                                     $label->setAttribute('class', $label->getAttribute('class') . ' required');
                                 } else {
                                     $label->setAttribute('class', 'required');
@@ -552,7 +552,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                                 $label->setAttributes($field->getLabelAttributes());
                             }
                             if ($field->isRequired()) {
-                                if (!empty($label->getAttribute('class'))) {
+                                if ($label->hasAttribute('class')) {
                                     $label->setAttribute('class', $label->getAttribute('class') . ' required');
                                 } else {
                                     $label->setAttribute('class', 'required');
@@ -607,7 +607,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
-                        if (!empty($label->getAttribute('class'))) {
+                        if ($label->hasAttribute('class')) {
                             $label->setAttribute('class', $label->getAttribute('class') . ' required');
                         } else {
                             $label->setAttribute('class', 'required');
