@@ -70,7 +70,6 @@ class Button extends AbstractElement
     public function setValue($value)
     {
         $this->setNodeValue($value);
-        $this->setAttribute('value', $value);
         return $this;
     }
 
