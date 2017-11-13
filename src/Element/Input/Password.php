@@ -48,12 +48,13 @@ class Password extends Element\Input
      *
      * @param  int     $depth
      * @param  string  $indent
+     * @param  boolean $inner
      * @return mixed
      */
-    public function render($depth = 0, $indent = null)
+    public function render($depth = 0, $indent = null, $inner = false)
     {
         $this->setAttribute('value', '');
-        return parent::render($depth, $indent);
+        return parent::render($depth, $indent, $inner);
     }
 
 }

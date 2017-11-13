@@ -70,12 +70,12 @@ class Datalist extends Text
      *
      * @param  int     $depth
      * @param  string  $indent
-     * @param  string  $errorIndent
+     * @param  boolean $inner
      * @return mixed
      */
-    public function render($depth = 0, $indent = null, $errorIndent = null)
+    public function render($depth = 0, $indent = null, $inner = false)
     {
-        return parent::render($depth, $indent, $errorIndent) . $this->datalist->render($depth, $indent);
+        return parent::render($depth, $indent, $inner) . $this->datalist->render($depth, $indent, $inner);
     }
 
     /**

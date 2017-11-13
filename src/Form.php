@@ -925,9 +925,10 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @param  int     $depth
      * @param  string  $indent
+     * @param  boolean $inner
      * @return mixed
      */
-    public function render($depth = 0, $indent = null)
+    public function render($depth = 0, $indent = null, $inner = false)
     {
         if (!($this->hasChildren())) {
             $this->prepare();
@@ -942,7 +943,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
             }
         }
 
-        return parent::render($depth, $indent);
+        return parent::render($depth, $indent, $inner);
     }
 
     /**

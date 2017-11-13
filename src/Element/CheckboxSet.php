@@ -281,15 +281,15 @@ class CheckboxSet extends AbstractElement
      *
      * @param  int     $depth
      * @param  string  $indent
-     * @param  string  $errorIndent
+     * @param  boolean $inner
      * @return string
      */
-    public function render($depth = 0, $indent = null, $errorIndent = null)
+    public function render($depth = 0, $indent = null, $inner = false)
     {
         if (!empty($this->legend)) {
             $this->addChild(new Child('legend', $this->legend));
         }
-        return parent::render($depth, $indent, $errorIndent);
+        return parent::render($depth, $indent, $inner);
     }
 
 }
