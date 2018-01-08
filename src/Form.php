@@ -756,7 +756,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
             }
         }
 
-        if ($value instanceof Element\AbstractElement) {
+        if (($value instanceof Element\AbstractElement) && (null !== $realValue) && ($realValue != '')) {
             $value->setValue($realValue);
         }
 
