@@ -30,6 +30,12 @@ class Password extends Element\Input
 {
 
     /**
+     * Flag to allow rendering the value
+     * @var boolean
+     */
+    protected $renderValue = false;
+
+    /**
      * Constructor
      *
      * Instantiate the password input form element
@@ -37,10 +43,33 @@ class Password extends Element\Input
      * @param  string $name
      * @param  string $value
      * @param  string $indent
+     * @param  boolean $renderValue
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct($name, $value = null, $indent = null, $renderValue = false)
     {
         parent::__construct($name, 'password', $value, $indent);
+    }
+
+    /**
+     * Set the render value flag
+     *
+     * @param  boolean $renderValue
+     * @return Password
+     */
+    public function setRenderValue($renderValue)
+    {
+        $this->renderValue = (bool)$renderValue;
+        return $this;
+    }
+
+    /**
+     * Get the render value flag
+     *
+     * @return boolean
+     */
+    public function getRenderValue()
+    {
+        return $this->renderValue;
     }
 
     /**
@@ -53,7 +82,9 @@ class Password extends Element\Input
      */
     public function render($depth = 0, $indent = null, $inner = false)
     {
-        $this->setAttribute('value', '');
+        if (!$this->renderValue) {
+            $this->setAttribute('value', '');
+        }
         return parent::render($depth, $indent, $inner);
     }
 

@@ -52,6 +52,7 @@ class Fields
         $readonly     = (isset($field['readonly']))   ? $field['readonly']   : null;
         $attributes   = (isset($field['attributes'])) ? $field['attributes'] : null;
         $validators   = (isset($field['validators'])) ? $field['validators'] : null;
+        $render       = (isset($field['render']))     ? $field['render']     : false;
         $expire       = (isset($field['expire']))     ? $field['expire']     : 300;
         $captcha      = (isset($field['captcha']))    ? $field['captcha']    : null;
         $answer       = (isset($field['answer']))     ? $field['answer']     : null;
@@ -113,6 +114,9 @@ class Fields
                     throw new Exception('Error: That class for that form element does not exist.');
                 }
                 $element = new $class($name, $value);
+                if ($class == 'Pop\\Form\\Element\\Input\\Password') {
+                    $element->setRenderValue($render);
+                }
         }
 
         // Set the label.
