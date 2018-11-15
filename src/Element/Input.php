@@ -155,7 +155,7 @@ class Input extends AbstractElement
         $value = $this->getValue();
 
         // Check if the element is required
-        if (($this->required) && empty($value)) {
+        if (($this->required) && empty($value) && !($this->getType() == 'number' && $value === '0')) {
             $this->errors[] = 'This field is required.';
         }
 
