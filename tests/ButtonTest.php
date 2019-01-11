@@ -3,8 +3,9 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Element\Button;
+use PHPUnit\Framework\TestCase;
 
-class ButtonTest extends \PHPUnit_Framework_TestCase
+class ButtonTest extends TestCase
 {
 
     public function testConstructor()

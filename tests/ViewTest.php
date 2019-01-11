@@ -3,8 +3,9 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Form;
+use PHPUnit\Framework\TestCase;
 
-class ViewTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends TestCase
 {
 
     public function testSetStreamTemplate()

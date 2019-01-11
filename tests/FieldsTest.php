@@ -5,8 +5,9 @@ namespace Pop\Form\Test;
 use Pop\Form\Fields;
 use Pop\Db;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class FieldsTest extends \PHPUnit_Framework_TestCase
+class FieldsTest extends TestCase
 {
 
     public function testCreate()

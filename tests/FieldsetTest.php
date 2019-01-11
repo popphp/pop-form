@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Fieldset;
 use Pop\Form\Element;
+use PHPUnit\Framework\TestCase;
 
-class FieldsetTest extends \PHPUnit_Framework_TestCase
+class FieldsetTest extends TestCase
 {
 
     public function testConstructor()

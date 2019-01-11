@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Form;
 use Pop\Form\Element;
+use PHPUnit\Framework\TestCase;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends TestCase
 {
 
     public function testConstructor()

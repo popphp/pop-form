@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Element\Input;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class InputTest extends \PHPUnit_Framework_TestCase
+class InputTest extends TestCase
 {
 
     public function testButton()

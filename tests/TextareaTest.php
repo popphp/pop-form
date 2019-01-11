@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Element\Textarea;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class TextareaTest extends \PHPUnit_Framework_TestCase
+class TextareaTest extends TestCase
 {
 
     public function testConstructor()

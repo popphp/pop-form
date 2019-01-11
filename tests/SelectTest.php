@@ -5,8 +5,9 @@ namespace Pop\Form\Test;
 use Pop\Form\Element\Select;
 use Pop\Form\Element\SelectMultiple;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class SelectTest extends \PHPUnit_Framework_TestCase
+class SelectTest extends TestCase
 {
 
     public function testConstructor()

@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Element\CheckboxSet;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class CheckboxSetTest extends \PHPUnit_Framework_TestCase
+class CheckboxSetTest extends TestCase
 {
 
     public function testConstructor()

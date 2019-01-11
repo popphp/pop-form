@@ -4,8 +4,9 @@ namespace Pop\Form\Test;
 
 use Pop\Form\Element\RadioSet;
 use Pop\Validator;
+use PHPUnit\Framework\TestCase;
 
-class RadioSetTest extends \PHPUnit_Framework_TestCase
+class RadioSetTest extends TestCase
 {
 
     public function testConstructor()
