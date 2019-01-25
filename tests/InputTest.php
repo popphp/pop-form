@@ -107,6 +107,7 @@ class InputTest extends TestCase
 
     public function testFileValidateRequired()
     {
+        unset($_FILES['my_file']);
         $input = new Input\File('my_file');
         $input->setRequired(true);
         $this->assertInstanceOf('Pop\Form\Element\Input\File', $input);

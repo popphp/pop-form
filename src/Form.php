@@ -639,15 +639,9 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $fields = $this->toArray();
         foreach ($fields as $name => $value) {
-            if (isset($values[$name]) && (!($this->getField($name) instanceof Element\Button) &&
-                !($this->getField($name) instanceof Element\Input\Button) &&
-                !($this->getField($name) instanceof Element\Input\Submit) &&
-                !($this->getField($name) instanceof Element\Input\Reset))) {
+            if (isset($values[$name]) && !($this->getField($name)->isButton())) {
                 $this->setFieldValue($name, $values[$name]);
-            } else if (!($this->getField($name) instanceof Element\Button) &&
-                !($this->getField($name) instanceof Element\Input\Button) &&
-                !($this->getField($name) instanceof Element\Input\Submit) &&
-                !($this->getField($name) instanceof Element\Input\Reset)) {
+            } else if (!($this->getField($name)->isButton())) {
                 $this->getField($name)->resetValue();
             }
         }
@@ -670,45 +664,26 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Add filter
      *
-     * @param  mixed $call
-     * @param  mixed $params
-     * @param  mixed $excludeByType
-     * @param  mixed $excludeByName
+     * @param  Filter\FilterInterface $filter
      * @return Form
      */
-    public function addFilter($call, $params = null, $excludeByType = null, $excludeByName = null)
+    public function addFilter(Filter\FilterInterface $filter)
     {
-        if (null !== $params) {
-            if (!is_array($params)) {
-                $params = [$params];
-            }
-        } else {
-            $params = [];
+        $this->filters[] = $filter;
+        return $this;
+    }
+
+    /**
+     * Add filters
+     *
+     * @param  array $filters
+     * @return Form
+     */
+    public function addFilters(array $filters)
+    {
+        foreach ($filters as $filter) {
+            $this->addFilter($filter);
         }
-
-        if (null !== $excludeByType) {
-            if (!is_array($excludeByType)) {
-                $excludeByType = [$excludeByType];
-            }
-        } else {
-            $excludeByType = [];
-        }
-
-        if (null !== $excludeByName) {
-            if (!is_array($excludeByName)) {
-                $excludeByName = [$excludeByName];
-            }
-        } else {
-            $excludeByName = [];
-        }
-
-        $this->filters[] = [
-            'call'          => $call,
-            'params'        => $params,
-            'excludeByType' => $excludeByType,
-            'excludeByName' => $excludeByName
-        ];
-
         return $this;
     }
 
@@ -742,18 +717,7 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         }
 
         foreach ($this->filters as $filter) {
-            if (((null === $type) || (!in_array($type, $filter['excludeByType']))) &&
-                ((null === $name) || (!in_array($name, $filter['excludeByName'])))) {
-                if (is_array($realValue)) {
-                    foreach ($realValue as $k => $v) {
-                        $params        = array_merge([$v], $filter['params']);
-                        $realValue[$k] = call_user_func_array($filter['call'], $params);
-                    }
-                } else {
-                    $params    = array_merge([$realValue], $filter['params']);
-                    $realValue = call_user_func_array($filter['call'], $params);
-                }
-            }
+            $realValue = $filter->filter($realValue, $type, $name);
         }
 
         if (($value instanceof Element\AbstractElement) && (null !== $realValue) && ($realValue != '')) {

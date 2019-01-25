@@ -400,6 +400,17 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Get whether the form element object is a button
+     *
+     * @return boolean
+     */
+    public function isButton()
+    {
+        return (($this instanceof Button) || ($this instanceof Input\Button) ||
+            ($this instanceof Input\Submit) || ($this instanceof Input\Reset));
+    }
+
+    /**
      * Get form element object errors
      *
      * @return array

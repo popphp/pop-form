@@ -183,6 +183,13 @@ interface ElementInterface
     public function isReadonly();
 
     /**
+     * Get whether the form element object is a button
+     *
+     * @return boolean
+     */
+    public function isButton();
+
+    /**
      * Get form element errors
      *
      * @return array

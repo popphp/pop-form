@@ -3,6 +3,7 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Form;
+use Pop\Form\Filter\Filter;
 use Pop\Form\Element;
 use PHPUnit\Framework\TestCase;
 
@@ -162,8 +163,8 @@ class FormTest extends TestCase
                 'value' => 'SUBMIT'
             ]
         ]);
-        $form->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8']);
-        $form->addFilter('strip_tags', null, 'email', 'email');
+        $form->addFilter(new Filter('htmlentities', [ENT_QUOTES, 'UTF-8']));
+        $form->addFilter(new Filter('strip_tags', null, 'email', 'email'));
         $form->setFieldValues(['username' => '<h1>admin</h1>', 'email' => 'admin@admin.com']);
         $this->assertEquals('&lt;h1&gt;admin&lt;/h1&gt;', $form->username);
         $form->clearFilters();
@@ -267,6 +268,7 @@ class FormTest extends TestCase
             ]
         ]);
         $form->clearTokens();
+        $this->assertInstanceOf('Pop\Form\Form', $form);
     }
 
 }
