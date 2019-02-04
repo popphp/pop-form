@@ -96,6 +96,9 @@ class Fields
             case 'input-button':
                 $element = new Element\Input\Button($name, $value);
                 break;
+            case 'datalist':
+                $element = new Element\Input\Datalist($name, $values, $value);
+                break;
             case 'datetime':
                 $element = new Element\Input\DateTime($name, $value);
                 break;

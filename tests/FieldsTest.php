@@ -40,6 +40,13 @@ class FieldsTest extends TestCase
             'type'  => 'input-button',
             'value' => 'Click Me!'
         ]);
+        $dataList = Fields::create('datalist', [
+            'type'  => 'datalist',
+            'values' => [
+                'Books',
+                'Bugs'
+            ]
+        ]);
         $dateTime = Fields::create('datetime', [
             'type'  => 'datetime'
         ]);
@@ -77,6 +84,7 @@ class FieldsTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\CheckboxSet', $checkbox);
         $this->assertInstanceOf('Pop\Form\Element\RadioSet', $radio);
         $this->assertInstanceOf('Pop\Form\Element\Input\Button', $inputButton);
+        $this->assertInstanceOf('Pop\Form\Element\Input\Datalist', $dataList);
         $this->assertInstanceOf('Pop\Form\Element\Input\DateTime', $dateTime);
         $this->assertInstanceOf('Pop\Form\Element\Input\DateTimeLocal', $dateTimeLocal);
         $this->assertInstanceOf('Pop\Form\Element\Input\Number', $number);
