@@ -24,7 +24,7 @@ use Pop\Validator;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    3.3.0
  */
 abstract class AbstractElement extends Child implements ElementInterface
 {
