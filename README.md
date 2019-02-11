@@ -204,15 +204,20 @@ would be `strip_tags` and `htmlentities`. So in the first example, we would add 
 to the $_POST block:
 
 ```php
+
+use Pop\Form\Filter\Filter;
+
+/** ... Code to create form **/
+
 if ($_POST) {
-    $form->addFilter('strip_tags')
-         ->addFilter('htmlentities', [ENT_QUOTES, 'UTF-8']);
+    $form->addFilter(new Filter('strip_tags'))
+         ->addFilter(new Filter('htmlentities', [ENT_QUOTES, 'UTF-8']));
     $form->setFieldValues($_POST);
     if (!$form->isValid()) {
         echo $form; // Has errors
     } else {
         $form->clearFilters();
-        $form->addFilter('html_entity_decode', [ENT_QUOTES, 'UTF-8']);
+        $form->addFilter(new Filter('html_entity_decode', [ENT_QUOTES, 'UTF-8']));
         echo 'Valid!';
     }
 } else {
