@@ -123,9 +123,21 @@ abstract class AbstractSelect extends AbstractElement
     {
         if ($readonly) {
             $this->setAttribute('readonly', 'readonly');
+            foreach ($this->childNodes as $childNode) {
+                if ($childNode->getAttribute('selected') != 'selected') {
+                    $childNode->setAttribute('disabled', 'disabled');
+                } else {
+                    $childNode->setAttribute('readonly', 'readonly');
+                }
+            }
         } else {
             $this->removeAttribute('readonly');
+            foreach ($this->childNodes as $childNode) {
+                $childNode->removeAttribute('disabled');
+                $childNode->removeAttribute('readonly');
+            }
         }
+
         return parent::setReadonly($readonly);
     }
 

@@ -178,7 +178,7 @@ class AclForm extends Form
                             $this->acl->isDeniedManyStrict($this->roles, $fieldName, $this->permissions['modify']) :
                             $this->acl->isDeniedMany($this->roles, $fieldName, $this->permissions['modify']);
                         if ($modifyDenied) {
-                            $field->setAttribute('readonly', 'readonly');
+                            $field->setReadonly(true);
                         }
                     }
                 }

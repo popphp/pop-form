@@ -100,6 +100,50 @@ class CheckboxSet extends AbstractElement
     }
 
     /**
+     * Set whether the form element is disabled
+     *
+     * @param  boolean $disabled
+     * @return Select
+     */
+    public function setDisabled($disabled)
+    {
+        if ($disabled) {
+            foreach ($this->childNodes as $childNode) {
+                $childNode->setAttribute('disabled', 'disabled');
+            }
+        } else {
+            foreach ($this->childNodes as $childNode) {
+                $childNode->removeAttribute('disabled');
+            }
+        }
+
+        return parent::setDisabled($disabled);
+    }
+
+    /**
+     * Set whether the form element is readonly
+     *
+     * @param  boolean $readonly
+     * @return Select
+     */
+    public function setReadonly($readonly)
+    {
+        if ($readonly) {
+            foreach ($this->childNodes as $childNode) {
+                $childNode->setAttribute('readonly', 'readonly');
+                $childNode->setAttribute('onclick', 'return false;');
+            }
+        } else {
+            foreach ($this->childNodes as $childNode) {
+                $childNode->removeAttribute('readonly');
+                $childNode->removeAttribute('onclick');
+            }
+        }
+
+        return parent::setReadonly($readonly);
+    }
+
+    /**
      * Set an attribute for the input checkbox elements
      *
      * @param  string $a
