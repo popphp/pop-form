@@ -27,8 +27,13 @@ use Pop\Form\Element;
  * @version    3.3.0
  */
 
-class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
+class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate
 {
+
+    /**
+     * Trait declaration
+     */
+    use FormTrait;
 
     /**
      * Field fieldsets
@@ -47,12 +52,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      * @var int
      */
     protected $current = 0;
-
-    /**
-     * Filters
-     * @var array
-     */
-    protected $filters = [];
 
     /**
      * Constructor
@@ -440,7 +439,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function addFieldsFromConfig(array $config)
     {
-
         $i = 1;
         foreach ($config as $name => $field) {
             if (is_numeric($name) && !isset($field[$name]['type'])) {
@@ -652,76 +650,29 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
-     * Method to iterate over the form elements
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->toArray());
-    }
-
-    /**
-     * Add filter
-     *
-     * @param  Filter\FilterInterface $filter
-     * @return Form
-     */
-    public function addFilter(Filter\FilterInterface $filter)
-    {
-        $this->filters[] = $filter;
-        return $this;
-    }
-
-    /**
-     * Add filters
-     *
-     * @param  array $filters
-     * @return Form
-     */
-    public function addFilters(array $filters)
-    {
-        foreach ($filters as $filter) {
-            $this->addFilter($filter);
-        }
-        return $this;
-    }
-
-    /**
-     * Clear filters
-     *
-     * @return Form
-     */
-    public function clearFilters()
-    {
-        $this->filters = [];
-        return $this;
-    }
-
-    /**
      * Filter value with the filters in the form object
      *
-     * @param  mixed $value
+     * @param  mixed $field
      * @return mixed
      */
-    public function filterValue($value)
+    public function filterValue($field)
     {
-        if ($value instanceof Element\AbstractElement) {
-            $name      = $value->getName();
-            $type      = $value->getType();
-            $realValue = $value->getValue();
+        if ($field instanceof Element\AbstractElement) {
+            $name      = $field->getName();
+            $type      = $field->getType();
+            $realValue = $field->getValue();
         } else {
             $type      = null;
             $name      = null;
-            $realValue = $value;
+            $realValue = $field;
         }
 
         foreach ($this->filters as $filter) {
             $realValue = $filter->filter($realValue, $type, $name);
         }
 
-        if (($value instanceof Element\AbstractElement) && (null !== $realValue) && ($realValue != '')) {
-            $value->setValue($realValue);
+        if (($field instanceof Element\AbstractElement) && (null !== $realValue) && ($realValue != '')) {
+            $field->setValue($realValue);
         }
 
         return $realValue;
@@ -968,51 +919,6 @@ class Form extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
         if (isset($fieldValues[$name])) {
             $this->getField($name)->resetValue();
         }
-    }
-
-    /**
-     * ArrayAccess offsetExists
-     *
-     * @param  mixed $offset
-     * @return boolean
-     */
-    public function offsetExists($offset)
-    {
-        return $this->__isset($offset);
-    }
-
-    /**
-     * ArrayAccess offsetGet
-     *
-     * @param  mixed $offset
-     * @return mixed
-     */
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
-    }
-
-    /**
-     * ArrayAccess offsetSet
-     *
-     * @param  mixed $offset
-     * @param  mixed $value
-     * @return void
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->__set($offset, $value);
-    }
-
-    /**
-     * ArrayAccess offsetUnset
-     *
-     * @param  mixed $offset
-     * @return void
-     */
-    public function offsetUnset($offset)
-    {
-        $this->__unset($offset);
     }
 
 }

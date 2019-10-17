@@ -54,7 +54,7 @@ class AclForm extends Form
      */
     protected $permissions = [
         'display' => 'view', // permission to display a field
-        'modify'  => 'edit'  // permission to modify  a field
+        'modify'  => 'edit'  // permission to modify a field
     ];
 
     /**

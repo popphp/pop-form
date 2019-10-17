@@ -80,11 +80,21 @@ class Fields
                 $element = new Element\Textarea($name, $value, $indent);
                 break;
             case 'checkbox':
-            case 'checkboxset':
+                $element = new Element\Input\Checkbox($name, $value, $indent);
+                if (($checked === true) || ($value == $checked)) {
+                    $element->check();
+                }
+                break;
+            case 'checkbox-set':
                 $element = new Element\CheckboxSet($name, $values, $checked, $indent);
                 break;
             case 'radio':
-            case 'radioset':
+                $element = new Element\Input\Radio($name, $value, $indent);
+                if (($checked === true) || ($value == $checked)) {
+                    $element->check();
+                }
+                break;
+            case 'radio-set':
                 $element = new Element\RadioSet($name, $values, $checked, $indent);
                 break;
             case 'csrf':
@@ -114,7 +124,7 @@ class Fields
             default:
                 $class = 'Pop\\Form\\Element\\Input\\' . ucfirst(strtolower($type));
                 if (!class_exists($class)) {
-                    throw new Exception('Error: That class for that form element does not exist.');
+                    throw new Exception('Error: That class for that form element (' . $type . ') does not exist.');
                 }
                 $element = new $class($name, $value);
                 if ($class == 'Pop\\Form\\Element\\Input\\Password') {
