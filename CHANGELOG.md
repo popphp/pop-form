@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+## 3.4.0
+
+* [ADDED] A light-weight form validator class for evaluating form values and returning error messages without the full
+weight of a full form object and all of the HTML rendering.
+* [CHANGED] Checkbox and radio elements can now be rendered as simple, single elements via a field config. `checkbox-set`
+and `radio-set` have to be explicitly declared to order have the field sets render as before (Possible BC break.) 
+
+## 3.3.0
+
+* [ADDED] Support for ACL-enforced form objects
+
 ## 3.0.3
 
 The `pop-form` v3 is a major version release that breaks backwards-compatibility is some areas. Chief among these changes
