@@ -29,11 +29,19 @@ class FieldsTest extends TestCase
             'value' => 'Hello'
         ]);
         $checkbox = Fields::create('checkbox', [
-            'type'   => 'checkbox',
+            'type'  => 'checkbox',
+            'value' => 1
+        ]);
+        $checkboxSet = Fields::create('checkbox', [
+            'type'   => 'checkbox-set',
             'values' => [1, 2, 3]
         ]);
         $radio = Fields::create('radio', [
-            'type'   => 'radio',
+            'type'  => 'radio',
+            'value' => 1
+        ]);
+        $radioSet = Fields::create('radio', [
+            'type'   => 'radio-set',
             'values' => [1, 2, 3]
         ]);
         $inputButton = Fields::create('input-button', [
@@ -81,8 +89,10 @@ class FieldsTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Select', $select);
         $this->assertInstanceOf('Pop\Form\Element\SelectMultiple', $selectMultiple);
         $this->assertInstanceOf('Pop\Form\Element\Textarea', $textarea);
-        $this->assertInstanceOf('Pop\Form\Element\CheckboxSet', $checkbox);
-        $this->assertInstanceOf('Pop\Form\Element\RadioSet', $radio);
+        $this->assertInstanceOf('Pop\Form\Element\Input\Checkbox', $checkbox);
+        $this->assertInstanceOf('Pop\Form\Element\CheckboxSet', $checkboxSet);
+        $this->assertInstanceOf('Pop\Form\Element\Input\Radio', $radio);
+        $this->assertInstanceOf('Pop\Form\Element\RadioSet', $radioSet);
         $this->assertInstanceOf('Pop\Form\Element\Input\Button', $inputButton);
         $this->assertInstanceOf('Pop\Form\Element\Input\Datalist', $dataList);
         $this->assertInstanceOf('Pop\Form\Element\Input\DateTime', $dateTime);

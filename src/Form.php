@@ -772,11 +772,13 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         if (session_id() == '') {
             session_start();
         }
-        if (isset($_SESSION['pop_csrf'])) {
-            unset($_SESSION['pop_csrf']);
-        }
-        if (isset($_SESSION['pop_captcha'])) {
-            unset($_SESSION['pop_captcha']);
+        if ($_SESSION) {
+            if (isset($_SESSION['pop_csrf'])) {
+                unset($_SESSION['pop_csrf']);
+            }
+            if (isset($_SESSION['pop_captcha'])) {
+                unset($_SESSION['pop_captcha']);
+            }
         }
 
         return $this;

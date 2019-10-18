@@ -147,7 +147,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Get validators
      *
      * @param  string $field
-     * @return mixed|void
+     * @return mixed
      */
     public function getValidators($field = null)
     {
@@ -155,6 +155,8 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
             return $this->validators;
         } else if ((null !== $field) && isset($this->validators[$field])) {
             return $this->validators[$field];
+        } else {
+            return null;
         }
     }
 

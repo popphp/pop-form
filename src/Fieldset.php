@@ -423,166 +423,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
         switch ($this->container) {
             case 'table':
-                foreach ($this->fields as $fields) {
-                    $table = new Child('table');
-
-                    foreach ($fields as $field) {
-                        $errors = [];
-                        if ($field->hasErrors()) {
-                            foreach ($field->getErrors() as $error) {
-                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
-                            }
-                        }
-
-                        $tr = new Child('tr');
-                        if (null !== $field->getLabel()) {
-                            $td = new Child('td');
-                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
-
-                            $label = new Child('label', $field->getLabel());
-                            $label->setAttribute('for', $labelFor);
-                            if (null !== $field->getLabelAttributes()) {
-                                $label->setAttributes($field->getLabelAttributes());
-                            }
-                            if ($field->isRequired()) {
-                                if ($label->hasAttribute('class')) {
-                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
-                                } else {
-                                    $label->setAttribute('class', 'required');
-                                }
-                            }
-                            $td->addChild($label);
-                            $tr->addChild($td);
-                        }
-
-                        $td = new Child('td');
-                        if ($field->isErrorPre()) {
-                            $td->addChildren($errors);
-                        }
-                        $td->addChild($field);
-
-                        if (null !== $field->getHint()) {
-                            $hint = new Child('span', $field->getHint());
-                            if (null !== $field->getHintAttributes()) {
-                                $hint->setAttributes($field->getHintAttributes());
-                            }
-                            $td->addChild($hint);
-                        }
-
-                        if (null === $field->getLabel()) {
-                            $td->setAttribute('colspan', 2);
-                        }
-                        if (!$field->isErrorPre()) {
-                            $td->addChildren($errors);
-                        }
-                        $tr->addChild($td);
-                        $table->addChild($tr);
-                    }
-
-                    $this->addChild($table);
-                }
+                $this->prepareTable();
                 break;
-            case 'div':
-            case 'p':
-                foreach ($this->fields as $fields) {
-                    foreach ($fields as $field) {
-                        $errors = [];
-                        if ($field->hasErrors()) {
-                            foreach ($field->getErrors() as $error) {
-                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
-                            }
-                        }
-
-                        $container = new Child($this->container);
-                        if (null !== $field->getLabel()) {
-                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
-                            $label    = new Child('label', $field->getLabel());
-                            $label->setAttribute('for', $labelFor);
-                            if (null !== $field->getLabelAttributes()) {
-                                $label->setAttributes($field->getLabelAttributes());
-                            }
-                            if ($field->isRequired()) {
-                                if ($label->hasAttribute('class')) {
-                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
-                                } else {
-                                    $label->setAttribute('class', 'required');
-                                }
-                            }
-                            $container->addChild($label);
-                        }
-
-                        if ($field->isErrorPre()) {
-                            $container->addChildren($errors);
-                        }
-                        $container->addChild($field);
-
-                        if (null !== $field->getHint()) {
-                            $hint = new Child('span', $field->getHint());
-                            if (null !== $field->getHintAttributes()) {
-                                $hint->setAttributes($field->getHintAttributes());
-                            }
-                            $container->addChild($hint);
-                        }
-                        if (!$field->isErrorPre()) {
-                            $container->addChildren($errors);
-                        }
-                        $this->addChild($container);
-                    }
-                }
+            case 'dl':
+                $this->prepareDl();
                 break;
             default:
-                foreach ($this->fields as $fields) {
-                    $dl = new Child('dl');
-
-                    foreach ($fields as $field) {
-                        $errors = [];
-                        if ($field->hasErrors()) {
-                            foreach ($field->getErrors() as $error) {
-                                $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
-                            }
-                        }
-
-                        if (null !== $field->getLabel()) {
-                            $dt = new Child('dt');
-                            $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
-
-                            $label = new Child('label', $field->getLabel());
-                            $label->setAttribute('for', $labelFor);
-                            if (null !== $field->getLabelAttributes()) {
-                                $label->setAttributes($field->getLabelAttributes());
-                            }
-                            if ($field->isRequired()) {
-                                if ($label->hasAttribute('class')) {
-                                    $label->setAttribute('class', $label->getAttribute('class') . ' required');
-                                } else {
-                                    $label->setAttribute('class', 'required');
-                                }
-                            }
-                            $dt->addChild($label);
-                            $dl->addChild($dt);
-                        }
-
-                        $dd = new Child('dd');
-                        if ($field->isErrorPre()) {
-                            $dd->addChildren($errors);
-                        }
-                        $dd->addChild($field);
-
-                        if (null !== $field->getHint()) {
-                            $hint = new Child('span', $field->getHint());
-                            if (null !== $field->getHintAttributes()) {
-                                $hint->setAttributes($field->getHintAttributes());
-                            }
-                            $dd->addChild($hint);
-                        }
-                        if (!$field->isErrorPre()) {
-                            $dd->addChildren($errors);
-                        }
-                        $dl->addChild($dd);
-                    }
-
-                    $this->addChild($dl);
-                }
+                $this->prepareElement($this->container);
         }
 
         return $this;
@@ -633,6 +480,189 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
         }
 
         return $fields;
+    }
+
+    /**
+     * Prepare table
+     *
+     * @return void
+     */
+    protected  function prepareTable()
+    {
+        foreach ($this->fields as $fields) {
+            $table = new Child('table');
+
+            foreach ($fields as $field) {
+                $errors = [];
+                if ($field->hasErrors()) {
+                    foreach ($field->getErrors() as $error) {
+                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                    }
+                }
+
+                $tr = new Child('tr');
+                if (null !== $field->getLabel()) {
+                    $td = new Child('td');
+                    $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+
+                    $label = new Child('label', $field->getLabel());
+                    $label->setAttribute('for', $labelFor);
+                    if (null !== $field->getLabelAttributes()) {
+                        $label->setAttributes($field->getLabelAttributes());
+                    }
+                    if ($field->isRequired()) {
+                        if ($label->hasAttribute('class')) {
+                            $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                        } else {
+                            $label->setAttribute('class', 'required');
+                        }
+                    }
+                    $td->addChild($label);
+                    $tr->addChild($td);
+                }
+
+                $td = new Child('td');
+                if ($field->isErrorPre()) {
+                    $td->addChildren($errors);
+                }
+                $td->addChild($field);
+
+                if (null !== $field->getHint()) {
+                    $hint = new Child('span', $field->getHint());
+                    if (null !== $field->getHintAttributes()) {
+                        $hint->setAttributes($field->getHintAttributes());
+                    }
+                    $td->addChild($hint);
+                }
+
+                if (null === $field->getLabel()) {
+                    $td->setAttribute('colspan', 2);
+                }
+                if (!$field->isErrorPre()) {
+                    $td->addChildren($errors);
+                }
+                $tr->addChild($td);
+                $table->addChild($tr);
+            }
+
+            $this->addChild($table);
+        }
+    }
+
+    /**
+     * Prepare DIV or P
+     *
+     * @param  string $element
+     * @return void
+     */
+    protected  function prepareElement($element)
+    {
+        foreach ($this->fields as $fields) {
+            foreach ($fields as $field) {
+                $errors = [];
+                if ($field->hasErrors()) {
+                    foreach ($field->getErrors() as $error) {
+                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                    }
+                }
+
+                $container = new Child($element);
+                if (null !== $field->getLabel()) {
+                    $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+                    $label    = new Child('label', $field->getLabel());
+                    $label->setAttribute('for', $labelFor);
+                    if (null !== $field->getLabelAttributes()) {
+                        $label->setAttributes($field->getLabelAttributes());
+                    }
+                    if ($field->isRequired()) {
+                        if ($label->hasAttribute('class')) {
+                            $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                        } else {
+                            $label->setAttribute('class', 'required');
+                        }
+                    }
+                    $container->addChild($label);
+                }
+
+                if ($field->isErrorPre()) {
+                    $container->addChildren($errors);
+                }
+                $container->addChild($field);
+
+                if (null !== $field->getHint()) {
+                    $hint = new Child('span', $field->getHint());
+                    if (null !== $field->getHintAttributes()) {
+                        $hint->setAttributes($field->getHintAttributes());
+                    }
+                    $container->addChild($hint);
+                }
+                if (!$field->isErrorPre()) {
+                    $container->addChildren($errors);
+                }
+                $this->addChild($container);
+            }
+        }
+    }
+
+    /**
+     * Prepare DL
+     *
+     * @return void
+     */
+    protected  function prepareDl()
+    {
+        foreach ($this->fields as $fields) {
+            $dl = new Child('dl');
+
+            foreach ($fields as $field) {
+                $errors = [];
+                if ($field->hasErrors()) {
+                    foreach ($field->getErrors() as $error) {
+                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                    }
+                }
+
+                if (null !== $field->getLabel()) {
+                    $dt = new Child('dt');
+                    $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
+
+                    $label = new Child('label', $field->getLabel());
+                    $label->setAttribute('for', $labelFor);
+                    if (null !== $field->getLabelAttributes()) {
+                        $label->setAttributes($field->getLabelAttributes());
+                    }
+                    if ($field->isRequired()) {
+                        if ($label->hasAttribute('class')) {
+                            $label->setAttribute('class', $label->getAttribute('class') . ' required');
+                        } else {
+                            $label->setAttribute('class', 'required');
+                        }
+                    }
+                    $dt->addChild($label);
+                    $dl->addChild($dt);
+                }
+
+                $dd = new Child('dd');
+                if ($field->isErrorPre()) {
+                    $dd->addChildren($errors);
+                }
+                $dd->addChild($field);
+
+                if (null !== $field->getHint()) {
+                    $hint = new Child('span', $field->getHint());
+                    if (null !== $field->getHintAttributes()) {
+                        $hint->setAttributes($field->getHintAttributes());
+                    }
+                    $dd->addChild($hint);
+                }
+                if (!$field->isErrorPre()) {
+                    $dd->addChildren($errors);
+                }
+                $dl->addChild($dd);
+            }
+
+            $this->addChild($dl);
+        }
     }
 
     /**
