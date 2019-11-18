@@ -16,10 +16,15 @@ class FormTest extends TestCase
         $email    = new Element\Input\Email('email');
         $submit   = new Element\Input\Submit('submit', 'SUBMIT');
         $form = new Form([$username, $email, $submit], '/process', 'post');
+        $form->username = 'admin';
         $this->assertInstanceOf('Pop\Form\Form', $form);
         $this->assertInstanceOf('Pop\Form\Element\AbstractElement', $form->getField('username'));
         $this->assertEquals('/process', $form->getAction());
         $this->assertEquals('post', $form->getMethod());
+        $this->assertTrue(isset($form->username));
+        $this->assertEquals('admin', $form->username);
+        unset($form->username);
+        $this->assertEmpty($form->username);
     }
 
     public function testSetAttributes()
@@ -40,7 +45,7 @@ class FormTest extends TestCase
         $this->assertEquals(0, $form->getCurrent());
     }
 
-    public function testCreateFromConfig()
+    public function testCreateFromConfig1()
     {
         $form = Form::createFromConfig([
             'username' => [
@@ -61,7 +66,33 @@ class FormTest extends TestCase
         $this->assertEquals(3, count($form->getFields()));
     }
 
-    public function testCreateFromFieldsetConfig()
+    public function testCreateFromConfig2()
+    {
+        $form = new Form();
+        $form->addFieldsFromConfig([
+            [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ],
+                'file' => [
+                    'type'  => 'file',
+                    'label' => 'File:'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]
+        ]);
+        $this->assertInstanceOf('Pop\Form\Form', $form);
+        $this->assertEquals(3, count($form->getFields()));
+    }
+
+    public function testCreateFromFieldsetConfig1()
     {
         $form = Form::createFromFieldsetConfig([
             [
@@ -87,6 +118,33 @@ class FormTest extends TestCase
         $this->assertEquals(3, count($form->getFields()));
     }
 
+    public function testCreateFromFieldsetConfig2()
+    {
+        $form = new Form();
+        $form->addFieldsetsFromConfig([
+            'Top of Form' => [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ],
+                'file' => [
+                    'type'  => 'file',
+                    'label' => 'File:'
+                ]
+            ],
+            'Bottom of Form' => [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+
+                ]
+            ]
+        ]);
+        $this->assertInstanceOf('Pop\Form\Form', $form);
+        $this->assertEquals(3, count($form->getFields()));
+    }
+
     public function testCreateAndRemoveFieldset()
     {
         $form = new Form();
@@ -99,6 +157,33 @@ class FormTest extends TestCase
         $form->removeFieldset(1);
         $form->setCurrent(0);
         $this->assertEquals(0, $form->getCurrent());
+    }
+
+    public function testRemoveField()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'file' => [
+                'type'  => 'file',
+                'label' => 'File:'
+            ]
+        ]);
+        $this->assertTrue($form->hasFields());
+        $this->assertTrue($form->hasField('username'));
+        $form->removeField('username');
+        $this->assertFalse($form->hasField('username'));
+    }
+
+    public function testfilterValue()
+    {
+        $form = new Form();
+        $form->addFilter(new Filter('strip_tags'));
+        $this->assertEquals('admin', $form->filterValue('<b>admin</b>'));
+
     }
 
     public function testInsertAfter()
@@ -195,26 +280,28 @@ class FormTest extends TestCase
                 'type'     => 'text',
                 'label'    => 'Username:',
                 'required' => true
-            ]
-        ],
-            [
+            ],
             'email' => [
                 'type'  => 'email',
                 'label' => 'Email:'
-            ]
-        ],
-        [
+            ],
+            'upload' => [
+                'type' => 'file',
+                'label' => 'Upload File'
+            ],
             'submit' => [
                 'type'  => 'submit',
                 'value' => 'SUBMIT'
             ]
         ]);
         $form->addColumn([1, 2], 'left-column');
-        $form->addColumn(3,'right-column');
+        $form->addColumn([3, 4],'right-column');
         $this->assertTrue($form->hasColumn('left-column'));
         $this->assertEquals(2, count($form->getColumn('left-column')));
         $form->removeColumn('right-column');
         $this->assertFalse($form->hasColumn('right-column'));
+        $this->assertContains('left-column', $form->render());
+        $this->assertContains('enctype="multipart/form-data"', $form->render());
     }
 
     public function testAddColumn2()

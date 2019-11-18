@@ -449,6 +449,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
                 if ($i > 1) {
                     $this->fieldsets[$this->current]->createGroup();
                 }
+                if (!isset($this->fieldsets[$this->current])) {
+                    $this->fieldsets[$this->current] = new Fieldset();
+                }
                 $this->fieldsets[$this->current]->addFields($fields);
                 $i++;
             } else {
@@ -580,6 +583,27 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         }
 
         return $fields;
+    }
+
+    /**
+     * Has a field element object
+     *
+     * @param  string $name
+     * @return boolean
+     */
+    public function hasField($name)
+    {
+        return (null !== $this->getField($name));
+    }
+
+    /**
+     * Has fields
+     *
+     * @return boolean
+     */
+    public function hasFields()
+    {
+        return (!empty($this->getFields()));
     }
 
     /**
