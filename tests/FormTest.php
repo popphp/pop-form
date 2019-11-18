@@ -22,6 +22,24 @@ class FormTest extends TestCase
         $this->assertEquals('post', $form->getMethod());
     }
 
+    public function testSetAttributes()
+    {
+        $form = new Form();
+        $form->setAttributes([
+            'class' => 'form-class',
+            'id'    => 'form-id'
+        ]);
+        $this->assertEquals('form-class', $form->getAttribute('class'));
+        $this->assertEquals('form-id', $form->getAttribute('id'));
+    }
+
+    public function testSetCurrent()
+    {
+        $form = new Form();
+        $form->setCurrent(0);
+        $this->assertEquals(0, $form->getCurrent());
+    }
+
     public function testCreateFromConfig()
     {
         $form = Form::createFromConfig([
@@ -170,7 +188,7 @@ class FormTest extends TestCase
         $form->clearFilters();
     }
 
-    public function testAddColumn()
+    public function testAddColumn1()
     {
         $form = Form::createFromConfig([
             'username' => [
@@ -197,6 +215,35 @@ class FormTest extends TestCase
         $this->assertEquals(2, count($form->getColumn('left-column')));
         $form->removeColumn('right-column');
         $this->assertFalse($form->hasColumn('right-column'));
+    }
+
+    public function testAddColumn2()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ]
+        ],
+            [
+                'email' => [
+                    'type'  => 'email',
+                    'label' => 'Email:'
+                ]
+            ],
+            [
+                'submit' => [
+                    'type'  => 'submit',
+                    'value' => 'SUBMIT'
+                ]
+            ]);
+        $form->addColumn([1, 2]);
+        $form->addColumn(3);
+        $this->assertTrue($form->hasColumn(1));
+        $this->assertEquals(2, count($form->getColumn(1)));
+        $form->removeColumn(2);
+        $this->assertFalse($form->hasColumn(2));
     }
 
     public function testIsValid()
