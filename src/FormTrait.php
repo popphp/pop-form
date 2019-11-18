@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,78 +13,23 @@
  */
 namespace Pop\Form;
 
+use Pop\Filter\FilterableTrait;
+
 /**
  * Form trait
  *
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.4.0
+ * @version    3.5.0
  */
 
 trait FormTrait
 {
 
-    /**
-     * Form filters
-     * @var array
-     */
-    protected $filters = [];
-
-    /**
-     * Add filter
-     *
-     * @param  Filter\FilterInterface $filter
-     * @return FormTrait
-     */
-    public function addFilter(Filter\FilterInterface $filter)
-    {
-        $this->filters[] = $filter;
-        return $this;
-    }
-
-    /**
-     * Add filters
-     *
-     * @param  array $filters
-     * @return FormTrait
-     */
-    public function addFilters(array $filters)
-    {
-        foreach ($filters as $filter) {
-            $this->addFilter($filter);
-        }
-        return $this;
-    }
-
-    /**
-     * Clear filters
-     *
-     * @return FormTrait
-     */
-    public function clearFilters()
-    {
-        $this->filters = [];
-        return $this;
-    }
-
-    /**
-     * Filter value with the filters
-     *
-     * @param  mixed $field
-     * @return mixed
-     */
-    abstract public function filterValue($field);
-
-    /**
-     * Filter values with the filters
-     *
-     * @param  array $values
-     * @return array
-     */
-    abstract public function filterValues(array $values = null);
+    use FilterableTrait;
 
     /**
      * Count of values

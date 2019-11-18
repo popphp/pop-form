@@ -3,7 +3,7 @@
 namespace Pop\Form\Test;
 
 use Pop\Form\Form;
-use Pop\Form\Filter\Filter;
+use Pop\Filter\Filter;
 use Pop\Form\Element;
 use PHPUnit\Framework\TestCase;
 

@@ -23,6 +23,7 @@
         "php": ">=7.1.0",
         "popphp/pop-acl": "^3.2.0",
         "popphp/pop-dom": "^3.2.6",
+        "popphp/pop-filter": "^3.0.0",
         "popphp/pop-validator": "^3.1.1"
     },
     "require-dev": {
@@ -45,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.4.x-dev"
+            "dev-master": "3.5.x-dev"
         }
     }
 }

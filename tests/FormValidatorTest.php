@@ -2,7 +2,7 @@
 
 namespace Pop\Form\Test;
 
-use Pop\Form\Filter\Filter;
+use Pop\Filter\Filter;
 use Pop\Form\FormValidator;
 use Pop\Validator;
 use PHPUnit\Framework\TestCase;
@@ -101,7 +101,7 @@ class FormValidatorTest extends TestCase
         $formValidator = new FormValidator($validators, $required, $values, $filter);
         $formValidator = new FormValidator($validators, $required, $values, $filters);
         $this->assertEquals('<b>admin</b>', $formValidator->username);
-        $formValidator->filterValues();
+        $formValidator->filter();
         $this->assertEquals('admin', $formValidator['username']);
     }
 
@@ -131,7 +131,7 @@ class FormValidatorTest extends TestCase
         $formValidator = new FormValidator($validators, $required, $values, $filter);
         $formValidator = new FormValidator($validators, $required, $values, $filters);
         $this->assertEquals('<b>admin</b>', $formValidator->username);
-        $formValidator->filterValues([
+        $formValidator->filter([
             'username' => '<b>admin</b>',
             'password' => '<i>password</i>',
             'email'    => '<strong>test@test.com</strong>'

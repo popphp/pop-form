@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -22,9 +22,9 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.4.0
+ * @version    3.5.0
  */
 
 class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate
@@ -644,7 +644,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
             }
         }
 
-        $this->filterValues();
+        $this->filter();
 
         return $this;
     }
@@ -668,7 +668,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         }
 
         foreach ($this->filters as $filter) {
-            $realValue = $filter->filter($realValue, $type, $name);
+            $realValue = $filter->filter($realValue, $name, $type);
         }
 
         if (($field instanceof Element\AbstractElement) && (null !== $realValue) && ($realValue != '')) {
@@ -684,7 +684,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array $values
      * @return mixed
      */
-    public function filterValues(array $values = null)
+    public function filter(array $values = null)
     {
         if (null === $values) {
             $values = $this->getFields();

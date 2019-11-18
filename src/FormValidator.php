@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.4.0
+ * @version    3.5.0
  */
 
 class FormValidator implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate
@@ -300,7 +300,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
         $value = $this->values[$field];
 
         foreach ($this->filters as $filter) {
-            $value = $filter->filter($value, null, $field);
+            $value = $filter->filter($value, $field);
         }
 
         $this->values[$field] = $value;
@@ -314,7 +314,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  array $values
      * @return array
      */
-    public function filterValues(array $values = null)
+    public function filter(array $values = null)
     {
         if (null !== $values) {
             $this->values = $values;
@@ -332,7 +332,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      */
     public function validate()
     {
-        $this->filterValues();
+        $this->filter();
 
         foreach ($this->required as $required) {
             if (!isset($this->values[$required])) {
