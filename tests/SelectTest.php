@@ -190,4 +190,49 @@ class SelectTest extends TestCase
         $this->assertEquals(12, count($select->getOptions()));
     }
 
+    public function testRemoveRequired()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->setRequired(false);
+        $this->assertFalse($select->isRequired());
+    }
+
+    public function testDisabled()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->setDisabled(true);
+        $this->assertTrue($select->isDisabled());
+    }
+
+    public function testRemoveDisabled()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->setDisabled(false);
+        $this->assertFalse($select->isDisabled());
+    }
+
+    public function testReadonly()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ], 'White');
+        $select->setReadonly(true);
+        $this->assertTrue($select->isReadonly());
+    }
+
+    public function testRemoveReadonly()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $select->setReadonly(false);
+        $this->assertFalse($select->isReadonly());
+    }
+
 }

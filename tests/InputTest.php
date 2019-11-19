@@ -129,8 +129,10 @@ class InputTest extends TestCase
 
     public function testPassword()
     {
-        $input = new Input\Password('my_password');
+        $input = new Input\Password('my_password', '123456');
         $this->assertInstanceOf('Pop\Form\Element\Input\Password', $input);
+        $this->assertFalse($input->getRenderValue());
+        $this->assertNotContains('123456', $input->render());
     }
 
     public function testRadio()
@@ -173,6 +175,41 @@ class InputTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Url', $input);
     }
 
+    public function testRemoveRequired()
+    {
+        $input = new Input('my_field');
+        $input->setRequired(false);
+        $this->assertFalse($input->isRequired());
+    }
+
+    public function testDisabled()
+    {
+        $input = new Input('my_field');
+        $input->setDisabled(true);
+        $this->assertTrue($input->isDisabled());
+    }
+
+    public function testRemoveDisabled()
+    {
+        $input = new Input('my_field');
+        $input->setDisabled(false);
+        $this->assertFalse($input->isDisabled());
+    }
+
+    public function testReadonly()
+    {
+        $input = new Input('my_field');
+        $input->setReadonly(true);
+        $this->assertTrue($input->isReadonly());
+    }
+
+    public function testRemoveReadonly()
+    {
+        $input = new Input('my_field');
+        $input->setReadonly(false);
+        $this->assertFalse($input->isReadonly());
+    }
+
     /**
      * @runInSeparateProcess
      */
@@ -182,6 +219,7 @@ class InputTest extends TestCase
         $input = new Input\Captcha('my_captcha');
         $input->setLabel('Enter Code');
         $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $input);
+        $this->assertTrue(is_array($input->getToken()));
     }
 
     /**

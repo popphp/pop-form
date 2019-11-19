@@ -42,4 +42,39 @@ class TextareaTest extends TestCase
         $this->assertEquals(1, count($textarea->getErrors()));
     }
 
+    public function testRemoveRequired()
+    {
+        $textarea = new Textarea('my_textarea');
+        $textarea->setRequired(false);
+        $this->assertFalse($textarea->isRequired());
+    }
+
+    public function testDisabled()
+    {
+        $textarea = new Textarea('my_textarea');
+        $textarea->setDisabled(true);
+        $this->assertTrue($textarea->isDisabled());
+    }
+
+    public function testRemoveDisabled()
+    {
+        $textarea = new Textarea('my_textarea');
+        $textarea->setDisabled(false);
+        $this->assertFalse($textarea->isDisabled());
+    }
+
+    public function testReadonly()
+    {
+        $textarea = new Textarea('my_textarea');
+        $textarea->setReadonly(true);
+        $this->assertTrue($textarea->isReadonly());
+    }
+
+    public function testRemoveReadonly()
+    {
+        $textarea = new Textarea('my_textarea');
+        $textarea->setReadonly(false);
+        $this->assertFalse($textarea->isReadonly());
+    }
+
 }

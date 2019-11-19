@@ -2,7 +2,7 @@
 
 namespace Pop\Form\Test;
 
-use Pop\Form\Filter\Filter;
+use Pop\Filter\Filter;
 use PHPUnit\Framework\TestCase;
 
 class FilterTest extends TestCase

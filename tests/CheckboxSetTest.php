@@ -55,4 +55,50 @@ class CheckboxSetTest extends TestCase
         $this->assertFalse($checkbox->validate());
         $this->assertEquals(1, count($checkbox->getErrors()));
     }
+
+    public function testDisabled()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $checkbox->setDisabled(true);
+        $this->assertTrue($checkbox->isDisabled());
+    }
+
+    public function testRemoveDisabled()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $checkbox->setDisabled(false);
+        $this->assertFalse($checkbox->isDisabled());
+    }
+
+    public function testReadonly()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $checkbox->setReadonly(true);
+        $this->assertTrue($checkbox->isReadonly());
+    }
+
+    public function testRemoveReadonly()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $checkbox->setReadonly(false);
+        $this->assertFalse($checkbox->isReadonly());
+    }
+
+    public function testSetTabIndex()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $checkbox->setCheckboxAttributes(['tabindex' => 1]);
+        $this->assertEquals(3, $checkbox->getChild(4)->getAttribute('tabindex'));
+    }
+
 }

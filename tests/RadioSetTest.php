@@ -55,4 +55,50 @@ class RadioSetTest extends TestCase
         $this->assertFalse($radio->validate());
         $this->assertEquals(1, count($radio->getErrors()));
     }
+
+    public function testDisabled()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $radio->setDisabled(true);
+        $this->assertTrue($radio->isDisabled());
+    }
+
+    public function testRemoveDisabled()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $radio->setDisabled(false);
+        $this->assertFalse($radio->isDisabled());
+    }
+
+    public function testReadonly()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $radio->setReadonly(true);
+        $this->assertTrue($radio->isReadonly());
+    }
+
+    public function testRemoveReadonly()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $radio->setReadonly(false);
+        $this->assertFalse($radio->isReadonly());
+    }
+
+    public function testSetTabIndex()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White', 'Blue' => 'Blue'
+        ]);
+        $radio->setRadioAttributes(['tabindex' => 1]);
+        $this->assertEquals(3, $radio->getChild(4)->getAttribute('tabindex'));
+    }
+
 }

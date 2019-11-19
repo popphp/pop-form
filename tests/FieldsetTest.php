@@ -47,7 +47,61 @@ class FieldsetTest extends TestCase
         }
         unset($fieldset['username']);
         $this->assertNull($fieldset->username);
+    }
 
+    public function testPrepareTable()
+    {
+        $fieldset = Fieldset::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $fieldset->setContainer('table');
+        $fieldset->prepare();
+        $this->assertContains('table', $fieldset->getChild(0)->getNodeName());
+    }
+
+    public function testPrepareDiv()
+    {
+        $fieldset = Fieldset::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $fieldset->setContainer('div');
+        $fieldset->prepare();
+        $this->assertContains('div', $fieldset->getChild(0)->getNodeName());
+    }
+
+    public function testPrepareLegend()
+    {
+        $fieldset = Fieldset::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $fieldset->setContainer('div');
+        $fieldset->setLegend('Hello!');
+        $fieldset->prepare();
+        $this->assertContains('legend', $fieldset->getChild(0)->getNodeName());
     }
 
 }
