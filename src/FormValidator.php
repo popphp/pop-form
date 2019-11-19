@@ -66,7 +66,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param array $values
      * @param mixed $filters
      */
-    public function __construct(array $validators = null,  $required = null, array $values = null, $filters = null)
+    public function __construct(array $validators = null, $required = null, array $values = null, $filters = null)
     {
         if (null !== $validators) {
             $this->addValidators($validators);

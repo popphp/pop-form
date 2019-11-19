@@ -32,6 +32,7 @@ Install `pop-form` using Composer.
 * [Filtering](#filtering)
 * [Validation](#validation)
 * [Dynamic fields from a database table](#dynamic-fields-from-a-database-table)
+* [ACL Forms](#acl-forms)
 
 ### Using field element objects
 
@@ -205,7 +206,7 @@ to the $_POST block:
 
 ```php
 
-use Pop\Form\Filter\Filter;
+use Pop\Filter\Filter;
 
 /** ... Code to create form **/
 
@@ -229,7 +230,8 @@ Of course, the `strip_tags` filter will strip out any possible malicious tags. T
 filter is useful if the form has to render with the values in it again:
 
 ```html
-<input type="text" name="username" id="username" value="Hello&quot;World&quot;" required="required" size="40" />
+<input type="text" name="username" id="username" 
+    value="Hello&quot;World&quot;" required="required" size="40" />
 ```
 
 Without the `htmlentities` filter, the quotes within the value would break the HTML of the input field.
@@ -274,6 +276,51 @@ class MyValidator
 
 $username = new Input\Text('username');
 $username->addValidator([new MyValidator(), 'validate']);
+```
+
+##### Validation-only forms
+
+There is a `FormValidator` class that is available for only validating a set of field values. The benefit
+of this feature is to not be burdened with the concern of rendering an entire form object, and to only
+return the appropriate validation messaging. This is useful for things like API calls, where the form
+rendering might be handled by another piece of the application (and not the PHP server side). 
+
+```php
+use Pop\Form\FormValidator;
+use Pop\Validator;
+
+$validators = [
+    'username' => new Validator\AlphaNumeric(),
+    'password' => new Validator\LengthGte(6)
+];
+
+$form = new FormValidator($validators);
+$form->setValues([
+    'username' => 'admin$%^',
+    'password' => '12345'
+]);
+
+if (!$form->validate()) {
+    print_r($form->getErrors());
+}
+```
+
+If the field values are bad, the `$form->getErrors()` will return an array of errors like this:
+
+```text
+Array
+(
+    [username] => Array
+        (
+            [0] => The value must only contain alphanumeric characters.
+        )
+
+    [password] => Array
+        (
+            [0] => The value length must be greater than or equal to 6.
+        )
+
+)
 ```
 
 [Top](#basic-usage)
@@ -333,3 +380,135 @@ the 'id' parameter in the above examples. Any `TEXT` column type in the database
 created as textarea objects and then the rest are created as input text objects.
 
 [Top](#basic-usage)
+
+### ACL Forms
+
+ACL forms are an extension of the regular form class that take an ACL object with its roles
+and resources and enforce which form fields can be seen and edited. Consider the following
+code below:
+
+```php
+use Pop\Form;
+use Pop\Acl;
+
+$acl      = new Acl\Acl();
+$admin    = new Acl\AclRole('admin');
+$editor   = new Acl\AclRole('editor');
+$username = new Acl\AclResource('username');
+$password = new Acl\AclResource('password');
+
+$acl->addRoles([$admin, $editor]);
+$acl->addResources([$username, $password]);
+
+$acl->deny($editor, 'username', 'edit');
+$acl->deny($editor, 'password', 'view');
+
+$fields = [
+    'username' => [
+        'type'  => 'text',
+        'label' => 'Username'
+    ],
+    'password' => [
+        'type'  => 'password',
+        'label' => 'Password'
+    ],
+    'first_name' => [
+        'type'  => 'text',
+        'label' => 'First Name'
+    ],
+    'last_name' => [
+        'type'  => 'text',
+        'label' => 'Last Name'
+    ],
+    'submit' => [
+        'type'  => 'submit',
+        'value' => 'Submit'
+    ]
+];
+
+$form = Form\AclForm::createFromConfig($fields);
+$form->setAcl($acl);
+```
+
+The `$admin` has no restrictions. However, the `$editor` role does have restrictions and
+cannot edit the `username` field and cannot view the `password` field. Setting the `$editor`
+as the form role and rendering the form will look like this:
+
+```php
+$form->addRole($editor);
+echo $form;
+```
+
+```text
+<form action="#" method="post" id="pop-form" class="pop-form">
+    <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username">Username</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" readonly="readonly" />
+            </dd>
+            <dt>
+                <label for="first_name">First Name</label>
+            </dt>
+            <dd>
+                <input type="text" name="first_name" id="first_name" value="" />
+            </dd>
+            <dt>
+                <label for="last_name">Last Name</label>
+            </dt>
+            <dd>
+                <input type="text" name="last_name" id="last_name" value="" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="Submit" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+```
+
+There is no `password` field and the `username` field has been made `readonly`. Switch the
+role to `$admin` and the entire form will render with no restrictions:
+
+```php
+$form->addRole($admin);
+echo $form;
+```
+
+```text
+<form action="#" method="post" id="pop-form" class="pop-form">
+    <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username">Username</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" />
+            </dd>
+            <dt>
+                <label for="password">Password</label>
+            </dt>
+            <dd>
+                <input type="password" name="password" id="password" value="" />
+            </dd>
+            <dt>
+                <label for="first_name">First Name</label>
+            </dt>
+            <dd>
+                <input type="text" name="first_name" id="first_name" value="" />
+            </dd>
+            <dt>
+                <label for="last_name">Last Name</label>
+            </dt>
+            <dd>
+                <input type="text" name="last_name" id="last_name" value="" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="Submit" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+```
