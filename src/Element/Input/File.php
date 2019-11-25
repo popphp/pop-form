@@ -46,9 +46,10 @@ class File extends Element\Input
     /**
      * Validate the form element object
      *
+     * @param  array $formValues
      * @return boolean
      */
-    public function validate()
+    public function validate(array $formValues = [])
     {
         if (($_FILES) && (isset($_FILES[$this->name]['name']))) {
             $value = $_FILES[$this->name]['name'];
@@ -80,10 +81,7 @@ class File extends Element\Input
                         }
                     }
                 } else if (is_callable($validator)) {
-                    $result = call_user_func_array($validator, [$value]);
-                    if (null !== $result) {
-                        $this->errors[] = $result;
-                    }
+                    $this->validateCallable($validator, $value, $formValues);
                 }
             }
         }

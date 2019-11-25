@@ -461,11 +461,65 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Validate the value
+     *
+     * @param  mixed $value
+     * @param  array $formValues
+     * @return void
+     */
+    public function validateValue($value, array $formValues = [])
+    {
+        // Check field validators
+        if (count($this->validators) > 0) {
+            foreach ($this->validators as $validator) {
+                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
+                    if (!$validator->evaluate($value)) {
+                        if (!in_array($validator->getMessage(), $this->errors)) {
+                            $this->errors[] = $validator->getMessage();
+                        }
+                    }
+                } else if (is_callable($validator)) {
+                    $this->validateCallable($validator, $value, $formValues);
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate the value by callable
+     *
+     * @param  callable $validator
+     * @param  mixed    $value
+     * @param  array    $formValues
+     * @return void
+     */
+    public function validateCallable(callable $validator, $value, array $formValues = [])
+    {
+        $result = call_user_func_array($validator, [$value, $formValues]);
+        if ($result instanceof \Pop\Validator\ValidatorInterface) {
+            if (!$result->evaluate($value)) {
+                $this->errors[] = $result->getMessage();
+            }
+        } else if (is_array($result)) {
+            foreach ($result as $val) {
+                if ($val instanceof \Pop\Validator\ValidatorInterface) {
+                    if (!$val->evaluate($value)) {
+                        $this->errors[] = $val->getMessage();
+                    }
+                }
+            }
+        } else if (null !== $result) {
+            $this->errors[] = $result;
+        }
+    }
+
+    /**
      * Validate the form element object
      *
+     * @param  array $formValues
      * @return boolean
      */
-    abstract public function validate();
+    abstract public function validate(array $formValues = []);
 
     /**
      * Print form element

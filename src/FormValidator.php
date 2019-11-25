@@ -348,8 +348,20 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                             $this->addError($field, $validator->getMessage());
                         }
                     } else if (is_callable($validator)) {
-                        $result = call_user_func_array($validator, [$value]);
-                        if (null !== $result) {
+                        $result = call_user_func_array($validator, [$value, $this->values]);
+                        if ($result instanceof \Pop\Validator\ValidatorInterface) {
+                            if (!$result->evaluate($value)) {
+                                $this->addError($field, $result->getMessage());
+                            }
+                        } else if (is_array($result)) {
+                            foreach ($result as $val) {
+                                if ($val instanceof \Pop\Validator\ValidatorInterface) {
+                                    if (!$val->evaluate($value)) {
+                                        $this->addError($field, $val->getMessage());
+                                    }
+                                }
+                            }
+                        } else if (null !== $result) {
                             $this->addError($field, $result);
                         }
                     }

@@ -728,10 +728,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     {
         $result = true;
         $fields = $this->getFields();
+        $values = $this->toArray();
 
         // Check each element for validators, validate them and return the result.
         foreach ($fields as $field) {
-            if ($field->validate() == false) {
+            if ($field->validate($values) == false) {
                 $result = false;
             }
         }

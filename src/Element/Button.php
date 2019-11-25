@@ -107,9 +107,10 @@ class Button extends AbstractElement
     /**
      * Validate the form element object
      *
+     * @param  array $formValues
      * @return boolean
      */
-    public function validate()
+    public function validate(array $formValues = [])
     {
         return (count($this->errors) == 0);
     }

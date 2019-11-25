@@ -212,11 +212,30 @@ interface ElementInterface
     public function addValidator($validator);
 
     /**
+     * Validate the value
+     *
+     * @param  mixed $value
+     * @param  array $formValues
+     * @return void
+     */
+    public function validateValue($value, array $formValues = []);
+
+    /**
+     * Validate the value by callable
+     *
+     * @param  callable $validator
+     * @param  mixed    $value
+     * @param  array    $formValues
+     * @return void
+     */
+    public function validateCallable(callable $validator, $value, array $formValues = []);
+
+    /**
      * Validate the form element
      *
-     * @throws Exception
+     * @param  array $formValues
      * @return boolean
      */
-    public function validate();
+    public function validate(array $formValues = []);
 
 }

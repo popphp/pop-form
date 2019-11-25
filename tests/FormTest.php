@@ -5,6 +5,7 @@ namespace Pop\Form\Test;
 use Pop\Form\Form;
 use Pop\Filter\Filter;
 use Pop\Form\Element;
+use Pop\Validator;
 use PHPUnit\Framework\TestCase;
 
 class FormTest extends TestCase
@@ -178,7 +179,7 @@ class FormTest extends TestCase
         $this->assertFalse($form->hasField('username'));
     }
 
-    public function testfilterValue()
+    public function testFilterValue()
     {
         $form = new Form();
         $form->addFilter(new Filter('strip_tags'));
@@ -355,6 +356,88 @@ class FormTest extends TestCase
         $this->assertEquals(1, count($form->getErrors('username')));
         $this->assertEquals(1, count($form->getAllErrors()));
         $form->reset();
+    }
+
+
+    public function testValidateCallable()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'password' => [
+                'type'  => 'password',
+                'label' => 'Password:',
+                'validators' => function($value, array $formValues = []) {
+                    if (!empty($formValues['username'])) {
+                        return new Validator\LengthGte(8);
+                    }
+                    return null;
+                }
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $form->setFieldValues(['username' => 'admin', 'password' => 1234]);
+        $this->assertFalse($form->isValid());
+        $this->assertEquals(1, count($form->getErrors('password')));
+        /*
+        $validators = [
+            'password' => [
+                function($value, array $formValues = []) {
+                    if (!empty($formValues['username'])) {
+                        return new Validator\LengthGte(8);
+                    }
+                    return null;
+                }
+            ]
+        ];
+
+        $validator = new FormValidator($validators);
+        $validator->setValues([
+            'username' => 'sdfd345345',
+            'password' => '@!@#'
+        ]);
+
+        $validator->validate();
+        $this->assertEquals(1, count($validator->getErrors()));
+        $this->assertEquals(1, count($validator->getErrors()['password']));
+        */
+    }
+
+    public function testValidateCallables()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true
+            ],
+            'password' => [
+                'type'  => 'password',
+                'label' => 'Password:',
+                'validators' =>                 function($value, array $formValues = []) {
+                    if (!empty($formValues['username'])) {
+                        return [
+                            new Validator\LengthGte(8),
+                            new Validator\AlphaNumeric()
+                        ];
+                    }
+                    return null;
+                }
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $form->setFieldValues(['username' => 'admin', 'password' => '!@#']);
+        $this->assertFalse($form->isValid());
+        $this->assertEquals(2, count($form->getErrors('password')));
     }
 
     public function testToString()

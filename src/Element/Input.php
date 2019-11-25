@@ -148,9 +148,10 @@ class Input extends AbstractElement
     /**
      * Validate the form element object
      *
+     * @param  array $formValues
      * @return boolean
      */
-    public function validate()
+    public function validate(array $formValues = [])
     {
         $value = $this->getValue();
 
@@ -159,25 +160,7 @@ class Input extends AbstractElement
             $this->errors[] = 'This field is required.';
         }
 
-        // Check field validators
-        if (count($this->validators) > 0) {
-            foreach ($this->validators as $validator) {
-                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
-                    if (!$validator->evaluate($value)) {
-                        if (!in_array($validator->getMessage(), $this->errors)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
-                    }
-                } else if (is_callable($validator)) {
-                    $result = call_user_func_array($validator, [$value]);
-                    if (null !== $result) {
-                        if (!in_array($result, $this->errors)) {
-                            $this->errors[] = $result;
-                        }
-                    }
-                }
-            }
-        }
+        $this->validateValue($value, $formValues);
 
         return (count($this->errors) == 0);
     }

@@ -175,6 +175,57 @@ class FormValidatorTest extends TestCase
         $this->assertEquals('The email must be test@test.com', $formValidator->getError('email', 0));
     }
 
+    public function testValidateCallable()
+    {
+        $validators = [
+            'password' => [
+                function($value, array $formValues = []) {
+                    if (!empty($formValues['username'])) {
+                        return new Validator\LengthGte(8);
+                    }
+                    return null;
+                }
+            ]
+        ];
+
+        $validator = new FormValidator($validators);
+        $validator->setValues([
+            'username' => 'sdfd345345',
+            'password' => '@!@#'
+        ]);
+
+        $validator->validate();
+        $this->assertEquals(1, count($validator->getErrors()));
+        $this->assertEquals(1, count($validator->getErrors()['password']));
+    }
+
+    public function testValidateCallables()
+    {
+        $validators = [
+            'password' => [
+                function($value, array $formValues = []) {
+                    if (!empty($formValues['username'])) {
+                        return [
+                            new Validator\LengthGte(8),
+                            new Validator\AlphaNumeric()
+                        ];
+                    }
+                    return null;
+                }
+            ]
+        ];
+
+        $validator = new FormValidator($validators);
+        $validator->setValues([
+            'username' => 'sdfd345345',
+            'password' => '@!@#'
+        ]);
+
+        $validator->validate();
+        $this->assertEquals(1, count($validator->getErrors()));
+        $this->assertEquals(2, count($validator->getErrors()['password']));
+    }
+
     public function testMagicMethods()
     {
         $formValidator = new FormValidator();
