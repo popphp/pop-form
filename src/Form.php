@@ -80,12 +80,12 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to create form object and fields from config
      *
-     * @param  array  $config
-     * @param  string $action
-     * @param  string $method
+     * @param  array|FormConfig $config
+     * @param  string           $action
+     * @param  string           $method
      * @return Form
      */
-    public static function createFromConfig(array $config, $action = null, $method = 'post')
+    public static function createFromConfig($config, $action = null, $method = 'post')
     {
         $form = new static(null, $action, $method);
         $form->addFieldsFromConfig($config);
@@ -434,10 +434,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to add form fields from config
      *
-     * @param  array $config
+     * @param  array|FormConfig $config
      * @return Form
      */
-    public function addFieldsFromConfig(array $config)
+    public function addFieldsFromConfig($config)
     {
         $i = 1;
         foreach ($config as $name => $field) {
