@@ -41,19 +41,38 @@ class FormConfig extends Utils\ArrayObject
     public static function createFromJson($jsonString, $depth = 512, $options = 0)
     {
         $formConfig = parent::createFromJson($jsonString, $depth, $options)->toArray();
+        $first      = reset($formConfig);
 
-        foreach ($formConfig as $key => $value) {
-            if (!empty($value['validators'])) {
-                foreach ($value['validators'] as $k => $v) {
-                    $class = 'Pop\\Validator\\' . $v['type'];
-                    $validator = new $class($v['value'], $v['message']);
-                    if (!empty($v['input'])) {
-                        $validator->setInput($v['input']);
+        if (!isset($first['type'])) {
+            foreach ($formConfig as $key => $value) {
+                foreach ($value as $ky => $vl) {
+                    if (!empty($vl['validators'])) {
+                        foreach ($vl['validators'] as $k => $v) {
+                            $class = 'Pop\\Validator\\' . $v['type'];
+                            $validator = new $class($v['value'], $v['message']);
+                            if (!empty($v['input'])) {
+                                $validator->setInput($v['input']);
+                            }
+                            $formConfig[$key][$ky]['validators'][$k] = $validator;
+                        }
                     }
-                    $formConfig[$key]['validators'][$k] = $validator;
+                }
+            }
+        } else {
+            foreach ($formConfig as $key => $value) {
+                if (!empty($value['validators'])) {
+                    foreach ($value['validators'] as $k => $v) {
+                        $class = 'Pop\\Validator\\' . $v['type'];
+                        $validator = new $class($v['value'], $v['message']);
+                        if (!empty($v['input'])) {
+                            $validator->setInput($v['input']);
+                        }
+                        $formConfig[$key]['validators'][$k] = $validator;
+                    }
                 }
             }
         }
+
 
         return new self($formConfig);
     }
@@ -67,7 +86,12 @@ class FormConfig extends Utils\ArrayObject
      */
     public function jsonSerialize($options = 0, $depth = 512)
     {
-        $this->filterConfig();
+        $first = reset($this->data);
+        if (!isset($first['type'])) {
+            $this->filterFieldsetConfig();
+        } else {
+            $this->filterConfig();
+        }
         return parent::jsonSerialize($options, $depth);
     }
 
@@ -105,4 +129,42 @@ class FormConfig extends Utils\ArrayObject
 
         return $this;
     }
+
+    /**
+     * Filter fieldset config validators
+     *
+     * @return FormConfig
+     */
+    public function filterFieldsetConfig()
+    {
+        foreach ($this->data as $key => $value) {
+            foreach ($value as $ky => $vl) {
+                if (!empty($vl['validator']) || !empty($vl['validators'])) {
+                    $validators = (!empty($vl['validator'])) ? $vl['validator'] : $vl['validators'];
+                    if (!is_array($validators)) {
+                        $validators = [$validators];
+                    }
+                    foreach ($validators as $k => $validator) {
+                        if ($validator instanceof ValidatorInterface) {
+                            $validators[$k] = [
+                                'type'    => str_replace('Pop\\Validator\\', '', get_class($validator)),
+                                'input'   => $validator->getInput(),
+                                'value'   => $validator->getValue(),
+                                'message' => $validator->getMessage()
+                            ];
+                        } else {
+                            unset($validators[$k]);
+                        }
+                    }
+                    $this->data[$key][$ky]['validators'] = array_values($validators);
+                    if (isset($this->data[$key][$k]['validator'])) {
+                        unset($this->data[$key][$k]['validator']);
+                    }
+                }
+            }
+        }
+
+        return $this;
+    }
+
 }

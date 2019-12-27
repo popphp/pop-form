@@ -68,7 +68,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      */
     public function __construct(array $validators = null, $required = null, array $values = null, $filters = null)
     {
-        if (null !== $validators) {
+        if (!empty($validators)) {
             $this->addValidators($validators);
         }
         if (null !== $required) {
@@ -84,6 +84,30 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                 $this->addFilter($filters);
             }
         }
+    }
+
+    /**
+     * Create form validator from config
+     *
+     * @param  array|FormConfig $formConfig
+     * @param  mixed            $required
+     * @param  array            $values
+     * @param  mixed            $filters
+     * @return FormValidator
+     */
+    public static function createFromConfig($formConfig, $required = null, array $values = null, $filters = null)
+    {
+        $validators = [];
+
+        foreach ($formConfig as $key => $value) {
+            if (!empty($value['validator'])) {
+                $validators[$key] = $value['validator'];
+            } else if (!empty($value['validators'])) {
+                $validators[$key] = $value['validators'];
+            }
+        }
+
+        return new self($validators, $required, $values, $filters);
     }
 
     /**
