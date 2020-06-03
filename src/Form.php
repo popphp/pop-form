@@ -705,17 +705,22 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Filter values with the filters in the form object
      *
-     * @param  array $values
+     * @param  mixed $values
      * @return mixed
      */
-    public function filter(array $values = null)
+    public function filter($values = null)
     {
         if (null === $values) {
             $values = $this->getFields();
         }
-        foreach ($values as $key => $value) {
-            $values[$key] = $this->filterValue($value);
+        if (is_array($values)) {
+            foreach ($values as $key => $value) {
+                $values[$key] = $this->filterValue($value);
+            }
+        } else {
+            $values = $this->filterValue($values);
         }
+
         return $values;
     }
 
