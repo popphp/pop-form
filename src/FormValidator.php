@@ -336,7 +336,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Filter values with the filters
      *
      * @param  mixed $values
-     * @return array
+     * @return mixed
      */
     public function filter($values = null)
     {
