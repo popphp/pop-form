@@ -335,17 +335,23 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Filter values with the filters
      *
-     * @param  array $values
+     * @param  mixed $values
      * @return array
      */
-    public function filter(array $values = null)
+    public function filter($values = null)
     {
         if (null !== $values) {
             $this->values = $values;
         }
-        foreach ($this->values as $name => $value) {
-            $this->values[$name] = $this->filterValue($name);
+
+        if (is_array($this->values)) {
+            foreach ($this->values as $name => $value) {
+                $this->values[$name] = $this->filterValue($name);
+            }
+        } else {
+            $this->values = $this->filterValue($this->values);
         }
+
         return $this->values;
     }
 

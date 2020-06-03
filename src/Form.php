@@ -713,6 +713,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         if (null === $values) {
             $values = $this->getFields();
         }
+
         if (is_array($values)) {
             foreach ($values as $key => $value) {
                 $values[$key] = $this->filterValue($value);
