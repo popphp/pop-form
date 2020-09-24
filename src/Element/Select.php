@@ -54,6 +54,19 @@ class Select extends AbstractSelect
             $this->setIndent($indent);
         }
 
+        $this->setValues($values);
+    }
+
+    /**
+     * Set the options values of the select form element
+     *
+     * @param  string|array $values
+     * @param  string       $xmlFile
+     * @param  string       $indent
+     * @return Select
+     */
+    public function setValues($values, $xmlFile = null, $indent = null)
+    {
         $values = self::parseValues($values, $xmlFile);
 
         // Create the child option elements.
@@ -90,6 +103,8 @@ class Select extends AbstractSelect
                 $this->addChild($option);
             }
         }
+
+        return $this;
     }
 
     /**
