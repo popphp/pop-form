@@ -198,7 +198,7 @@ class FormValidatorTest extends TestCase
         $formValidator = new FormValidator($validators, $required, $values);
         $formValidator->validate('username');
         $this->assertTrue($formValidator->hasErrors());
-        $this->assertFalse($formValidator->hasErrors('username'));
+        $this->assertTrue($formValidator->hasErrors('username'));
         $this->assertFalse($formValidator->hasErrors('email'));
     }
 

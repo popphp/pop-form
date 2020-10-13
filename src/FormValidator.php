@@ -98,12 +98,16 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     public static function createFromConfig($formConfig, $required = null, array $values = null, $filters = null)
     {
         $validators = [];
+        $required   = [];
 
         foreach ($formConfig as $key => $value) {
             if (!empty($value['validator'])) {
                 $validators[$key] = $value['validator'];
             } else if (!empty($value['validators'])) {
                 $validators[$key] = $value['validators'];
+            }
+            if (isset($value['required']) && ($value['required'] == true)) {
+                $required[] = $key;
             }
         }
 
@@ -374,18 +378,23 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                 },
                 ARRAY_FILTER_USE_KEY
             );
+
+            foreach ($formFields as $field) {
+                if (in_array($field, $this->required) && !isset($formFields[$field])) {
+                    $this->addError($field, 'This field is required.');
+                }
+            }
         } else {
             $formFields = $this->values;
-        }
-
-        // Check for required fields
-        foreach ($this->required as $required) {
-            if (!isset($formFields[$required])) {
-                $this->addError($required, 'This field is required.');
+            // Check for required fields
+            foreach ($this->required as $required) {
+                if (!isset($formFields[$required])) {
+                    $this->addError($required, 'This field is required.');
+                }
             }
         }
 
-        // Execute any field validators
+        // Check for required fields and execute any field validators
         foreach ($formFields as $field => $value) {
             if ($this->hasValidators($field)) {
                 foreach ($this->validators[$field] as $validator) {
@@ -426,8 +435,8 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      */
     public function hasErrors($field = null)
     {
-        if ((null !== $field) && isset($this->errors[$field])) {
-            return (count($this->errors[$field]) > 0);
+        if (null !== $field) {
+            return (isset($this->errors[$field]) && (count($this->errors[$field]) > 0));
         } else {
             return (count($this->errors) > 0);
         }
