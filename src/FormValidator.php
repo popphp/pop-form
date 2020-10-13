@@ -358,19 +358,35 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Validate values
      *
+     * @param  mixed $fields
      * @return boolean
      */
-    public function validate()
+    public function validate($fields = null)
     {
         $this->filter();
 
+        if (null !== $fields) {
+            $fields     = (!is_array($fields)) ? [$fields] : $fields;
+            $formFields = array_filter(
+                $this->values,
+                function ($key) use ($fields) {
+                    return in_array($key, $fields);
+                },
+                ARRAY_FILTER_USE_KEY
+            );
+        } else {
+            $formFields = $this->values;
+        }
+
+        // Check for required fields
         foreach ($this->required as $required) {
-            if (!isset($this->values[$required])) {
+            if (!isset($formFields[$required])) {
                 $this->addError($required, 'This field is required.');
             }
         }
 
-        foreach ($this->values as $field => $value) {
+        // Execute any field validators
+        foreach ($formFields as $field => $value) {
             if ($this->hasValidators($field)) {
                 foreach ($this->validators[$field] as $validator) {
                     if ($validator instanceof \Pop\Validator\ValidatorInterface) {
@@ -378,7 +394,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                             $this->addError($field, $validator->getMessage());
                         }
                     } else if (is_callable($validator)) {
-                        $result = call_user_func_array($validator, [$value, $this->values]);
+                        $result = call_user_func_array($validator, [$value, $formFields]);
                         if ($result instanceof \Pop\Validator\ValidatorInterface) {
                             if (!$result->evaluate($value)) {
                                 $this->addError($field, $result->getMessage());

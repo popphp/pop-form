@@ -175,6 +175,33 @@ class FormValidatorTest extends TestCase
         $this->assertEquals('The email must be test@test.com', $formValidator->getError('email', 0));
     }
 
+    public function testValidateSingleFields()
+    {
+        $validators = [
+            'username' => [
+                new Validator\LengthGte(6),
+                new Validator\NotContains(['$', '?'])
+            ],
+            'password' => new Validator\LengthGte(8),
+            'email'    => function($value) {
+                if ($value != 'test@test.com') {
+                    return 'The email must be test@test.com';
+                }
+            }
+        ];
+        $required = ['username', 'password', 'last_name'];
+        $values   = [
+            'username' => 'adin$',
+            'password' => 'password',
+            'email'    => 'testtest.com'
+        ];
+        $formValidator = new FormValidator($validators, $required, $values);
+        $formValidator->validate('username');
+        $this->assertTrue($formValidator->hasErrors());
+        $this->assertFalse($formValidator->hasErrors('username'));
+        $this->assertFalse($formValidator->hasErrors('email'));
+    }
+
     public function testValidateCallable()
     {
         $validators = [
