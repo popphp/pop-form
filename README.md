@@ -1,7 +1,7 @@
 pop-form
 ========
 
-[![Build Status](https://travis-ci.org/popphp/pop-form.svg?branch=master)](https://travis-ci.org/popphp/pop-form)
+[![Build Status](https://github.com/popphp/pop-form/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-form/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
 
 OVERVIEW

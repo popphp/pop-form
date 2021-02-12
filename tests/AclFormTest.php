@@ -97,8 +97,8 @@ class AclFormTest extends TestCase
 
         $formString = (string)$form;
 
-        $this->assertNotContains('name="password"', $formString);
-        $this->assertContains('<input type="text" name="username" id="username" value="admin" size="40" readonly="readonly" />', $formString);
+        $this->assertStringNotContainsString('name="password"', $formString);
+        $this->assertStringContainsString('<input type="text" name="username" id="username" value="admin" size="40" readonly="readonly" />', $formString);
     }
 
     public function testAclFormDenyStrict()
@@ -123,8 +123,8 @@ class AclFormTest extends TestCase
 
         $formString = (string)$form;
 
-        $this->assertNotContains('name="password"', $formString);
-        $this->assertContains('<input type="text" name="username" id="username" value="admin" size="40" readonly="readonly" />', $formString);
+        $this->assertStringNotContainsString('name="password"', $formString);
+        $this->assertStringContainsString('<input type="text" name="username" id="username" value="admin" size="40" readonly="readonly" />', $formString);
     }
 
 }

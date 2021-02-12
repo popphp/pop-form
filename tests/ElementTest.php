@@ -118,7 +118,7 @@ class ElementTest extends TestCase
         echo $element;
         $result = ob_get_clean();
 
-        $this->assertContains('<input', $result);
+        $this->assertStringContainsString('<input', $result);
     }
 
     public function testValidate()

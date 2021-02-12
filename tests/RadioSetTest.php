@@ -26,7 +26,7 @@ class RadioSetTest extends TestCase
         $this->assertEquals('Radio Legend', $radio->getLegend());
         $radio->resetValue();
         $this->assertTrue(empty($radio->getValue()));
-        $this->assertContains('Radio Legend', $radio->render());
+        $this->assertStringContainsString('Radio Legend', $radio->render());
     }
 
 

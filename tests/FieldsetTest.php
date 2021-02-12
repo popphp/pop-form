@@ -64,7 +64,7 @@ class FieldsetTest extends TestCase
         ]);
         $fieldset->setContainer('table');
         $fieldset->prepare();
-        $this->assertContains('table', $fieldset->getChild(0)->getNodeName());
+        $this->assertStringContainsString('table', $fieldset->getChild(0)->getNodeName());
     }
 
     public function testPrepareDiv()
@@ -82,7 +82,7 @@ class FieldsetTest extends TestCase
         ]);
         $fieldset->setContainer('div');
         $fieldset->prepare();
-        $this->assertContains('div', $fieldset->getChild(0)->getNodeName());
+        $this->assertStringContainsString('div', $fieldset->getChild(0)->getNodeName());
     }
 
     public function testPrepareLegend()
@@ -101,7 +101,7 @@ class FieldsetTest extends TestCase
         $fieldset->setContainer('div');
         $fieldset->setLegend('Hello!');
         $fieldset->prepare();
-        $this->assertContains('legend', $fieldset->getChild(0)->getNodeName());
+        $this->assertStringContainsString('legend', $fieldset->getChild(0)->getNodeName());
     }
 
 }

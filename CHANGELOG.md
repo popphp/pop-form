@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+## 3.6.0
+
+* [UPDATED] Updated to a minimum of PHP 7.3 and PHPUnit 9.0. Migrated from TravisCI to GitHub Actions for CI.  
+
+## 3.5.0
+
+* [ADDED] `AclForm` class to enforce ACL-based roles and permissions for which form fields are accessible by certain users.
+* [REMOVED] the native filter classes in favor of using the newly refactored `pop-filter` component
+* [ADDED] `FormValidator` class to simply perform field value validations without the weight of a full form object.
+* [ADDED] `FormConfig` class for more robust support of form configuration
+* [ADDED] Better support for conditional validation
+
 ## 3.4.0
 
 * [ADDED] A light-weight form validator class for evaluating form values and returning error messages without the full

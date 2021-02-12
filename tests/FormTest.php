@@ -301,8 +301,8 @@ class FormTest extends TestCase
         $this->assertEquals(2, count($form->getColumn('left-column')));
         $form->removeColumn('right-column');
         $this->assertFalse($form->hasColumn('right-column'));
-        $this->assertContains('left-column', $form->render());
-        $this->assertContains('enctype="multipart/form-data"', $form->render());
+        $this->assertStringContainsString('left-column', $form->render());
+        $this->assertStringContainsString('enctype="multipart/form-data"', $form->render());
     }
 
     public function testAddColumn2()
@@ -461,7 +461,7 @@ class FormTest extends TestCase
         echo $form;
         $result = ob_get_clean();
 
-        $this->assertContains('<form', $result);
+        $this->assertStringContainsString('<form', $result);
     }
 
     /**

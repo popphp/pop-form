@@ -26,7 +26,7 @@ class CheckboxSetTest extends TestCase
         $this->assertEquals('Checkbox Legend', $checkbox->getLegend());
         $checkbox->resetValue();
         $this->assertTrue(empty($checkbox->getValue()));
-        $this->assertContains('Checkbox Legend', $checkbox->render());
+        $this->assertStringContainsString('Checkbox Legend', $checkbox->render());
     }
 
 

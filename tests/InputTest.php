@@ -78,8 +78,8 @@ class InputTest extends TestCase
         echo $input;
         $result = ob_get_clean();
 
-        $this->assertContains('<datalist', $result);
-        $this->assertContains('<datalist', $input->render());
+        $this->assertStringContainsString('<datalist', $result);
+        $this->assertStringContainsString('<datalist', $input->render());
     }
 
     public function testEmail()
@@ -132,7 +132,7 @@ class InputTest extends TestCase
         $input = new Input\Password('my_password', '123456');
         $this->assertInstanceOf('Pop\Form\Element\Input\Password', $input);
         $this->assertFalse($input->getRenderValue());
-        $this->assertNotContains('123456', $input->render());
+        $this->assertStringNotContainsString('123456', $input->render());
     }
 
     public function testRadio()
