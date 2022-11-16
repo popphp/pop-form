@@ -308,12 +308,13 @@ class FormTest extends TestCase
     public function testAddColumn2()
     {
         $form = Form::createFromConfig([
-            'username' => [
-                'type'     => 'text',
-                'label'    => 'Username:',
-                'required' => true
-            ]
-        ],
+            [
+                'username' => [
+                    'type'     => 'text',
+                    'label'    => 'Username:',
+                    'required' => true
+                ]
+            ],
             [
                 'email' => [
                     'type'  => 'email',
@@ -325,7 +326,8 @@ class FormTest extends TestCase
                     'type'  => 'submit',
                     'value' => 'SUBMIT'
                 ]
-            ]);
+            ]
+        ]);
         $form->addColumn([1, 2]);
         $form->addColumn(3);
         $this->assertTrue($form->hasColumn(1));

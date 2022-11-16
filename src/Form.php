@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -15,6 +15,7 @@ namespace Pop\Form;
 
 use Pop\Dom\Child;
 use Pop\Form\Element;
+use ReturnTypeWillChange;
 
 /**
  * Form class
@@ -22,7 +23,7 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -523,7 +524,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $count = 0;
         foreach ($this->fieldsets as $fieldset) {
@@ -537,7 +538,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $fieldValues = [];
 
@@ -877,6 +878,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  boolean $inner
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function render($depth = 0, $indent = null, $inner = false)
     {
         if (!($this->hasChildren())) {

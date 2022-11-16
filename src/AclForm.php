@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -15,6 +15,7 @@ namespace Pop\Form;
 
 use Pop\Acl\Acl;
 use Pop\Acl\AclRole;
+use ReturnTypeWillChange;
 
 /**
  * ACL Form class
@@ -22,7 +23,7 @@ use Pop\Acl\AclRole;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -161,6 +162,7 @@ class AclForm extends Form
      * @param  boolean $inner
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function render($depth = 0, $indent = null, $inner = false)
     {
         foreach ($this->fieldsets as $fieldset) {

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -14,6 +14,7 @@
 namespace Pop\Form;
 
 use Pop\Filter\FilterableTrait;
+use ReturnTypeWillChange;
 
 /**
  * Form trait
@@ -21,7 +22,7 @@ use Pop\Filter\FilterableTrait;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -36,21 +37,21 @@ trait FormTrait
      *
      * @return int
      */
-    abstract public function count();
+    abstract public function count(): int;
 
     /**
      * Get values
      *
      * @return array
      */
-    abstract public function toArray();
+    abstract public function toArray(): array;
 
     /**
      * Method to iterate over the form elements
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->toArray());
     }
@@ -94,7 +95,7 @@ trait FormTrait
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
@@ -105,6 +106,7 @@ trait FormTrait
      * @param  mixed $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);
@@ -117,6 +119,7 @@ trait FormTrait
      * @param  mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
@@ -128,6 +131,7 @@ trait FormTrait
      * @param  mixed $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->__unset($offset);

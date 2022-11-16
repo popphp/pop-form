@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,7 +19,7 @@ namespace Pop\Form;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -495,7 +495,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->values);
     }
@@ -505,7 +505,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->values;
     }

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,13 +13,15 @@
  */
 namespace Pop\Form;
 
+use ReturnTypeWillChange;
+
 /**
  * Form interface class
  *
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -32,21 +34,21 @@ interface FormInterface
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Get values
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 
     /**
      * Method to iterate over object
      *
      * @return \ArrayIterator
      */
-    public function getIterator();
+    public function getIterator(): \ArrayIterator;
 
     /**
      * Set method to set the property to the value of values[$name]
@@ -87,7 +89,7 @@ interface FormInterface
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset);
+    public function offsetExists($offset): bool;
 
     /**
      * ArrayAccess offsetGet
@@ -95,6 +97,7 @@ interface FormInterface
      * @param  mixed $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset);
 
     /**
@@ -104,6 +107,7 @@ interface FormInterface
      * @param  mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value);
 
     /**
@@ -112,6 +116,7 @@ interface FormInterface
      * @param  mixed $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset);
 
 }

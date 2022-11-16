@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -15,6 +15,7 @@ namespace Pop\Form;
 
 use Pop\Dom\Child;
 use Pop\Form\Element;
+use ReturnTypeWillChange;
 
 /**
  * Form fieldset class
@@ -22,7 +23,7 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2021 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.6.0
  */
@@ -211,7 +212,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $count = 0;
         foreach ($this->fields as $group) {
@@ -225,7 +226,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $fieldValues = [];
 
@@ -405,7 +406,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->toArray());
     }
@@ -723,7 +724,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
@@ -734,6 +735,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);
@@ -746,6 +748,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
@@ -757,6 +760,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->__unset($offset);
