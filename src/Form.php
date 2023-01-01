@@ -693,7 +693,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         }
 
         foreach ($this->filters as $filter) {
-            $realValue = $filter->filter($realValue, $name, $type);
+            if (null !== $realValue) {
+                $realValue = $filter->filter($realValue, $name, $type);
+            }
         }
 
         if (($field instanceof Element\AbstractElement) && !($field instanceof Element\Input\Checkbox) &&
