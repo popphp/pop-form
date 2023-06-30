@@ -72,24 +72,33 @@ class Select extends AbstractSelect
         // Create the child option elements.
         foreach ($values as $k => $v) {
             if (is_array($v)) {
-                $optGroup = new Select\Optgroup();
-                if (null !== $indent) {
-                    $optGroup->setIndent($indent);
-                }
-                $optGroup->setAttribute('label', $k);
-                foreach ($v as $ky => $vl) {
-                    $option = new Select\Option($ky, $vl);
+                if (isset($v['value']) && isset($v['attributes'])) {
+                    $option = new Select\Option($k, $v['value'], ['attributes' => $v['attributes']]);
+                    $this->addChild($option);
+                } else {
+                    $optGroup = new Select\Optgroup();
                     if (null !== $indent) {
-                        $option->setIndent($indent);
+                        $optGroup->setIndent($indent);
                     }
+                    $optGroup->setAttribute('label', $k);
+                    foreach ($v as $ky => $vl) {
+                        if (is_array($vl) && isset($vl['value']) && isset($vl['attributes'])) {
+                            $option = new Select\Option($ky, $vl['value'], ['attributes' => $vl['attributes']]);
+                        } else {
+                            $option = new Select\Option($ky, $vl);
+                        }
+                        if (null !== $indent) {
+                            $option->setIndent($indent);
+                        }
 
-                    // Determine if the current option element is selected.
-                    if ((null !== $this->selected) && ($ky == $this->selected)) {
-                        $option->select();
+                        // Determine if the current option element is selected.
+                        if ((null !== $this->selected) && ($ky == $this->selected)) {
+                            $option->select();
+                        }
+                        $optGroup->addChild($option);
                     }
-                    $optGroup->addChild($option);
+                    $this->addChild($optGroup);
                 }
-                $this->addChild($optGroup);
             } else {
                 $option = new Select\Option($k, $v);
                 if (null !== $indent) {
