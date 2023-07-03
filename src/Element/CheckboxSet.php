@@ -82,6 +82,13 @@ class CheckboxSet extends AbstractElement
                 'value' => $k
             ]);
 
+            if (is_array($v) && isset($v['value']) && isset($v['attributes'])) {
+                $nodeValue = $v['value'];
+                $checkbox->setAttributes($v['attributes']);
+            } else {
+                $nodeValue = $v;
+            }
+
             // Determine if the current radio element is checked.
             if (in_array($k, $this->checked)) {
                 $checkbox->check();
@@ -92,7 +99,7 @@ class CheckboxSet extends AbstractElement
                 $span->setIndent($indent);
             }
             $span->setAttribute('class', 'checkbox-span');
-            $span->setNodeValue($v);
+            $span->setNodeValue($nodeValue);
             $this->addChildren([$checkbox, $span]);
             $this->checkboxes[] = $checkbox;
             $i++;

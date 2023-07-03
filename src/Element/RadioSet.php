@@ -82,6 +82,13 @@ class RadioSet extends AbstractElement
                 'value' => $k
             ]);
 
+            if (is_array($v) && isset($v['value']) && isset($v['attributes'])) {
+                $nodeValue = $v['value'];
+                $radio->setAttributes($v['attributes']);
+            } else {
+                $nodeValue = $v;
+            }
+
             // Determine if the current radio element is checked.
             if ((null !== $this->checked) && ($k == $this->checked)) {
                 $radio->check();
@@ -92,7 +99,7 @@ class RadioSet extends AbstractElement
                 $span->setIndent($indent);
             }
             $span->setAttribute('class', 'radio-span');
-            $span->setNodeValue($v);
+            $span->setNodeValue($nodeValue);
             $this->addChildren([$radio, $span]);
             $this->radios[] = $radio;
             $i++;
