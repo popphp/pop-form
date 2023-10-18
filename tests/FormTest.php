@@ -160,6 +160,15 @@ class FormTest extends TestCase
         $this->assertEquals(0, $form->getCurrent());
     }
 
+    public function testGetFieldsets()
+    {
+        $form = new Form();
+        $form->createFieldset('Fieldset 1', 'table');
+        $form->createFieldset('Fieldset 2', 'table');
+        $this->assertTrue($form->hasFieldsets());
+        $this->assertEquals(2, count($form->getFieldsets()));
+    }
+
     public function testRemoveField()
     {
         $form = Form::createFromConfig([
