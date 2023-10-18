@@ -267,6 +267,26 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     }
 
     /**
+     * Method to get all fieldsets
+     *
+     * @return array
+     */
+    public function getFieldsets()
+    {
+        return $this->fieldsets;
+    }
+
+    /**
+     * Method to determine if the form has fieldsets
+     *
+     * @return boolean
+     */
+    public function hasFieldsets()
+    {
+        return !empty($this->fieldsets);
+    }
+
+    /**
      * Method to add form column
      *
      * @param  mixed  $fieldsets
