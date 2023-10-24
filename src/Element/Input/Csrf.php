@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element\Input;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Csrf extends Hidden
@@ -31,19 +31,19 @@ class Csrf extends Hidden
      * Current token data
      * @var array
      */
-    protected $token = [];
+    protected array $token = [];
 
     /**
      * Constructor
      *
      * Instantiate the CSRF input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  int    $expire
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  int     $expire
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $expire = 300, $indent = null)
+    public function __construct(string $name, ?string $value = null, int $expire = 300, ?string $indent = null)
     {
         // Start a session.
         if (session_id() == '') {
@@ -73,11 +73,11 @@ class Csrf extends Hidden
     /**
      * Set the token of the csrf form element
      *
-     * @param  string $value
-     * @param  int    $expire
+     * @param  ?string $value
+     * @param  int     $expire
      * @return Csrf
      */
-    public function createNewToken($value, $expire = 300)
+    public function createNewToken(?string $value = null, int $expire = 300): Csrf
     {
         $this->token = [
             'value'  => sha1(rand(10000, getrandmax()) . $value),
@@ -94,7 +94,7 @@ class Csrf extends Hidden
      * @throws Exception
      * @return void
      */
-    protected function setValidator()
+    protected function setValidator(): void
     {
         // Get query data
         if (!isset($_SERVER['REQUEST_METHOD'])) {

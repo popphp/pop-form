@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -22,78 +22,78 @@ use Pop\Validator;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 abstract class AbstractElement extends Child implements ElementInterface
 {
 
     /**
      * Element name
-     * @var string
+     * @var ?string
      */
-    protected $name = null;
+    protected ?string $name = null;
 
     /**
      * Form element label
-     * @var string
+     * @var ?string
      */
-    protected $label = null;
+    protected ?string $label = null;
 
     /**
      * Form element hint
-     * @var string
+     * @var ?string
      */
-    protected $hint = null;
+    protected ?string $hint = null;
 
     /**
      * Form element label attributes
      * @var array
      */
-    protected $labelAttributes = [];
+    protected array $labelAttributes = [];
 
     /**
      * Form element hint attributes
      * @var array
      */
-    protected $hintAttributes = [];
+    protected array $hintAttributes = [];
 
     /**
      * Form element required property
-     * @var boolean
+     * @var bool
      */
-    protected $required = false;
+    protected bool $required = false;
 
     /**
      * Form element disabled property
-     * @var boolean
+     * @var bool
      */
-    protected $disabled = false;
+    protected bool $disabled = false;
 
     /**
      * Form element readonly property
-     * @var boolean
+     * @var bool
      */
-    protected $readonly = false;
+    protected bool $readonly = false;
 
     /**
      * Form element validators
      * @var array
      */
-    protected $validators = [];
+    protected array $validators = [];
 
     /**
      * Form element error display position
-     * @var boolean
+     * @var bool
      */
-    protected $errorPre = false;
+    protected bool $errorPre = false;
 
     /**
      * Form element errors
      * @var array
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
      * Constructor
@@ -101,10 +101,10 @@ abstract class AbstractElement extends Child implements ElementInterface
      * Instantiate the form element object
      *
      * @param  string  $name
-     * @param  string  $value
+     * @param  ?string $value
      * @param  array   $options
      */
-    public function __construct($name, $value = null, array $options = [])
+    public function __construct(string $name, ?string $value = null, array $options = [])
     {
         parent::__construct($name, $value, $options);
     }
@@ -115,7 +115,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  string $name
      * @return AbstractElement
      */
-    public function setName($name)
+    public function setName(string $name): AbstractElement
     {
         $this->name = $name;
         return $this;
@@ -127,14 +127,14 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  mixed $value
      * @return AbstractElement
      */
-    abstract public function setValue($value);
+    abstract public function setValue(mixed $value): AbstractElement;
 
     /**
      * Reset the value of the form element
      *
      * @return AbstractElement
      */
-    abstract public function resetValue();
+    abstract public function resetValue(): AbstractElement;
 
     /**
      * Set the label of the form element object
@@ -142,7 +142,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  string $label
      * @return AbstractElement
      */
-    public function setLabel($label)
+    public function setLabel(string $label): AbstractElement
     {
         $this->label = $label;
         return $this;
@@ -154,7 +154,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  string $hint
      * @return AbstractElement
      */
-    public function setHint($hint)
+    public function setHint(string $hint): AbstractElement
     {
         $this->hint = $hint;
         return $this;
@@ -167,7 +167,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  string $v
      * @return AbstractElement
      */
-    public function setLabelAttribute($a, $v)
+    public function setLabelAttribute(string $a, string $v): AbstractElement
     {
         $this->labelAttributes[$a] = $v;
         return $this;
@@ -179,7 +179,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  array $attribs
      * @return AbstractElement
      */
-    public function setLabelAttributes(array $attribs)
+    public function setLabelAttributes(array $attribs): AbstractElement
     {
         foreach ($attribs as $a => $v) {
             $this->setLabelAttribute($a, $v);
@@ -194,7 +194,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  string $v
      * @return AbstractElement
      */
-    public function setHintAttribute($a, $v)
+    public function setHintAttribute(string $a, string $v): AbstractElement
     {
         $this->hintAttributes[$a] = $v;
         return $this;
@@ -206,7 +206,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  array $attribs
      * @return AbstractElement
      */
-    public function setHintAttributes(array $attribs)
+    public function setHintAttributes(array $attribs): AbstractElement
     {
         foreach ($attribs as $a => $v) {
             $this->setHintAttribute($a, $v);
@@ -217,57 +217,57 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Set whether the form element is required
      *
-     * @param  boolean $required
-     * @return mixed
+     * @param  bool $required
+     * @return AbstractElement
      */
-    public function setRequired($required)
+    public function setRequired(bool $required): AbstractElement
     {
-        $this->required = (boolean)$required;
+        $this->required = $required;
         return $this;
     }
 
     /**
      * Set whether the form element is disabled
      *
-     * @param  boolean $disabled
-     * @return mixed
+     * @param  bool $disabled
+     * @return AbstractElement
      */
-    public function setDisabled($disabled)
+    public function setDisabled(bool $disabled): AbstractElement
     {
-        $this->disabled = (boolean)$disabled;
+        $this->disabled = $disabled;
         return $this;
     }
 
     /**
      * Set whether the form element is readonly
      *
-     * @param  boolean $readonly
-     * @return mixed
+     * @param  bool $readonly
+     * @return AbstractElement
      */
-    public function setReadonly($readonly)
+    public function setReadonly(bool $readonly): AbstractElement
     {
-        $this->readonly = (boolean)$readonly;
+        $this->readonly = $readonly;
         return $this;
     }
 
     /**
      * Set error pre-display
      *
-     * @param  boolean $pre
+     * @param  bool $pre
      * @return AbstractElement
      */
-    public function setErrorPre($pre)
+    public function setErrorPre(bool $pre): AbstractElement
     {
-        $this->errorPre = (boolean)$pre;
+        $this->errorPre = $pre;
         return $this;
     }
 
     /**
      * Determine if error to display before the element
      *
-     * @return boolean
+     * @return bool
      */
-    public function isErrorPre()
+    public function isErrorPre(): bool
     {
         return $this->errorPre;
     }
@@ -278,7 +278,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  array $validators
      * @return AbstractElement
      */
-    public function setValidators(array $validators = [])
+    public function setValidators(array $validators = []): AbstractElement
     {
         $this->validators = $validators;
         return $this;
@@ -289,7 +289,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      *
      * @return AbstractElement
      */
-    public function clearErrors()
+    public function clearErrors(): AbstractElement
     {
         $this->errors = [];
         return $this;
@@ -298,9 +298,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get form element object name
      *
-     * @return string
+     * @return ?string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -308,23 +308,23 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get form element object type
      *
-     * @return string
+     * @return ?string
      */
-    abstract public function getType();
+    abstract public function getType() : ?string;
 
     /**
      * Get form element value
      *
      * @return mixed
      */
-    abstract public function getValue();
+    abstract public function getValue(): mixed;
 
     /**
      * Get form element object label
      *
-     * @return string
+     * @return ?string
      */
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->label;
     }
@@ -332,9 +332,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get form element object hint
      *
-     * @return string
+     * @return ?string
      */
-    public function getHint()
+    public function getHint(): ?string
     {
         return $this->hint;
     }
@@ -344,7 +344,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      *
      * @return array
      */
-    public function getLabelAttributes()
+    public function getLabelAttributes(): array
     {
         return $this->labelAttributes;
     }
@@ -354,7 +354,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      *
      * @return array
      */
-    public function getHintAttributes()
+    public function getHintAttributes(): array
     {
         return $this->hintAttributes;
     }
@@ -364,7 +364,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      *
      * @return array
      */
-    public function getValidators()
+    public function getValidators(): array
     {
         return $this->validators;
     }
@@ -372,9 +372,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get whether the form element object is required
      *
-     * @return boolean
+     * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->required;
     }
@@ -382,9 +382,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get whether the form element object is disabled
      *
-     * @return boolean
+     * @return bool
      */
-    public function isDisabled()
+    public function isDisabled(): bool
     {
         return $this->disabled;
     }
@@ -392,9 +392,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get whether the form element object is readonly
      *
-     * @return boolean
+     * @return bool
      */
-    public function isReadonly()
+    public function isReadonly(): bool
     {
         return $this->readonly;
     }
@@ -402,9 +402,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get whether the form element object is a button
      *
-     * @return boolean
+     * @return bool
      */
-    public function isButton()
+    public function isButton(): bool
     {
         return (($this instanceof Button) || ($this instanceof Input\Button) ||
             ($this instanceof Input\Submit) || ($this instanceof Input\Reset));
@@ -415,7 +415,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -423,9 +423,9 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Get if form element object has errors
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return (count($this->errors) > 0);
     }
@@ -437,7 +437,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @throws Exception
      * @return AbstractElement
      */
-    public function addValidator($validator)
+    public function addValidator(mixed $validator): AbstractElement
     {
         if (!($validator instanceof \Pop\Validator\AbstractValidator) && !is_callable($validator)) {
             throw new Exception('Error: The validator must be an instance of Pop\Validator\AbstractValidator or a callable object.');
@@ -450,9 +450,10 @@ abstract class AbstractElement extends Child implements ElementInterface
      * Add multiple validators the form element
      *
      * @param  array $validators
+     * @throws Exception
      * @return AbstractElement
      */
-    public function addValidators(array $validators)
+    public function addValidators(array $validators): AbstractElement
     {
         foreach ($validators as $validator) {
             $this->addValidator($validator);
@@ -467,7 +468,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  array $formValues
      * @return void
      */
-    public function validateValue($value, array $formValues = [])
+    public function validateValue(mixed $value, array $formValues = []): void
     {
         // Check field validators
         if (count($this->validators) > 0) {
@@ -493,7 +494,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  array    $formValues
      * @return void
      */
-    public function validateCallable(callable $validator, $value, array $formValues = [])
+    public function validateCallable(callable $validator, mixed $value, array $formValues = []): void
     {
         $result = call_user_func_array($validator, [$value, $formValues]);
         if ($result instanceof \Pop\Validator\ValidatorInterface) {
@@ -508,7 +509,7 @@ abstract class AbstractElement extends Child implements ElementInterface
                     }
                 }
             }
-        } else if (null !== $result) {
+        } else if ($result !== null) {
             $this->errors[] = $result;
         }
     }
@@ -517,16 +518,16 @@ abstract class AbstractElement extends Child implements ElementInterface
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    abstract public function validate(array $formValues = []);
+    abstract public function validate(array $formValues = []): bool;
 
     /**
      * Print form element
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

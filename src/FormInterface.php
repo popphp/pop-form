@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,7 +13,7 @@
  */
 namespace Pop\Form;
 
-use ReturnTypeWillChange;
+use ArrayIterator;
 
 /**
  * Form interface class
@@ -21,9 +21,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 interface FormInterface
@@ -46,9 +46,9 @@ interface FormInterface
     /**
      * Method to iterate over object
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator;
+    public function getIterator(): ArrayIterator;
 
     /**
      * Set method to set the property to the value of values[$name]
@@ -57,7 +57,7 @@ interface FormInterface
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value);
+    public function __set(string $name, mixed $value): void;
 
     /**
      * Get method to return the value of values[$name]
@@ -65,15 +65,15 @@ interface FormInterface
      * @param  string $name
      * @return mixed
      */
-    public function __get($name);
+    public function __get(string $name): mixed;
 
     /**
      * Return the isset value of values[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name);
+    public function __isset(string $name): bool;
 
     /**
      * Unset values[$name]
@@ -81,15 +81,15 @@ interface FormInterface
      * @param  string $name
      * @return void
      */
-    public function __unset($name);
+    public function __unset(string $name): void;
 
     /**
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool;
+    public function offsetExists(mixed $offset): bool;
 
     /**
      * ArrayAccess offsetGet
@@ -97,8 +97,7 @@ interface FormInterface
      * @param  mixed $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset);
+    public function offsetGet(mixed $offset): mixed;
 
     /**
      * ArrayAccess offsetSet
@@ -107,8 +106,7 @@ interface FormInterface
      * @param  mixed $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value);
+    public function offsetSet(mixed $offset, mixed $value): void;
 
     /**
      * ArrayAccess offsetUnset
@@ -116,7 +114,6 @@ interface FormInterface
      * @param  mixed $offset
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset);
+    public function offsetUnset(mixed $offset): void;
 
 }

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class SelectMultiple extends AbstractSelect
@@ -35,10 +35,12 @@ class SelectMultiple extends AbstractSelect
      * @param  string       $name
      * @param  string|array $values
      * @param  string|array $selected
-     * @param  string       $xmlFile
-     * @param  string       $indent
+     * @param  ?string      $xmlFile
+     * @param  ?string      $indent
      */
-    public function __construct($name, $values, $selected = null, $xmlFile = null, $indent = null)
+    public function __construct(
+        string $name, string|array $values, mixed $selected = null, ?string $xmlFile = null, ?string $indent = null
+    )
     {
         parent::__construct('select');
 
@@ -49,7 +51,7 @@ class SelectMultiple extends AbstractSelect
             'multiple' => 'multiple'
         ]);
 
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
 
@@ -59,13 +61,13 @@ class SelectMultiple extends AbstractSelect
         foreach ($values as $k => $v) {
             if (is_array($v)) {
                 $optGroup = new Select\Optgroup();
-                if (null !== $indent) {
+                if ($indent !== null) {
                     $optGroup->setIndent($indent);
                 }
                 $optGroup->setAttribute('label', $k);
                 foreach ($v as $ky => $vl) {
                     $option = new Select\Option($ky, $vl);
-                    if (null !== $indent) {
+                    if ($indent !== null) {
                         $option->setIndent($indent);
                     }
 
@@ -78,7 +80,7 @@ class SelectMultiple extends AbstractSelect
                 $this->addChild($optGroup);
             } else {
                 $option = new Select\Option($k, $v);
-                if (null !== $indent) {
+                if ($indent !== null) {
                     $option->setIndent($indent);
                 }
 
@@ -90,7 +92,7 @@ class SelectMultiple extends AbstractSelect
             }
         }
 
-        if (null !== $selected) {
+        if ($selected !== null) {
             $this->setValue($selected);
         } else {
             $this->selected = [];
@@ -103,7 +105,7 @@ class SelectMultiple extends AbstractSelect
      * @param  mixed $value
      * @return SelectMultiple
      */
-    public function setValue($value)
+    public function setValue(mixed $value): SelectMultiple
     {
         $this->selected = (!is_array($value)) ? [$value] : $value;
 
@@ -136,7 +138,7 @@ class SelectMultiple extends AbstractSelect
      *
      * @return SelectMultiple
      */
-    public function resetValue()
+    public function resetValue(): SelectMultiple
     {
         $this->selected = [];
 

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Checkbox extends Element\Input
@@ -33,11 +33,11 @@ class Checkbox extends Element\Input
      *
      * Instantiate the text input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct(string $name, ?string $value = null, ?string $indent = null)
     {
         parent::__construct($name, 'checkbox', $value, $indent);
     }
@@ -47,7 +47,7 @@ class Checkbox extends Element\Input
      * @param  mixed $value
      * @return Checkbox
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Checkbox
     {
         if ($value == $this->getAttribute('value')) {
             $this->check();
@@ -62,7 +62,7 @@ class Checkbox extends Element\Input
      *
      * @return Checkbox
      */
-    public function resetValue()
+    public function resetValue(): Checkbox
     {
         $this->uncheck();
         return $this;
@@ -73,7 +73,7 @@ class Checkbox extends Element\Input
      *
      * @return Checkbox
      */
-    public function check()
+    public function check(): Checkbox
     {
         $this->setAttribute('checked', 'checked');
         return $this;
@@ -84,7 +84,7 @@ class Checkbox extends Element\Input
      *
      * @return Checkbox
      */
-    public function uncheck()
+    public function uncheck(): Checkbox
     {
         $this->removeAttribute('checked');
         return $this;
@@ -93,9 +93,9 @@ class Checkbox extends Element\Input
     /**
      * Determine if the checkbox value is checked
      *
-     * @return boolean
+     * @return bool
      */
-    public function isChecked()
+    public function isChecked(): bool
     {
         return ($this->getAttribute('checked') == 'checked');
     }

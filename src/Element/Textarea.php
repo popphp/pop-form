@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Textarea extends AbstractElement
@@ -32,17 +32,17 @@ class Textarea extends AbstractElement
      *
      * Instantiate the textarea form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct(string $name, ?string $value = null, ?string $indent = null)
     {
         parent::__construct('textarea', $value);
 
         $this->setAttributes(['name' => $name, 'id' => $name]);
         $this->setName($name);
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
     }
@@ -50,10 +50,10 @@ class Textarea extends AbstractElement
     /**
      * Set whether the form element is required
      *
-     * @param  boolean $required
+     * @param  bool $required
      * @return Textarea
      */
-    public function setRequired($required)
+    public function setRequired(bool $required): Textarea
     {
         if ($required) {
             $this->setAttribute('required', 'required');
@@ -66,10 +66,10 @@ class Textarea extends AbstractElement
     /**
      * Set whether the form element is disabled
      *
-     * @param  boolean $disabled
+     * @param  bool $disabled
      * @return Textarea
      */
-    public function setDisabled($disabled)
+    public function setDisabled(bool $disabled): Textarea
     {
         if ($disabled) {
             $this->setAttribute('disabled', 'disabled');
@@ -82,10 +82,10 @@ class Textarea extends AbstractElement
     /**
      * Set whether the form element is readonly
      *
-     * @param  boolean $readonly
+     * @param  bool $readonly
      * @return Textarea
      */
-    public function setReadonly($readonly)
+    public function setReadonly(bool $readonly): Textarea
     {
         if ($readonly) {
             $this->setAttribute('readonly', 'readonly');
@@ -101,7 +101,7 @@ class Textarea extends AbstractElement
      * @param  mixed $value
      * @return Textarea
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Textarea
     {
         $this->setNodeValue($value);
         return $this;
@@ -112,7 +112,7 @@ class Textarea extends AbstractElement
      *
      * @return Textarea
      */
-    public function resetValue()
+    public function resetValue(): Textarea
     {
         $this->setNodeValue('');
         return $this;
@@ -123,7 +123,7 @@ class Textarea extends AbstractElement
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'textarea';
     }
@@ -131,9 +131,9 @@ class Textarea extends AbstractElement
     /**
      * Get the value of the form textarea element object
      *
-     * @return string
+     * @return ?string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->getNodeValue();
     }
@@ -142,9 +142,9 @@ class Textarea extends AbstractElement
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = [])
+    public function validate(array $formValues = []): bool
     {
         $value = $this->getValue();
 

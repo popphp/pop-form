@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Input extends AbstractElement
@@ -32,12 +32,12 @@ class Input extends AbstractElement
      *
      * Instantiate the form input element, defaults to text
      *
-     * @param  string $name
-     * @param  string $type
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  string  $type
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $type = 'text', $value = null, $indent = null)
+    public function __construct(string $name, string $type = 'text', ?string $value = null, ?string  $indent = null)
     {
         parent::__construct('input');
 
@@ -49,7 +49,7 @@ class Input extends AbstractElement
             'value' => $value
         ]);
 
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
     }
@@ -57,10 +57,10 @@ class Input extends AbstractElement
     /**
      * Set whether the form element is required
      *
-     * @param  boolean $required
+     * @param  bool $required
      * @return Input
      */
-    public function setRequired($required)
+    public function setRequired(bool $required): Input
     {
         if ($required) {
             $this->setAttribute('required', 'required');
@@ -73,10 +73,10 @@ class Input extends AbstractElement
     /**
      * Set whether the form element is disabled
      *
-     * @param  boolean $disabled
+     * @param  bool $disabled
      * @return Input
      */
-    public function setDisabled($disabled)
+    public function setDisabled(bool $disabled): Input
     {
         if ($disabled) {
             $this->setAttribute('disabled', 'disabled');
@@ -89,10 +89,10 @@ class Input extends AbstractElement
     /**
      * Set whether the form element is readonly
      *
-     * @param  boolean $readonly
+     * @param  bool $readonly
      * @return Input
      */
-    public function setReadonly($readonly)
+    public function setReadonly(bool $readonly): Input
     {
         if ($readonly) {
             $this->setAttribute('readonly', 'readonly');
@@ -108,7 +108,7 @@ class Input extends AbstractElement
      * @param  mixed $value
      * @return Input
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Input
     {
         $this->setAttribute('value', $value);
         return $this;
@@ -119,7 +119,7 @@ class Input extends AbstractElement
      *
      * @return Input
      */
-    public function resetValue()
+    public function resetValue(): Input
     {
         $this->setAttribute('value', '');
         return $this;
@@ -128,9 +128,9 @@ class Input extends AbstractElement
     /**
      * Get the value of the form input element object
      *
-     * @return string
+     * @return ?string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->getAttribute('value');
     }
@@ -138,9 +138,9 @@ class Input extends AbstractElement
     /**
      * Get the type of the form input element object
      *
-     * @return string
+     * @return ?string
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->getAttribute('type');
     }
@@ -149,9 +149,9 @@ class Input extends AbstractElement
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = [])
+    public function validate(array $formValues = []): bool
     {
         $value = $this->getValue();
 

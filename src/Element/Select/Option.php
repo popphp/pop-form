@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Option extends Child
@@ -38,7 +38,7 @@ class Option extends Child
      * @param  string  $nodeValue
      * @param  array   $options
      */
-    public function __construct($value, $nodeValue, array $options = [])
+    public function __construct(string $value, string $nodeValue, array $options = [])
     {
         parent::__construct('option', $nodeValue, $options);
         $this->setValue($value);
@@ -50,7 +50,7 @@ class Option extends Child
      * @param  mixed $value
      * @return Option
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Option
     {
         $this->setAttribute('value', $value);
         return $this;
@@ -59,9 +59,9 @@ class Option extends Child
     /**
      * Get the option value
      *
-     * @return string
+     * @return ?string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->getAttribute('value');
     }
@@ -71,7 +71,7 @@ class Option extends Child
      *
      * @return Option
      */
-    public function select()
+    public function select(): Option
     {
         $this->setAttribute('selected', 'selected');
         return $this;
@@ -82,7 +82,7 @@ class Option extends Child
      *
      * @return Option
      */
-    public function deselect()
+    public function deselect(): Option
     {
         $this->removeAttribute('selected');
         return $this;
@@ -91,9 +91,9 @@ class Option extends Child
     /**
      * Determine if the option value is selected
      *
-     * @return boolean
+     * @return bool
      */
-    public function isSelected()
+    public function isSelected(): bool
     {
         return ($this->getAttribute('selected') == 'selected');
     }

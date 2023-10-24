@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -14,8 +14,8 @@
 namespace Pop\Form;
 
 use Pop\Dom\Child;
-use Pop\Form\Element;
-use ReturnTypeWillChange;
+use Pop\Form\Element\AbstractElement;
+use ArrayIterator;
 
 /**
  * Form fieldset class
@@ -23,9 +23,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -35,39 +35,39 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Form field elements
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * Current field group
      * @var int
      */
-    protected $current = 0;
+    protected int $current = 0;
 
     /**
      * Fieldset legend
-     * @var string
+     * @var ?string
      */
-    protected $legend = null;
+    protected ?string $legend = null;
 
     /**
      * Fieldset container (dl, table, div or p)
      * @var string
      */
-    protected $container = 'dl';
+    protected string $container = 'dl';
 
     /**
      * Constructor
      *
      * Instantiate the form fieldset object
      *
-     * @param  array  $fields
+     * @param  ?array $fields
      * @param  string $container
      */
-    public function __construct(array $fields = null, $container = 'dl')
+    public function __construct(?array $fields = null, string $container = 'dl')
     {
         parent::__construct('fieldset');
         $this->setContainer($container);
-        if (null !== $fields) {
+        if ($fields !== null) {
             $this->addFields($fields);
         }
     }
@@ -78,7 +78,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  array  $config
      * @return Fieldset
      */
-    public static function createFromConfig(array $config)
+    public static function createFromConfig(array $config): Fieldset
     {
         $fields = [];
 
@@ -95,7 +95,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  string $container
      * @return Fieldset
      */
-    public function setContainer($container)
+    public function setContainer(string $container): Fieldset
     {
         $this->container = strtolower($container);
         return $this;
@@ -107,7 +107,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  int $i
      * @return Fieldset
      */
-    public function setCurrent($i)
+    public function setCurrent(int $i): Fieldset
     {
         $this->current = (int)$i;
         if (!isset($this->fields[$this->current])) {
@@ -121,7 +121,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return Fieldset
      */
-    public function createGroup()
+    public function createGroup(): Fieldset
     {
         $this->current++;
         $this->fields[$this->current] = [];
@@ -131,10 +131,10 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     /**
      * Method to add a form field
      *
-     * @param  Element\AbstractElement $field
+     * @param  AbstractElement $field
      * @return Fieldset
      */
-    public function addField(Element\AbstractElement $field)
+    public function addField(AbstractElement $field): Fieldset
     {
         if (!isset($this->fields[$this->current])) {
             $this->fields[$this->current] = [];
@@ -149,7 +149,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  array $fields
      * @return Fieldset
      */
-    public function addFields(array $fields)
+    public function addFields(array $fields): Fieldset
     {
         foreach ($fields as $field) {
             $this->addField($field);
@@ -160,11 +160,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     /**
      * Method to insert a field before another one
      *
-     * @param  string                  $name
-     * @param  Element\AbstractElement $field
+     * @param  string          $name
+     * @param  AbstractElement $field
      * @return Fieldset
      */
-    public function insertFieldBefore($name, Element\AbstractElement $field)
+    public function insertFieldBefore(string $name, AbstractElement $field): Fieldset
     {
         foreach ($this->fields as $i => $group) {
             $fields = [];
@@ -185,11 +185,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     /**
      * Method to insert a field after another one
      *
-     * @param  string                  $name
-     * @param  Element\AbstractElement $field
+     * @param  string          $name
+     * @param  AbstractElement $field
      * @return Fieldset
      */
-    public function insertFieldAfter($name, Element\AbstractElement $field)
+    public function insertFieldAfter(string $name, AbstractElement $field): Fieldset
     {
         foreach ($this->fields as $i => $group) {
             $fields = [];
@@ -242,9 +242,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     /**
      * Method to get fieldset legend
      *
-     * @return string
+     * @return string|null
      */
-    public function getLegend()
+    public function getLegend(): string|null
     {
         return $this->legend;
     }
@@ -254,7 +254,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return string
      */
-    public function getContainer()
+    public function getContainer(): string
     {
         return $this->container;
     }
@@ -264,7 +264,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return int
      */
-    public function getCurrent()
+    public function getCurrent(): int
     {
         return $this->current;
     }
@@ -273,9 +273,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Method to determine if the fieldset has a field
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function hasField($name)
+    public function hasField(string $name): bool
     {
         $result = false;
         foreach ($this->fields as $key => $fields) {
@@ -291,9 +291,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Method to get a field element object
      *
      * @param  string $name
-     * @return Element\AbstractElement
+     * @return AbstractElement
      */
-    public function getField($name)
+    public function getField(string $name): AbstractElement
     {
         $result = null;
         foreach ($this->fields as $key => $fields) {
@@ -308,11 +308,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Method to get field element objects in a group
      *
      * @param  int  $i
-     * @return array
+     * @return array|null
      */
-    public function getFields($i)
+    public function getFields(int $i): array|null
     {
-        return (isset($this->fields[$i])) ? $this->fields[$i] : null;
+        return $this->fields[$i] ?? null;
     }
 
     /**
@@ -320,7 +320,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return array
      */
-    public function getFieldGroups()
+    public function getFieldGroups(): array
     {
         return $this->fields;
     }
@@ -330,7 +330,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return array
      */
-    public function getAllFields()
+    public function getAllFields(): array
     {
         $fields = [];
         foreach ($this->fields as $group) {
@@ -347,7 +347,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  string $name
      * @return mixed
      */
-    public function getFieldValue($name)
+    public function getFieldValue(string $name): mixed
     {
         $result = null;
         foreach ($this->fields as $key => $fields) {
@@ -364,7 +364,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  string $legend
      * @return Fieldset
      */
-    public function setLegend($legend)
+    public function setLegend(string $legend): Fieldset
     {
         $this->legend = $legend;
         return $this;
@@ -377,7 +377,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed  $value
      * @return Fieldset
      */
-    public function setFieldValue($name, $value)
+    public function setFieldValue(string $name, mixed $value): Fieldset
     {
         foreach ($this->fields as $key => $fields) {
             if (isset($fields[$name])) {
@@ -393,7 +393,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  array $values
      * @return Fieldset
      */
-    public function setFieldValues(array $values)
+    public function setFieldValues(array $values): Fieldset
     {
         foreach ($values as $name => $value) {
             $this->setFieldValue($name, $value);
@@ -404,11 +404,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     /**
      * Method to iterate over the form elements
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->toArray());
+        return new ArrayIterator($this->toArray());
     }
 
     /**
@@ -416,7 +416,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return Fieldset
      */
-    public function prepare()
+    public function prepare(): Fieldset
     {
         if (!empty($this->legend)) {
             $this->addChild(new Child('legend', $this->legend));
@@ -441,17 +441,17 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return array
      */
-    public function prepareForView()
+    public function prepareForView(): array
     {
         $fields = [];
 
         foreach ($this->fields as $groups) {
             foreach ($groups as $field) {
-                if (null !== $field->getLabel()) {
+                if ($field->getLabel() !== null) {
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
                     $label    = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if (null !== $field->getLabelAttributes()) {
+                    if ($field->getLabelAttributes() !== null) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -464,9 +464,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $fields[$field->getName() . '_label'] = $label->render();
                 }
 
-                if (null !== $field->getHint()) {
+                if ($field->getHint() !== null) {
                     $hint = new Child('span', $field->getHint());
-                    if (null !== $field->getHintAttributes()) {
+                    if ($field->getHintAttributes() !== null) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $fields[$field->getName() . '_hint'] = $hint->render();
@@ -488,7 +488,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return void
      */
-    protected  function prepareTable()
+    protected function prepareTable(): void
     {
         foreach ($this->fields as $fields) {
             $table = new Child('table');
@@ -502,13 +502,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
 
                 $tr = new Child('tr');
-                if (null !== $field->getLabel()) {
+                if ($field->getLabel() !== null) {
                     $td = new Child('td');
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
                     $label = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if (null !== $field->getLabelAttributes()) {
+                    if ($field->getLabelAttributes() !== null) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -528,15 +528,15 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $td->addChild($field);
 
-                if (null !== $field->getHint()) {
+                if ($field->getHint() !== null) {
                     $hint = new Child('span', $field->getHint());
-                    if (null !== $field->getHintAttributes()) {
+                    if ($field->getHintAttributes() !== null) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $td->addChild($hint);
                 }
 
-                if (null === $field->getLabel()) {
+                if ($field->getLabel() === null) {
                     $td->setAttribute('colspan', 2);
                 }
                 if (!$field->isErrorPre()) {
@@ -556,7 +556,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  string $element
      * @return void
      */
-    protected  function prepareElement($element)
+    protected function prepareElement(string $element): void
     {
         foreach ($this->fields as $fields) {
             foreach ($fields as $field) {
@@ -568,11 +568,11 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
 
                 $container = new Child($element);
-                if (null !== $field->getLabel()) {
+                if ($field->getLabel() !== null) {
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
                     $label    = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if (null !== $field->getLabelAttributes()) {
+                    if ($field->getLabelAttributes() !== null) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -590,9 +590,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $container->addChild($field);
 
-                if (null !== $field->getHint()) {
+                if ($field->getHint() !== null) {
                     $hint = new Child('span', $field->getHint());
-                    if (null !== $field->getHintAttributes()) {
+                    if ($field->getHintAttributes() !== null) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $container->addChild($hint);
@@ -610,7 +610,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      *
      * @return void
      */
-    protected  function prepareDl()
+    protected function prepareDl(): void
     {
         foreach ($this->fields as $fields) {
             $dl = new Child('dl');
@@ -623,13 +623,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
                 }
 
-                if (null !== $field->getLabel()) {
+                if ($field->getLabel() !== null) {
                     $dt = new Child('dt');
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
                     $label = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if (null !== $field->getLabelAttributes()) {
+                    if ($field->getLabelAttributes() !== null) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -649,9 +649,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $dd->addChild($field);
 
-                if (null !== $field->getHint()) {
+                if ($field->getHint() !== null) {
                     $hint = new Child('span', $field->getHint());
-                    if (null !== $field->getHintAttributes()) {
+                    if ($field->getHintAttributes() !== null) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $dd->addChild($hint);
@@ -673,7 +673,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->setFieldValue($name, $value);
     }
@@ -682,10 +682,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Get method to return the value of fields[$name]
      *
      * @param  string $name
-     * @throws Exception
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->getFieldValue($name);
     }
@@ -694,9 +693,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Return the isset value of fields[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return $this->hasField($name);
     }
@@ -707,7 +706,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  string $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         foreach ($this->fields as $i => $group) {
             foreach ($group as $key => $value) {
@@ -722,9 +721,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->__isset($offset);
     }
@@ -735,8 +734,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
@@ -748,8 +746,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->__set($offset, $value);
     }
@@ -760,8 +757,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * @param  mixed $offset
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->__unset($offset);
     }

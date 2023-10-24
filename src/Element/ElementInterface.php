@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 interface ElementInterface
 {
@@ -32,7 +32,7 @@ interface ElementInterface
      * @param  string $name
      * @return ElementInterface
      */
-    public function setName($name);
+    public function setName(string $name): ElementInterface;
 
     /**
      * Set the value of the form element
@@ -40,22 +40,22 @@ interface ElementInterface
      * @param  mixed $value
      * @return ElementInterface
      */
-    public function setValue($value);
+    public function setValue(mixed $value): ElementInterface;
 
     /**
      * Reset the value of the form element
      *
      * @return ElementInterface
      */
-    public function resetValue();
+    public function resetValue(): ElementInterface;
 
     /**
      * Set the label of the form element
      *
-     * @param  mixed $label
+     * @param  string $label
      * @return ElementInterface
      */
-    public function setLabel($label);
+    public function setLabel(string $label): ElementInterface;
 
     /**
      * Set the attributes of the label of the form element
@@ -63,46 +63,46 @@ interface ElementInterface
      * @param  array $attribs
      * @return ElementInterface
      */
-    public function setLabelAttributes(array $attribs);
+    public function setLabelAttributes(array $attribs): ElementInterface;
 
     /**
      * Set whether the form element is required
      *
-     * @param  boolean $required
+     * @param  bool $required
      * @return mixed
      */
-    public function setRequired($required);
+    public function setRequired(bool $required): mixed;
 
     /**
      * Set whether the form element is disabled
      *
-     * @param  boolean $disabled
+     * @param  bool $disabled
      * @return mixed
      */
-    public function setDisabled($disabled);
+    public function setDisabled(bool $disabled): mixed;
 
     /**
      * Set whether the form element is readonly
      *
-     * @param  boolean $readonly
+     * @param  bool $readonly
      * @return mixed
      */
-    public function setReadonly($readonly);
+    public function setReadonly(bool $readonly): mixed;
 
     /**
      * Set error to display before the element
      *
-     * @param  boolean $pre
+     * @param  bool $pre
      * @return ElementInterface
      */
-    public function setErrorPre($pre);
+    public function setErrorPre(bool $pre): ElementInterface;
 
     /**
      * Determine if error to display before the element
      *
-     * @return boolean
+     * @return bool
      */
-    public function isErrorPre();
+    public function isErrorPre(): bool;
 
     /**
      * Set validators
@@ -110,98 +110,98 @@ interface ElementInterface
      * @param  array $validators
      * @return ElementInterface
      */
-    public function setValidators(array $validators = []);
+    public function setValidators(array $validators = []): ElementInterface;
 
     /**
      * Clear errors
      *
      * @return ElementInterface
      */
-    public function clearErrors();
+    public function clearErrors(): ElementInterface;
 
     /**
      * Get form element name
      *
-     * @return string
+     * @return ?string
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Get form element object type
      *
-     * @return string
+     * @return ?string
      */
-    public function getType();
+    public function getType(): ?string;
 
     /**
      * Get form element value
      *
      * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Get form element label
      *
-     * @return string
+     * @return ?string
      */
-    public function getLabel();
+    public function getLabel(): ?string;
 
     /**
      * Get the attributes of the form element label
      *
      * @return array
      */
-    public function getLabelAttributes();
+    public function getLabelAttributes(): array;
 
     /**
      * Get validators
      *
      * @return array
      */
-    public function getValidators();
+    public function getValidators(): array;
 
     /**
      * Get whether the form element is required
      *
-     * @return boolean
+     * @return bool
      */
-    public function isRequired();
+    public function isRequired(): bool;
 
     /**
      * Get whether the form element is disabled
      *
-     * @return boolean
+     * @return bool
      */
-    public function isDisabled();
+    public function isDisabled(): bool;
 
     /**
      * Get whether the form element is readonly
      *
-     * @return boolean
+     * @return bool
      */
-    public function isReadonly();
+    public function isReadonly(): bool;
 
     /**
      * Get whether the form element object is a button
      *
-     * @return boolean
+     * @return bool
      */
-    public function isButton();
+    public function isButton(): bool;
 
     /**
      * Get form element errors
      *
      * @return array
      */
-    public function getErrors();
+    public function getErrors(): array;
 
     /**
      * Get if form element has errors
      *
-     * @return array
+     * @return bool
      */
-    public function hasErrors();
+    public function hasErrors(): bool;
 
     /**
      * Add a validator the form element
@@ -209,7 +209,7 @@ interface ElementInterface
      * @param  mixed $validator
      * @return ElementInterface
      */
-    public function addValidator($validator);
+    public function addValidator(mixed $validator): ElementInterface;
 
     /**
      * Validate the value
@@ -218,7 +218,7 @@ interface ElementInterface
      * @param  array $formValues
      * @return void
      */
-    public function validateValue($value, array $formValues = []);
+    public function validateValue(mixed $value, array $formValues = []): void;
 
     /**
      * Validate the value by callable
@@ -228,14 +228,14 @@ interface ElementInterface
      * @param  array    $formValues
      * @return void
      */
-    public function validateCallable(callable $validator, $value, array $formValues = []);
+    public function validateCallable(callable $validator, mixed $value, array $formValues = []): void;
 
     /**
      * Validate the form element
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = []);
+    public function validate(array $formValues = []): bool;
 
 }

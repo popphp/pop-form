@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -14,8 +14,10 @@
 namespace Pop\Form;
 
 use Pop\Dom\Child;
-use Pop\Form\Element;
-use ReturnTypeWillChange;
+use Pop\Form\Element\AbstractElement;
+use Pop\Form\Element\Input\Checkbox;
+use Pop\Form\Element\Input\Radio;
+use Pop\Form\Element\Input\File;
 
 /**
  * Form class
@@ -23,9 +25,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate
@@ -40,32 +42,32 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Field fieldsets
      * @var array
      */
-    protected $fieldsets = [];
+    protected array $fieldsets = [];
 
     /**
      * Form columns
      * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Current field fieldset
      * @var int
      */
-    protected $current = 0;
+    protected int $current = 0;
 
     /**
      * Constructor
      *
      * Instantiate the form object
      *
-     * @param  array  $fields
-     * @param  string $action
-     * @param  string $method
+     * @param  ?array  $fields
+     * @param  ?string $action
+     * @param  string  $method
      */
-    public function __construct(array $fields = null, $action = null, $method = 'post')
+    public function __construct(?array $fields = null, ?string $action = null, string $method = 'post')
     {
-        if (null === $action) {
+        if ($action === null) {
             $action = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '#';
         }
 
@@ -73,7 +75,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         $this->setAction($action);
         $this->setMethod($method);
 
-        if (null !== $fields) {
+        if ($fields !== null) {
             $this->addFields($fields);
         }
     }
@@ -82,11 +84,13 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to create form object and fields from config
      *
      * @param  array|FormConfig $config
-     * @param  string           $action
+     * @param  ?string          $action
      * @param  string           $method
      * @return Form
      */
-    public static function createFromConfig($config, $action = null, $method = 'post')
+    public static function createFromConfig(
+        array|FormConfig $config, ?string $action = null, string $method = 'post'
+    ): Form
     {
         $form = new static(null, $action, $method);
         $form->addFieldsFromConfig($config);
@@ -97,12 +101,14 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to create form object and fields from config
      *
      * @param  array|FormConfig $config
-     * @param  string           $container
-     * @param  string           $action
+     * @param  ?string          $container
+     * @param  ?string          $action
      * @param  string           $method
      * @return Form
      */
-    public static function createFromFieldsetConfig($config, $container = null, $action = null, $method = 'post')
+    public static function createFromFieldsetConfig(
+        array|FormConfig$config, ?string $container = null, ?string $action = null, string $method = 'post'
+    ): Form
     {
         $form = new static(null, $action, $method);
         $form->addFieldsetsFromConfig($config, $container);
@@ -112,26 +118,26 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to create a new fieldset object
      *
-     * @param  string  $legend
-     * @param  string  $container
+     * @param  ?string  $legend
+     * @param  ?string  $container
      * @return Fieldset
      */
-    public function createFieldset($legend = null, $container = null)
+    public function createFieldset(?string $legend = null, ?string $container = null): Fieldset
     {
         $fieldset = new Fieldset();
-        if (null !== $legend) {
+        if ($legend !== null) {
             $fieldset->setLegend($legend);
         }
-        if (null !== $container) {
+        if ($container !== null) {
             $fieldset->setContainer($container);
         }
 
         $this->addFieldset($fieldset);
 
-        $id = (null !== $this->getAttribute('id')) ?
+        $id = ($this->getAttribute('id') !== null) ?
             $this->getAttribute('id') . '-fieldset-' . ($this->current + 1) : 'pop-form-fieldset-' . ($this->current + 1);
 
-        $class = (null !== $this->getAttribute('class')) ?
+        $class = ($this->getAttribute('class') !== null) ?
             $this->getAttribute('id') . '-fieldset' : 'pop-form-fieldset';
 
         $fieldset->setAttribute('id', $id);
@@ -146,7 +152,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $action
      * @return Form
      */
-    public function setAction($action)
+    public function setAction(string $action): Form
     {
         $this->setAttribute('action', str_replace(['?captcha=1', '&captcha=1'], ['', ''], $action));
         return $this;
@@ -158,7 +164,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $method
      * @return Form
      */
-    public function setMethod($method)
+    public function setMethod(string $method): Form
     {
         $this->setAttribute('method', $method);
         return $this;
@@ -167,9 +173,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to get action
      *
-     * @return string
+     * @return string|null
      */
-    public function getAction()
+    public function getAction(): string|null
     {
         return $this->getAttribute('action');
     }
@@ -177,9 +183,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to get method
      *
-     * @return string
+     * @return string|null
      */
-    public function getMethod()
+    public function getMethod(): string|null
     {
         return $this->getAttribute('method');
     }
@@ -191,7 +197,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $v
      * @return Form
      */
-    public function setAttribute($a, $v)
+    public function setAttribute(string $a, string $v): Form
     {
         parent::setAttribute($a, $v);
 
@@ -217,7 +223,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array $a
      * @return Form
      */
-    public function setAttributes(array $a)
+    public function setAttributes(array $a): Form
     {
         foreach ($a as $name => $value) {
             $this->setAttribute($name, $value);
@@ -231,7 +237,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  Fieldset $fieldset
      * @return Form
      */
-    public function addFieldset(Fieldset $fieldset)
+    public function addFieldset(Fieldset $fieldset): Form
     {
         $this->fieldsets[] = $fieldset;
         $this->current     = count($this->fieldsets) - 1;
@@ -244,7 +250,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  int $i
      * @return Form
      */
-    public function removeFieldset($i)
+    public function removeFieldset(int $i): Form
     {
         if (isset($this->fieldsets[(int)$i])) {
             unset($this->fieldsets[(int)$i]);
@@ -259,11 +265,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to get current fieldset
      *
-     * @return Fieldset
+     * @return Fieldset|null
      */
-    public function getFieldset()
+    public function getFieldset(): Fieldset|null
     {
-        return (isset($this->fieldsets[$this->current])) ? $this->fieldsets[$this->current] : null;
+        return $this->fieldsets[$this->current] ?? null;
     }
 
     /**
@@ -271,7 +277,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return array
      */
-    public function getFieldsets()
+    public function getFieldsets(): array
     {
         return $this->fieldsets;
     }
@@ -279,9 +285,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to determine if the form has fieldsets
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasFieldsets()
+    public function hasFieldsets(): bool
     {
         return !empty($this->fieldsets);
     }
@@ -289,11 +295,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to add form column
      *
-     * @param  mixed  $fieldsets
-     * @param  string $class
+     * @param  mixed   $fieldsets
+     * @param  ?string $class
      * @return Form
      */
-    public function addColumn($fieldsets, $class = null)
+    public function addColumn(mixed $fieldsets, ?string $class = null): Form
     {
         if (!is_array($fieldsets)) {
             $fieldsets = [$fieldsets];
@@ -303,7 +309,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
             $fieldsets[$i] = (int)$num - 1;
         }
 
-        if (null === $class) {
+        if ($class === null) {
             $class = 'pop-form-column-' . (count($this->columns) + 1);
         }
 
@@ -315,9 +321,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to determine if form has a column
      *
      * @param  string $class
-     * @return boolean
+     * @return bool
      */
-    public function hasColumn($class)
+    public function hasColumn(string $class): bool
     {
         if (is_numeric($class)) {
             $class = 'pop-form-column-' . $class;
@@ -330,15 +336,15 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to get form column
      *
      * @param  string $class
-     * @return array
+     * @return array|null
      */
-    public function getColumn($class)
+    public function getColumn(string $class): array|null
     {
         if (is_numeric($class)) {
             $class = 'pop-form-column-' . $class;
         }
 
-        return (isset($this->columns[$class])) ? $this->columns[$class] : null;
+        return $this->columns[$class] ?? null;
     }
 
     /**
@@ -347,7 +353,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $class
      * @return Form
      */
-    public function removeColumn($class)
+    public function removeColumn(string $class): Form
     {
         if (is_numeric($class)) {
             $class = 'pop-form-column-' . $class;
@@ -365,7 +371,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return int
      */
-    public function getCurrent()
+    public function getCurrent(): int
     {
         return $this->current;
     }
@@ -376,7 +382,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  int $i
      * @return Form
      */
-    public function setCurrent($i)
+    public function setCurrent(int $i): Form
     {
         $this->current = (int)$i;
         if (!isset($this->fieldsets[$this->current])) {
@@ -388,12 +394,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to get the legend of the current fieldset
      *
-     * @return string
+     * @return string|null
      */
-    public function getLegend()
+    public function getLegend(): string|null
     {
-        return (isset($this->fieldsets[$this->current])) ?
-            $this->fieldsets[$this->current]->getLegend() : null;
+        return $this->fieldsets[$this->current]?->getLegend();
     }
 
     /**
@@ -402,7 +407,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $legend
      * @return Form
      */
-    public function setLegend($legend)
+    public function setLegend(string $legend): Form
     {
         if (isset($this->fieldsets[$this->current])) {
             $this->fieldsets[$this->current]->setLegend($legend);
@@ -413,10 +418,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to add a form field
      *
-     * @param  Element\AbstractElement $field
+     * @param  AbstractElement $field
      * @return Form
      */
-    public function addField(Element\AbstractElement $field)
+    public function addField(AbstractElement $field): Form
     {
         if (count($this->fieldsets) == 0) {
             $this->createFieldset();
@@ -431,7 +436,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array $fields
      * @return Form
      */
-    public function addFields(array $fields)
+    public function addFields(array $fields): Form
     {
         foreach ($fields as $field) {
             $this->addField($field);
@@ -446,7 +451,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array  $field
      * @return Form
      */
-    public function addFieldFromConfig($name, $field)
+    public function addFieldFromConfig(string $name, array $field): Form
     {
         $this->addField(Fields::create($name, $field));
         return $this;
@@ -458,7 +463,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array|FormConfig $config
      * @return Form
      */
-    public function addFieldsFromConfig($config)
+    public function addFieldsFromConfig(array|FormConfig $config): Form
     {
         $i = 1;
         foreach ($config as $name => $field) {
@@ -486,10 +491,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to add form fieldsets from config
      *
      * @param  array|FormConfig $fieldsets
-     * @param  string $container
+     * @param  ?string          $container
      * @return Form
      */
-    public function addFieldsetsFromConfig($fieldsets, $container = null)
+    public function addFieldsetsFromConfig(array|FormConfig $fieldsets, ?string $container = null): Form
     {
         foreach ($fieldsets as $legend => $config) {
             if (!is_numeric($legend)) {
@@ -506,11 +511,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to insert a field before another one
      *
-     * @param  string                  $name
-     * @param  Element\AbstractElement $field
+     * @param  string          $name
+     * @param  AbstractElement $field
      * @return Form
      */
-    public function insertFieldBefore($name, Element\AbstractElement $field)
+    public function insertFieldBefore(string $name, AbstractElement $field): Form
     {
         foreach ($this->fieldsets as $fieldset) {
             if ($fieldset->hasField($name)) {
@@ -524,11 +529,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to insert a field after another one
      *
-     * @param  string                  $name
-     * @param  Element\AbstractElement $field
+     * @param  string          $name
+     * @param  AbstractElement $field
      * @return Form
      */
-    public function insertFieldAfter($name, Element\AbstractElement $field)
+    public function insertFieldAfter(string $name, AbstractElement $field): Form
     {
         foreach ($this->fieldsets as $fieldset) {
             if ($fieldset->hasField($name)) {
@@ -573,9 +578,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to get a field element object
      *
      * @param  string $name
-     * @return Element\AbstractElement
+     * @return AbstractElement|null
      */
-    public function getField($name)
+    public function getField(string $name): AbstractElement|null
     {
         $namedField = null;
         $fields     = $this->getFields();
@@ -595,7 +600,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return array
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [];
 
@@ -610,19 +615,19 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Has a field element object
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function hasField($name)
+    public function hasField(string $name): bool
     {
-        return (null !== $this->getField($name));
+        return ($this->getField($name) !== null);
     }
 
     /**
      * Has fields
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasFields()
+    public function hasFields(): bool
     {
         return (!empty($this->getFields()));
     }
@@ -633,7 +638,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $field
      * @return Form
      */
-    public function removeField($field)
+    public function removeField(string $field): Form
     {
         foreach ($this->fieldsets as $fieldset) {
             if ($fieldset->hasField($field)) {
@@ -649,10 +654,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $name
      * @return mixed
      */
-    public function getFieldValue($name)
+    public function getFieldValue(string $name): mixed
     {
         $fieldValues = $this->toArray();
-        return (isset($fieldValues[$name])) ? $fieldValues[$name] : null;
+        return $fieldValues[$name] ?? null;
     }
 
     /**
@@ -662,7 +667,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  mixed  $value
      * @return Form
      */
-    public function setFieldValue($name, $value)
+    public function setFieldValue(string $name, mixed $value): Form
     {
         foreach ($this->fieldsets as $fieldset) {
             if (isset($fieldset[$name])) {
@@ -678,7 +683,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  array $values
      * @return Form
      */
-    public function setFieldValues(array $values)
+    public function setFieldValues(array $values): Form
     {
         $fields = $this->toArray();
         foreach ($fields as $name => $value) {
@@ -700,9 +705,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  mixed $field
      * @return mixed
      */
-    public function filterValue($field)
+    public function filterValue(mixed $field): mixed
     {
-        if ($field instanceof Element\AbstractElement) {
+        if ($field instanceof AbstractElement) {
             $name      = $field->getName();
             $type      = $field->getType();
             $realValue = $field->getValue();
@@ -713,13 +718,13 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         }
 
         foreach ($this->filters as $filter) {
-            if (null !== $realValue) {
+            if ($realValue !== null) {
                 $realValue = $filter->filter($realValue, $name, $type);
             }
         }
 
-        if (($field instanceof Element\AbstractElement) && !($field instanceof Element\Input\Checkbox) &&
-            !($field instanceof Element\Input\Radio) && (null !== $realValue) && ($realValue != '')) {
+        if (($field instanceof AbstractElement) && !($field instanceof Checkbox) &&
+            !($field instanceof Radio) && ($realValue !== null) && ($realValue != '')) {
             $field->setValue($realValue);
         }
 
@@ -732,9 +737,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  mixed $values
      * @return mixed
      */
-    public function filter($values = null)
+    public function filter(mixed $values = null): mixed
     {
-        if (null === $values) {
+        if ($values === null) {
             $values = $this->getFields();
         }
 
@@ -752,9 +757,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Determine whether or not the form object is valid
      *
-     * @return boolean
+     * @return bool
      */
-    public function isValid()
+    public function isValid(): bool
     {
         $result = true;
         $fields = $this->getFields();
@@ -776,10 +781,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $name
      * @return array
      */
-    public function getErrors($name)
+    public function getErrors(string $name): array
     {
         $field  = $this->getField($name);
-        $errors = (null !== $field) ? $field->getErrors() : [];
+        $errors = ($field !== null) ? $field->getErrors() : [];
 
         return $errors;
     }
@@ -789,7 +794,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return array
      */
-    public function getAllErrors()
+    public function getAllErrors(): array
     {
         $errors = [];
         $fields = $this->getFields();
@@ -807,7 +812,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return Form
      */
-    public function reset()
+    public function reset(): Form
     {
         $fields = $this->getFields();
         foreach ($fields as $field) {
@@ -821,7 +826,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return Form
      */
-    public function clearTokens()
+    public function clearTokens(): Form
     {
         // Start a session.
         if (session_id() == '') {
@@ -844,12 +849,12 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return Form
      */
-    public function prepare()
+    public function prepare(): Form
     {
-        if (null === $this->getAttribute('id')) {
+        if ($this->getAttribute('id') === null) {
             $this->setAttribute('id', 'pop-form');
         }
-        if (null === $this->getAttribute('class')) {
+        if ($this->getAttribute('class') === null) {
             $this->setAttribute('class', 'pop-form');
         }
 
@@ -881,7 +886,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return array
      */
-    public function prepareForView()
+    public function prepareForView(): array
     {
         $formData = [];
 
@@ -896,12 +901,11 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Render the form object
      *
      * @param  int     $depth
-     * @param  string  $indent
-     * @param  boolean $inner
-     * @return mixed
+     * @param  ?string $indent
+     * @param  bool    $inner
+     * @return string|null
      */
-    #[\ReturnTypeWillChange]
-    public function render($depth = 0, $indent = null, $inner = false)
+    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string|null
     {
         if (!($this->hasChildren())) {
             $this->prepare();
@@ -909,7 +913,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
 
         foreach ($this->fieldsets as $fieldset) {
             foreach ($fieldset->getAllFields() as $field) {
-                if ($field instanceof Element\Input\File) {
+                if ($field instanceof File) {
                     $this->setAttribute('enctype', 'multipart/form-data');
                     break;
                 }
@@ -924,7 +928,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -936,7 +940,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->setFieldValue($name, $value);
     }
@@ -945,10 +949,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Get method to return the value of fields[$name]
      *
      * @param  string $name
-     * @throws Exception
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->getFieldValue($name);
     }
@@ -957,9 +960,9 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Return the isset value of fields[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         $fieldValues = $this->toArray();
         return isset($fieldValues[$name]);
@@ -971,7 +974,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @param  string $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         $fieldValues = $this->toArray();
         if (isset($fieldValues[$name])) {

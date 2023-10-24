@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Select extends AbstractSelect
@@ -34,11 +34,13 @@ class Select extends AbstractSelect
      *
      * @param  string       $name
      * @param  string|array $values
-     * @param  string       $selected
-     * @param  string       $xmlFile
-     * @param  string       $indent
+     * @param  mixed        $selected
+     * @param  ?string      $xmlFile
+     * @param  ?string      $indent
      */
-    public function __construct($name, $values, $selected = null, $xmlFile = null, $indent = null)
+    public function __construct(
+        string $name, string|array $values, mixed $selected = null, ?string $xmlFile = null, ?string $indent = null
+    )
     {
         parent::__construct('select');
         $this->setName($name);
@@ -47,10 +49,10 @@ class Select extends AbstractSelect
             'id'   => $name
         ]);
 
-        if (null !== $selected) {
+        if ($selected !== null) {
             $this->setValue($selected);
         }
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
 
@@ -61,11 +63,11 @@ class Select extends AbstractSelect
      * Set the options values of the select form element
      *
      * @param  string|array $values
-     * @param  string       $xmlFile
-     * @param  string       $indent
+     * @param  ?string      $xmlFile
+     * @param  ?string      $indent
      * @return Select
      */
-    public function setValues($values, $xmlFile = null, $indent = null)
+    public function setValues(string|array $values, ?string $xmlFile = null, ?string $indent = null): Select
     {
         $values = self::parseValues($values, $xmlFile);
 
@@ -77,7 +79,7 @@ class Select extends AbstractSelect
                     $this->addChild($option);
                 } else {
                     $optGroup = new Select\Optgroup();
-                    if (null !== $indent) {
+                    if ($indent !== null) {
                         $optGroup->setIndent($indent);
                     }
                     $optGroup->setAttribute('label', $k);
@@ -87,12 +89,12 @@ class Select extends AbstractSelect
                         } else {
                             $option = new Select\Option($ky, $vl);
                         }
-                        if (null !== $indent) {
+                        if ($indent !== null) {
                             $option->setIndent($indent);
                         }
 
                         // Determine if the current option element is selected.
-                        if ((null !== $this->selected) && ($ky == $this->selected)) {
+                        if (($this->selected !== null) && ($ky == $this->selected)) {
                             $option->select();
                         }
                         $optGroup->addChild($option);
@@ -101,12 +103,12 @@ class Select extends AbstractSelect
                 }
             } else {
                 $option = new Select\Option($k, $v);
-                if (null !== $indent) {
+                if ($indent !== null) {
                     $option->setIndent($indent);
                 }
 
                 // Determine if the current option element is selected.
-                if ((null !== $this->selected) && ($k == $this->selected)) {
+                if (($this->selected !== null) && ($k == $this->selected)) {
                     $option->select();
                 }
                 $this->addChild($option);
@@ -122,7 +124,7 @@ class Select extends AbstractSelect
      * @param  mixed $value
      * @return Select
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Select
     {
         $this->selected = $value;
 
@@ -155,7 +157,7 @@ class Select extends AbstractSelect
      *
      * @return Select
      */
-    public function resetValue()
+    public function resetValue(): Select
     {
         $this->selected = null;
 

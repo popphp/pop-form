@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Datalist extends Text
@@ -31,31 +31,31 @@ class Datalist extends Text
 
     /**
      * Datalist object.
-     * @var Child
+     * @var ?Child
      */
-    protected $datalist = null;
+    protected ?Child $datalist = null;
 
     /**
      * Constructor
      *
      * Instantiate the datalist text input form element
      *
-     * @param  string $name
+     * @param  string  $name
      * @param  array  $values
-     * @param  string $value
-     * @param  string $indent
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, array $values, $value = null, $indent = null)
+    public function __construct(string $name, array $values, ?string $value = null, ?string $indent = null)
     {
         parent::__construct($name, $value);
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
         $this->setAttribute('list', $name . '_datalist');
 
-        if (null !== $values) {
+        if ($values !== null) {
             $this->datalist = new Child('datalist');
-            if (null !== $indent) {
+            if ($indent !== null) {
                 $this->datalist->setIndent($indent);
             }
             $this->datalist->setAttribute('id', $name . '_datalist');
@@ -69,11 +69,11 @@ class Datalist extends Text
      * Render the datalist element
      *
      * @param  int     $depth
-     * @param  string  $indent
-     * @param  boolean $inner
-     * @return mixed
+     * @param  ?string $indent
+     * @param  bool    $inner
+     * @return string
      */
-    public function render($depth = 0, $indent = null, $inner = false)
+    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string
     {
         return parent::render($depth, $indent, $inner) . $this->datalist->render($depth, $indent, $inner);
     }
@@ -83,7 +83,7 @@ class Datalist extends Text
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

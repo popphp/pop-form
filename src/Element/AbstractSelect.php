@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,15 +13,17 @@
  */
 namespace Pop\Form\Element;
 
+use SimpleXMLElement;
+
 /**
  * Abstract select element class
  *
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 abstract class AbstractSelect extends AbstractElement
@@ -79,15 +81,15 @@ abstract class AbstractSelect extends AbstractElement
      * Selected value(s)
      * @var mixed
      */
-    protected $selected = null;
+    protected mixed $selected = null;
 
     /**
      * Set whether the form element is required
      *
-     * @param  boolean $required
-     * @return Select
+     * @param  bool $required
+     * @return AbstractSelect
      */
-    public function setRequired($required)
+    public function setRequired(bool $required): AbstractSelect
     {
         if ($required) {
             $this->setAttribute('required', 'required');
@@ -100,10 +102,10 @@ abstract class AbstractSelect extends AbstractElement
     /**
      * Set whether the form element is disabled
      *
-     * @param  boolean $disabled
-     * @return Select
+     * @param  bool $disabled
+     * @return AbstractSelect
      */
-    public function setDisabled($disabled)
+    public function setDisabled(bool $disabled): AbstractSelect
     {
         if ($disabled) {
             $this->setAttribute('disabled', 'disabled');
@@ -116,10 +118,10 @@ abstract class AbstractSelect extends AbstractElement
     /**
      * Set whether the form element is readonly
      *
-     * @param  boolean $readonly
-     * @return Select
+     * @param  bool $readonly
+     * @return AbstractSelect
      */
-    public function setReadonly($readonly)
+    public function setReadonly(bool $readonly): AbstractSelect
     {
         if ($readonly) {
             $this->setAttribute('readonly', 'readonly');
@@ -146,7 +148,7 @@ abstract class AbstractSelect extends AbstractElement
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'select';
     }
@@ -156,7 +158,7 @@ abstract class AbstractSelect extends AbstractElement
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->selected;
     }
@@ -166,7 +168,7 @@ abstract class AbstractSelect extends AbstractElement
      *
      * @return mixed
      */
-    public function getSelected()
+    public function getSelected(): mixed
     {
         return $this->getValue();
     }
@@ -176,7 +178,7 @@ abstract class AbstractSelect extends AbstractElement
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         $options = [];
 
@@ -200,7 +202,7 @@ abstract class AbstractSelect extends AbstractElement
      *
      * @return array
      */
-    public function getOptionsAsArray()
+    public function getOptionsAsArray(): array
     {
         $options      = $this->getOptions();
         $optionsArray = [];
@@ -216,9 +218,9 @@ abstract class AbstractSelect extends AbstractElement
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = [])
+    public function validate(array $formValues = []): bool
     {
         $value = $this->getValue();
 
@@ -236,10 +238,10 @@ abstract class AbstractSelect extends AbstractElement
      * Set the select element as multiple
      *
      * @param  string|array $values
-     * @param  string       $xmlFile
+     * @param  ?string      $xmlFile
      * @return array
      */
-    public static function parseValues($values, $xmlFile = null)
+    public static function parseValues(string|array $values, ?string $xmlFile = null): array
     {
         $parsedValues = null;
 
@@ -249,7 +251,7 @@ abstract class AbstractSelect extends AbstractElement
         // Else, if the value is a string
         } else if (is_string($values)) {
             // If the value flag is YEAR-based, calculate the year range for the select drop-down menu.
-            if (strpos($values, 'YEAR') !== false) {
+            if (str_contains($values, 'YEAR')) {
                 $years = [];
                 $yearAry = explode('_', $values);
                 // YEAR_1111_2222 (from year 1111 to 2222)
@@ -350,7 +352,7 @@ abstract class AbstractSelect extends AbstractElement
                         break;
                     // Else, set the custom array of values passed.
                     default:
-                        if (null === $xmlFile) {
+                        if ($xmlFile === null) {
                             $xmlFile = __DIR__ . DIRECTORY_SEPARATOR . 'Data' . DIRECTORY_SEPARATOR . 'options.xml';
                         }
                         $parsedValues = self::parseXml($xmlFile, $values);
@@ -364,16 +366,17 @@ abstract class AbstractSelect extends AbstractElement
     /**
      * Static method to parse an XML file of options
      *
-     * @param  string $xmlFile
-     * @param  string $name
+     * @param string $xmlFile
+     * @param string $name
+     * @throws \Exception
      * @return array
      */
-    protected static function parseXml($xmlFile, $name)
+    protected static function parseXml(string $xmlFile, string $name): array
     {
         $options = [];
 
         if (file_exists($xmlFile)) {
-            $xml = new \SimpleXMLElement($xmlFile, 0, true);
+            $xml = new SimpleXMLElement($xmlFile, 0, true);
             $xmlValues = [];
             foreach ($xml->set as $node) {
                 $xmlValues[(string)$node->attributes()->name] = [];

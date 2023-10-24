@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -14,7 +14,7 @@
 namespace Pop\Form;
 
 use Pop\Filter\FilterableTrait;
-use ReturnTypeWillChange;
+use ArrayIterator;
 
 /**
  * Form trait
@@ -22,9 +22,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 trait FormTrait
@@ -49,11 +49,11 @@ trait FormTrait
     /**
      * Method to iterate over the form elements
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->toArray());
+        return new ArrayIterator($this->toArray());
     }
 
     /**
@@ -63,7 +63,7 @@ trait FormTrait
      * @param  mixed $value
      * @return void
      */
-    abstract public function __set($name, $value);
+    abstract public function __set(string $name, mixed $value): void;
 
     /**
      * Get method to return the value of values[$name]
@@ -71,15 +71,15 @@ trait FormTrait
      * @param  string $name
      * @return mixed
      */
-    abstract public function __get($name);
+    abstract public function __get(string $name): mixed;
 
     /**
      * Return the isset value of values[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    abstract public function __isset($name);
+    abstract public function __isset(string $name): bool;
 
     /**
      * Unset values[$name]
@@ -87,15 +87,15 @@ trait FormTrait
      * @param  string $name
      * @return void
      */
-    abstract public function __unset($name);
+    abstract public function __unset(string $name);
 
     /**
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->__isset($offset);
     }
@@ -106,8 +106,7 @@ trait FormTrait
      * @param  mixed $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
@@ -119,8 +118,7 @@ trait FormTrait
      * @param  mixed $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->__set($offset, $value);
     }
@@ -131,8 +129,7 @@ trait FormTrait
      * @param  mixed $offset
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->__unset($offset);
     }

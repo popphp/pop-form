@@ -108,10 +108,10 @@ class FieldsTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $csrf = Fields::create('csrf', [
-            'type'   => 'csrf'
+            'type' => 'csrf',
         ]);
         $captcha = Fields::create('captcha', [
-            'type'   => 'captcha'
+            'type' => 'captcha'
         ]);
         $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $csrf);
         $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $captcha);

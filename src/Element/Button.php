@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Button extends AbstractElement
@@ -32,11 +32,11 @@ class Button extends AbstractElement
      *
      * Instantiate the button form element.
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct(string $name, ?string $value = null, ?string $indent = null)
     {
         parent::__construct('button', $value);
 
@@ -52,11 +52,11 @@ class Button extends AbstractElement
 
         $this->setName($name);
 
-        if (null !== $value) {
+        if ($value !== null) {
             $this->setValue($value);
         }
 
-        if (null !== $indent) {
+        if ($indent !== null) {
             $this->setIndent($indent);
         }
     }
@@ -67,7 +67,7 @@ class Button extends AbstractElement
      * @param  mixed $value
      * @return Button
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Button
     {
         $this->setNodeValue($value);
         return $this;
@@ -78,7 +78,7 @@ class Button extends AbstractElement
      *
      * @return Button
      */
-    public function resetValue()
+    public function resetValue(): Button
     {
         $this->setNodeValue('');
         return $this;
@@ -89,7 +89,7 @@ class Button extends AbstractElement
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return 'button';
     }
@@ -97,9 +97,9 @@ class Button extends AbstractElement
     /**
      * Get the value of the form button element object
      *
-     * @return string
+     * @return ?string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->getNodeValue();
     }
@@ -108,9 +108,9 @@ class Button extends AbstractElement
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = [])
+    public function validate(array $formValues = []): bool
     {
         return (count($this->errors) == 0);
     }

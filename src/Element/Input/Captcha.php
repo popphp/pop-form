@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form\Element\Input;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Captcha extends Text
@@ -31,21 +31,23 @@ class Captcha extends Text
      * Current token data
      * @var array
      */
-    protected $token = [];
+    protected array $token = [];
 
     /**
      * Constructor
      *
      * Instantiate the captcha input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $captcha
-     * @param  string $answer
-     * @param  int    $expire
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $captcha
+     * @param  ?string $answer
+     * @param  int     $expire
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $captcha = null, $answer = null, $expire = 300, $indent = null)
+    public function __construct(
+        string $name, ?string $value = null, ?string $captcha = null, ?string $answer = null, int $expire = 300, ?string $indent = null
+    )
     {
         // Start a session.
         if (session_id() == '') {
@@ -75,14 +77,14 @@ class Captcha extends Text
     /**
      * Set the token of the CAPTCHA form element
      *
-     * @param  string $captcha
-     * @param  string $answer
-     * @param  int    $expire
+     * @param  ?string $captcha
+     * @param  ?string $answer
+     * @param  int     $expire
      * @return Captcha
      */
-    public function createNewToken($captcha = null, $answer = null, $expire = 300)
+    public function createNewToken(?string $captcha = null, ?string $answer = null, int $expire = 300): Captcha
     {
-        if ((null === $captcha) || (null === $answer)) {
+        if (($captcha === null) || ($answer === null)) {
             $captcha = $this->generateEquation();
             $answer  = $this->evaluateEquation($captcha);
         }
@@ -102,7 +104,7 @@ class Captcha extends Text
      *
      * @return array
      */
-    public function getToken()
+    public function getToken(): array
     {
         return $this->token;
     }
@@ -113,16 +115,16 @@ class Captcha extends Text
      * @param  string $label
      * @return Captcha
      */
-    public function setLabel($label)
+    public function setLabel(string $label): Captcha
     {
         parent::setLabel($label);
 
         if (isset($this->token['captcha'])) {
-            if ((strpos($this->token['captcha'], '<img') === false) &&
-                ((strpos($this->token['captcha'], ' + ') !== false) ||
-                 (strpos($this->token['captcha'], ' - ') !== false) ||
-                 (strpos($this->token['captcha'], ' * ') !== false) ||
-                 (strpos($this->token['captcha'], ' / ') !== false))) {
+            if ((!str_contains($this->token['captcha'], '<img')) &&
+                ((str_contains($this->token['captcha'], ' + ')) ||
+                 (str_contains($this->token['captcha'], ' - ')) ||
+                 (str_contains($this->token['captcha'], ' * ')) ||
+                 (str_contains($this->token['captcha'], ' / ')))) {
                 $this->label = $this->label . '(' .
                     str_replace([' * ', ' / '], [' &#215; ', ' &#247; '], $this->token['captcha'] .')');
             } else {
@@ -139,7 +141,7 @@ class Captcha extends Text
      * @throws Exception
      * @return void
      */
-    protected function setValidator()
+    protected function setValidator(): void
     {
         $this->validators = [];
 
@@ -188,7 +190,7 @@ class Captcha extends Text
      *
      * @return string
      */
-    protected function generateEquation()
+    protected function generateEquation(): string
     {
         $ops = [' + ', ' - ', ' * ', ' / '];
         $equation = null;
@@ -215,10 +217,10 @@ class Captcha extends Text
     /**
      * Evaluate equation
      *
-     * @param  $equation
+     * @param  string $equation
      * @return int
      */
-    protected function evaluateEquation($equation)
+    protected function evaluateEquation(string $equation): int
     {
         return eval("return ($equation);");
     }

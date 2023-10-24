@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Form;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class FormValidator implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate
@@ -36,48 +36,48 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Form validators
      * @var array
      */
-    protected $validators = [];
+    protected array $validators = [];
 
     /**
      * Required fields
      * @var array
      */
-    protected $required = [];
+    protected array $required = [];
 
     /**
      * Form values
      * @var array
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * Form validation errors
      * @var array
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
      * Constructor
      *
      * Instantiate the form validator object
      *
-     * @param array $validators
-     * @param mixed $required
-     * @param array $values
-     * @param mixed $filters
+     * @param ?array $validators
+     * @param mixed  $required
+     * @param ?array $values
+     * @param mixed  $filters
      */
-    public function __construct(array $validators = null, $required = null, array $values = null, $filters = null)
+    public function __construct(array $validators = null, mixed $required = null, ?array $values = null, mixed $filters = null)
     {
         if (!empty($validators)) {
             $this->addValidators($validators);
         }
-        if (null !== $required) {
+        if ($required !== null) {
             $this->setRequired($required);
         }
-        if (null !== $values) {
+        if ($values !== null) {
             $this->setValues($values);
         }
-        if (null !== $filters) {
+        if ($filters !== null) {
             if (is_array($filters)) {
                 $this->addFilters($filters);
             } else {
@@ -91,11 +91,13 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      *
      * @param  array|FormConfig $formConfig
      * @param  mixed            $required
-     * @param  array            $values
+     * @param  ?array           $values
      * @param  mixed            $filters
      * @return FormValidator
      */
-    public static function createFromConfig($formConfig, $required = null, array $values = null, $filters = null)
+    public static function createFromConfig(
+        array|FormConfig $formConfig, mixed $required = null, ?array $values = null, mixed $filters = null
+    ): FormValidator
     {
         $validators = [];
         $required   = [];
@@ -120,7 +122,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  array $validators
      * @return FormValidator
      */
-    public function addValidators($validators)
+    public function addValidators(array $validators): FormValidator
     {
         foreach ($validators as $field => $validator) {
             $this->addValidator($field, $validator);
@@ -135,7 +137,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  mixed  $validator
      * @return FormValidator
      */
-    public function addValidator($field, $validator)
+    public function addValidator(string $field, mixed $validator): FormValidator
     {
         if (!isset($this->validators[$field])) {
             $this->validators[$field] = [];
@@ -157,14 +159,14 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Has validators
      *
-     * @param  string $field
-     * @return boolean
+     * @param  ?string $field
+     * @return bool
      */
-    public function hasValidators($field = null)
+    public function hasValidators(?string $field = null)
     {
-        if (null === $field) {
+        if ($field === null) {
             return (count($this->validators) > 0);
-        } else if ((null !== $field) && isset($this->validators[$field])) {
+        } else if (($field !== null) && isset($this->validators[$field])) {
             return (count($this->validators[$field]) > 0);
         } else {
             return false;
@@ -177,11 +179,11 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  string $field
      * @return mixed
      */
-    public function getValidators($field = null)
+    public function getValidators(?string $field = null)
     {
-        if (null === $field) {
+        if ($field === null) {
             return $this->validators;
-        } else if ((null !== $field) && isset($this->validators[$field])) {
+        } else if (($field !== null) && isset($this->validators[$field])) {
             return $this->validators[$field];
         } else {
             return null;
@@ -193,9 +195,9 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      *
      * @param  string $field
      * @param  int    $index
-     * @return boolean
+     * @return bool
      */
-    public function hasValidator($field, $index)
+    public function hasValidator(string $field, int $index): bool
     {
         return (isset($this->validators[$field]) && isset($this->validators[$field][$index]));
     }
@@ -207,7 +209,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  int    $index
      * @return mixed
      */
-    public function getValidator($field, $index)
+    public function getValidator(string $field, int $index)
     {
         return (isset($this->validators[$field]) && isset($this->validators[$field][$index])) ?
             $this->validators[$field][$index] : null;
@@ -216,14 +218,14 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Remove validators
      *
-     * @param  string $field
+     * @param  ?string $field
      * @return FormValidator
      */
-    public function removeValidators($field = null)
+    public function removeValidators(?string $field = null): FormValidator
     {
-        if ((null !== $field) && isset($this->validators[$field])) {
+        if (($field !== null) && isset($this->validators[$field])) {
             unset($this->validators[$field]);
-        } else if (null === $field) {
+        } else if ($field === null) {
             $this->validators = [];
         }
         return $this;
@@ -236,7 +238,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  int    $index
      * @return FormValidator
      */
-    public function removeValidator($field, $index)
+    public function removeValidator(string $field, int $index): FormValidator
     {
         if (isset($this->validators[$field]) && isset($this->validators[$field][$index])) {
             unset($this->validators[$field][$index]);
@@ -250,7 +252,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  mixed $required
      * @return FormValidator
      */
-    public function setRequired($required)
+    public function setRequired(mixed $required): FormValidator
     {
         if (!is_array($required)) {
             $required = [$required];
@@ -269,9 +271,9 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Is required
      *
      * @param  string $field
-     * @return boolean
+     * @return bool
      */
-    public function isRequired($field)
+    public function isRequired(string $field): bool
     {
         return (in_array($field, $this->required));
     }
@@ -282,7 +284,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  string $field
      * @return FormValidator
      */
-    public function removeRequired($field)
+    public function removeRequired(string $field): FormValidator
     {
         if (in_array($field, $this->required)) {
             unset($this->required[array_search($field, $this->required)]);
@@ -297,7 +299,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  array $values
      * @return FormValidator
      */
-    public function setValues($values)
+    public function setValues(array $values): FormValidator
     {
         $this->values = $values;
         return $this;
@@ -308,7 +310,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      *
      * @return array
      */
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }
@@ -317,9 +319,10 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Filter value with the filters
      *
      * @param  mixed $field
+     * @throws Exception
      * @return mixed
      */
-    public function filterValue($field)
+    public function filterValue(mixed $field): mixed
     {
         if (!isset($this->values[$field])) {
             throw new Exception("Error: A value for '" . $field . "' has not been set.");
@@ -342,9 +345,9 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  mixed $values
      * @return mixed
      */
-    public function filter($values = null)
+    public function filter(mixed $values = null): mixed
     {
-        if (null !== $values) {
+        if ($values !== null) {
             $this->values = $values;
         }
 
@@ -363,13 +366,13 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Validate values
      *
      * @param  mixed $fields
-     * @return boolean
+     * @return bool
      */
-    public function validate($fields = null)
+    public function validate(mixed $fields = null): bool
     {
         $this->filter();
 
-        if (null !== $fields) {
+        if ($fields !== null) {
             $fields     = (!is_array($fields)) ? [$fields] : $fields;
             $formFields = array_filter(
                 $this->values,
@@ -416,7 +419,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                                     }
                                 }
                             }
-                        } else if (null !== $result) {
+                        } else if ($result !== null) {
                             $this->addError($field, $result);
                         }
                     }
@@ -430,12 +433,12 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Has errors
      *
-     * @param  string $field
-     * @return boolean
+     * @param  ?string $field
+     * @return bool
      */
-    public function hasErrors($field = null)
+    public function hasErrors(?string $field = null): bool
     {
-        if (null !== $field) {
+        if ($field !== null) {
             return (isset($this->errors[$field]) && (count($this->errors[$field]) > 0));
         } else {
             return (count($this->errors) > 0);
@@ -445,12 +448,12 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Get errors
      *
-     * @param  string $field
+     * @param  ?string $field
      * @return array
      */
-    public function getErrors($field = null)
+    public function getErrors(?string $field = null): array
     {
-        if ((null !== $field) && isset($this->errors[$field])) {
+        if (($field !== null) && isset($this->errors[$field])) {
             return $this->errors[$field];
         } else {
             return $this->errors;
@@ -464,7 +467,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  int    $index
      * @return mixed
      */
-    public function getError($field, $index)
+    public function getError(string $field, int $index): mixed
     {
         return (isset($this->errors[$field]) && isset($this->errors[$field][$index])) ?
             $this->errors[$field][$index] : null;
@@ -477,7 +480,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  string $error
      * @return FormValidator
      */
-    protected function addError($field, $error)
+    protected function addError(string $field, string $error): FormValidator
     {
         if (!isset($this->errors[$field])) {
             $this->errors[$field] = [];
@@ -517,7 +520,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->values[$name] = $value;
     }
@@ -528,18 +531,18 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
-        return (isset($this->values[$name])) ? $this->values[$name] : null;
+        return $this->values[$name] ?? null;
     }
 
     /**
      * Return the isset value of values[$name]
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->values[$name]);
     }
@@ -550,7 +553,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * @param  string $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (isset($this->values[$name])) {
             unset($this->values[$name]);

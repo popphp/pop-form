@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Radio extends Element\Input
@@ -33,11 +33,11 @@ class Radio extends Element\Input
      *
      * Instantiate the text input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct(string $name, ?string $value = null, ?string $indent = null)
     {
         parent::__construct($name, 'radio', $value, $indent);
     }
@@ -48,7 +48,7 @@ class Radio extends Element\Input
      * @param  mixed $value
      * @return Radio
      */
-    public function setValue($value)
+    public function setValue(mixed $value): Radio
     {
         if ($value == $this->getAttribute('value')) {
             $this->check();
@@ -63,7 +63,7 @@ class Radio extends Element\Input
      *
      * @return Radio
      */
-    public function resetValue()
+    public function resetValue(): Radio
     {
         $this->uncheck();
         return $this;
@@ -74,7 +74,7 @@ class Radio extends Element\Input
      *
      * @return Radio
      */
-    public function check()
+    public function check(): Radio
     {
         $this->setAttribute('checked', 'checked');
         return $this;
@@ -85,7 +85,7 @@ class Radio extends Element\Input
      *
      * @return Radio
      */
-    public function uncheck()
+    public function uncheck(): Radio
     {
         $this->removeAttribute('checked');
         return $this;
@@ -94,9 +94,9 @@ class Radio extends Element\Input
     /**
      * Determine if the radio value is checked
      *
-     * @return boolean
+     * @return bool
      */
-    public function isChecked()
+    public function isChecked(): bool
     {
         return ($this->getAttribute('checked') == 'checked');
     }

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Password extends Element\Input
@@ -31,43 +31,44 @@ class Password extends Element\Input
 
     /**
      * Flag to allow rendering the value
-     * @var boolean
+     * @var bool
      */
-    protected $renderValue = false;
+    protected bool $renderValue = false;
 
     /**
      * Constructor
      *
      * Instantiate the password input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
-     * @param  boolean $renderValue
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
+     * @param  bool    $renderValue
      */
-    public function __construct($name, $value = null, $indent = null, $renderValue = false)
+    public function __construct(string $name, $value = null, $indent = null, bool $renderValue = false)
     {
         parent::__construct($name, 'password', $value, $indent);
+        $this->setRenderValue($renderValue);
     }
 
     /**
      * Set the render value flag
      *
-     * @param  boolean $renderValue
+     * @param  bool $renderValue
      * @return Password
      */
-    public function setRenderValue($renderValue)
+    public function setRenderValue(bool $renderValue): Password
     {
-        $this->renderValue = (bool)$renderValue;
+        $this->renderValue = $renderValue;
         return $this;
     }
 
     /**
      * Get the render value flag
      *
-     * @return boolean
+     * @return bool
      */
-    public function getRenderValue()
+    public function getRenderValue(): bool
     {
         return $this->renderValue;
     }
@@ -76,11 +77,11 @@ class Password extends Element\Input
      * Render the password element
      *
      * @param  int     $depth
-     * @param  string  $indent
-     * @param  boolean $inner
-     * @return mixed
+     * @param  ?string $indent
+     * @param  bool    $inner
+     * @return string
      */
-    public function render($depth = 0, $indent = null, $inner = false)
+    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string
     {
         if (!$this->renderValue) {
             $this->setAttribute('value', '');

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -23,9 +23,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class AclForm extends Form
@@ -33,27 +33,27 @@ class AclForm extends Form
 
     /**
      * Acl object
-     * @var Acl
+     * @var ?Acl
      */
-    protected $acl = null;
+    protected ?Acl $acl = null;
 
     /**
      * AclRole role objects
      * @var array
      */
-    protected $roles = [];
+    protected array $roles = [];
 
     /**
      * Acl strict flag
-     * @var boolean
+     * @var bool
      */
-    protected $aclStrict = false;
+    protected bool $aclStrict = false;
 
     /**
      * Acl flag to manage how to display/manage fields
      * @var array
      */
-    protected $permissions = [
+    protected array $permissions = [
         'display' => 'view', // permission to display a field
         'modify'  => 'edit'  // permission to modify a field
     ];
@@ -61,10 +61,10 @@ class AclForm extends Form
     /**
      * Set the Acl object
      *
-     * @param  Acl     $acl
+     * @param  ?Acl $acl
      * @return AclForm
      */
-    public function setAcl(Acl $acl = null)
+    public function setAcl(?Acl $acl = null): AclForm
     {
         $this->acl = $acl;
         return $this;
@@ -73,10 +73,10 @@ class AclForm extends Form
     /**
      * Set a AclRole object (alias method)
      *
-     * @param  AclRole $role
+     * @param  ?AclRole $role
      * @return AclForm
      */
-    public function setRole(AclRole $role = null)
+    public function setRole(?AclRole $role = null): AclForm
     {
         $this->roles[$role->getName()] = $role;
         return $this;
@@ -85,10 +85,10 @@ class AclForm extends Form
     /**
      * Add a AclRole object
      *
-     * @param  AclRole $role
+     * @param  ?AclRole $role
      * @return AclForm
      */
-    public function addRole(AclRole $role = null)
+    public function addRole(?AclRole $role = null): AclForm
     {
         return $this->setRole($role);
     }
@@ -99,7 +99,7 @@ class AclForm extends Form
      * @param  array $roles
      * @return AclForm
      */
-    public function addRoles(array $roles)
+    public function addRoles(array $roles): AclForm
     {
         foreach ($roles as $role) {
             $this->setRole($role);
@@ -111,12 +111,12 @@ class AclForm extends Form
     /**
      * Set the Acl object as strict evaluation
      *
-     * @param  boolean $strict
+     * @param  bool $strict
      * @return AclForm
      */
-    public function setAclStrict($strict)
+    public function setAclStrict(bool $strict): AclForm
     {
-        $this->aclStrict = (bool)$strict;
+        $this->aclStrict = $strict;
         return $this;
     }
 
@@ -127,7 +127,7 @@ class AclForm extends Form
      * @param  string $modifyPermission
      * @return AclForm
      */
-    public function setPermissions($displayPermission, $modifyPermission)
+    public function setPermissions(string $displayPermission, string $modifyPermission): AclForm
     {
         $this->permissions['display'] = $displayPermission;
         $this->permissions['modify']  = $modifyPermission;
@@ -138,9 +138,9 @@ class AclForm extends Form
     /**
      * Is the Acl object set to strict evaluation
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAclStrict()
+    public function isAclStrict(): bool
     {
         return $this->aclStrict;
     }
@@ -149,7 +149,7 @@ class AclForm extends Form
      *
      * @return array
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
         return $this->permissions;
     }
@@ -158,12 +158,11 @@ class AclForm extends Form
      * Render the form object
      *
      * @param  int     $depth
-     * @param  string  $indent
-     * @param  boolean $inner
-     * @return mixed
+     * @param  ?string $indent
+     * @param  bool    $inner
+     * @return string|null
      */
-    #[\ReturnTypeWillChange]
-    public function render($depth = 0, $indent = null, $inner = false)
+    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string|null
     {
         foreach ($this->fieldsets as $fieldset) {
             foreach ($fieldset->getAllFields() as $field) {

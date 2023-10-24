@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Dom\Child;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class Optgroup extends Child
@@ -34,10 +34,10 @@ class Optgroup extends Child
      *
      * Instantiate the option element object
      *
-     * @param  string  $value
+     * @param  ?string $value
      * @param  array   $options
      */
-    public function __construct($value = null, array $options = [])
+    public function __construct(?string $value = null, array $options = [])
     {
         parent::__construct('optgroup', $value, $options);
     }
@@ -48,7 +48,7 @@ class Optgroup extends Child
      * @param  Child $option
      * @return Optgroup
      */
-    public function addOption(Child $option)
+    public function addOption(Child $option): Optgroup
     {
         $this->addChild($option);
         return $this;
@@ -60,7 +60,7 @@ class Optgroup extends Child
      * @param  array $options
      * @return Optgroup
      */
-    public function addOptions(array $options)
+    public function addOptions(array $options): Optgroup
     {
         $this->addChildren($options);
         return $this;
@@ -71,7 +71,7 @@ class Optgroup extends Child
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         $options = [];
 

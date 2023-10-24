@@ -25,6 +25,12 @@ Install `pop-form` using Composer.
 
     composer require popphp/pop-form
 
+Or, require it in your composer.json file
+
+    "require": {
+        "popphp/pop-form" : "^4.0.0"
+    }
+
 ## BASIC USAGE
 
 * [Using field element objects](#using-field-element-objects)

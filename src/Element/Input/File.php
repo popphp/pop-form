@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class File extends Element\Input
@@ -34,11 +34,11 @@ class File extends Element\Input
      *
      * Instantiate the file input form element
      *
-     * @param  string $name
-     * @param  string $value
-     * @param  string $indent
+     * @param  string  $name
+     * @param  ?string $value
+     * @param  ?string $indent
      */
-    public function __construct($name, $value = null, $indent = null)
+    public function __construct(string $name, ?string $value = null, ?string $indent = null)
     {
         parent::__construct($name, 'file', $value, $indent);
     }
@@ -47,9 +47,9 @@ class File extends Element\Input
      * Validate the form element object
      *
      * @param  array $formValues
-     * @return boolean
+     * @return bool
      */
-    public function validate(array $formValues = [])
+    public function validate(array $formValues = []): bool
     {
         if (($_FILES) && (isset($_FILES[$this->name]['name']))) {
             $value = $_FILES[$this->name]['name'];
@@ -69,7 +69,7 @@ class File extends Element\Input
             foreach ($this->validators as $validator) {
                 if ($validator instanceof \Pop\Validator\ValidatorInterface) {
                     $class =  get_class($validator);
-                    if ((null !== $size) &&
+                    if (($size !== null) &&
                         (('Pop\Validator\LessThanEqual' == $class) || ('Pop\Validator\GreaterThanEqual' == $class) ||
                          ('Pop\Validator\LessThan' == $class) || ('Pop\Validator\GreaterThan' == $class))) {
                         if (!$validator->evaluate($size)) {

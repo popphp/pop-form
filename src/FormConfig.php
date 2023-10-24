@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -22,9 +22,9 @@ use Pop\Validator\ValidatorInterface;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 
 class FormConfig extends Utils\ArrayObject
@@ -38,7 +38,7 @@ class FormConfig extends Utils\ArrayObject
      * @param  int     $options
      * @return FormConfig
      */
-    public static function createFromJson($jsonString, $depth = 512, $options = 0)
+    public static function createFromJson(string $jsonString, int $depth = 512, int $options = 0): FormConfig
     {
         $formConfig = parent::createFromJson($jsonString, $depth, $options)->toArray();
         $first      = reset($formConfig);
@@ -84,7 +84,7 @@ class FormConfig extends Utils\ArrayObject
      * @param  int $depth
      * @return string
      */
-    public function jsonSerialize($options = 0, $depth = 512): string
+    public function jsonSerialize(int $options = 0, int $depth = 512): string
     {
         $first = reset($this->data);
         if (!isset($first['type'])) {
@@ -100,7 +100,7 @@ class FormConfig extends Utils\ArrayObject
      *
      * @return FormConfig
      */
-    public function filterConfig()
+    public function filterConfig(): FormConfig
     {
         foreach ($this->data as $key => $value) {
             if (!empty($value['validator']) || !empty($value['validators'])) {
@@ -135,7 +135,7 @@ class FormConfig extends Utils\ArrayObject
      *
      * @return FormConfig
      */
-    public function filterFieldsetConfig()
+    public function filterFieldsetConfig(): FormConfig
     {
         foreach ($this->data as $key => $value) {
             foreach ($value as $ky => $vl) {

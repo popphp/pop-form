@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,15 +13,17 @@
  */
 namespace Pop\Form;
 
+use Pop\Form\Element\AbstractElement;
+
 /**
  * Form fields config class
  *
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.6.0
+ * @version    4.0.0
  */
 class Fields
 {
@@ -31,37 +33,37 @@ class Fields
      *
      * @param  string $name
      * @param  array  $field
-     * @throws Exception
-     * @return Element\AbstractElement
+     * @throws Exception|Element\Exception
+     * @return AbstractElement
      */
-    public static function create($name, array $field)
+    public static function create(string $name, array $field): AbstractElement
     {
         if (!isset($field['type'])) {
             throw new Exception('Error: The field type was not set.');
         }
 
         $type         = $field['type'];
-        $value        = (isset($field['value']))      ? $field['value']      : null;
-        $values       = (isset($field['values']))     ? $field['values']     : [];
-        $label        = (isset($field['label']))      ? $field['label']      : null;
-        $indent       = (isset($field['indent']))     ? $field['indent']     : null;
-        $checked      = (isset($field['checked']))    ? $field['checked']    : null;
-        $selected     = (isset($field['selected']))   ? $field['selected']   : null;
-        $required     = (isset($field['required']))   ? $field['required']   : null;
-        $disabled     = (isset($field['disabled']))   ? $field['disabled']   : null;
-        $readonly     = (isset($field['readonly']))   ? $field['readonly']   : null;
-        $attributes   = (isset($field['attributes'])) ? $field['attributes'] : null;
-        $validators   = (isset($field['validators'])) ? $field['validators'] : null;
-        $render       = (isset($field['render']))     ? $field['render']     : false;
-        $expire       = (isset($field['expire']))     ? $field['expire']     : 300;
-        $captcha      = (isset($field['captcha']))    ? $field['captcha']    : null;
-        $answer       = (isset($field['answer']))     ? $field['answer']     : null;
-        $min          = (isset($field['min']))        ? $field['min']        : false;
-        $max          = (isset($field['max']))        ? $field['max']        : false;
-        $xmlFile      = (isset($field['xml']))        ? $field['xml']        : null;
-        $hint         = (isset($field['hint']))       ? $field['hint']       : null;
-        $hintAttribs  = (isset($field['hint-attributes'])) ? $field['hint-attributes']   : null;
-        $labelAttribs = (isset($field['label-attributes'])) ? $field['label-attributes'] : null;
+        $value        = $field['value'] ?? null;
+        $values       = $field['values'] ?? [];
+        $label        = $field['label'] ?? null;
+        $indent       = $field['indent'] ?? null;
+        $checked      = $field['checked'] ?? null;
+        $selected     = $field['selected'] ?? null;
+        $required     = $field['required'] ?? null;
+        $disabled     = $field['disabled'] ?? null;
+        $readonly     = $field['readonly'] ?? null;
+        $attributes   = $field['attributes'] ?? null;
+        $validators   = $field['validators'] ?? null;
+        $render       = $field['render'] ?? false;
+        $expire       = $field['expire'] ?? 300;
+        $captcha      = $field['captcha'] ?? null;
+        $answer       = $field['answer'] ?? null;
+        $min          = $field['min'] ?? false;
+        $max          = $field['max'] ?? false;
+        $xmlFile      = $field['xml'] ?? null;
+        $hint         = $field['hint'] ?? null;
+        $hintAttribs  = $field['hint-attributes'] ?? null;
+        $labelAttribs = $field['label-attributes'] ?? null;
 
         $errorPre = (isset($field['error']) && ($field['error'] == 'pre'));
 
@@ -133,38 +135,38 @@ class Fields
         }
 
         // Set the label.
-        if (null !== $label) {
+        if ($label !== null) {
             $element->setLabel($label);
         }
         // Set the label attributes.
-        if ((null !== $labelAttribs) && is_array($labelAttribs)) {
+        if (($labelAttribs !== null) && is_array($labelAttribs)) {
             $element->setLabelAttributes($labelAttribs);
         }
         // Set the hint.
-        if (null !== $hint) {
+        if ($hint !== null) {
             $element->setHint($hint);
         }
         // Set the hint attributes.
-        if ((null !== $hintAttribs) && is_array($hintAttribs)) {
+        if (($hintAttribs !== null) && is_array($hintAttribs)) {
             $element->setHintAttributes($hintAttribs);
         }
         // Set if required.
-        if ((null !== $required) && ($required)) {
+        if (($required !== null) && ($required)) {
             $element->setRequired($required);
         }
         // Set if disabled.
-        if ((null !== $disabled) && ($disabled)) {
+        if (($disabled !== null) && ($disabled)) {
             $element->setDisabled($disabled);
         }
         // Set if readonly.
-        if ((null !== $readonly) && ($readonly)) {
+        if (($readonly !== null) && ($readonly)) {
             $element->setReadonly($readonly);
         }
 
         $element->setErrorPre($errorPre);
 
         // Set any attributes.
-        if (null !== $attributes) {
+        if ($attributes !== null) {
             if ($element instanceof Element\CheckboxSet) {
                 $element->setCheckboxAttributes($attributes);
             } else if ($element instanceof Element\RadioSet) {
@@ -174,7 +176,7 @@ class Fields
             }
         }
         // Set any validators.
-        if (null !== $validators) {
+        if ($validators !== null) {
             if (is_array($validators)) {
                 $element->addValidators($validators);
             } else {
@@ -188,14 +190,16 @@ class Fields
     /**
      * Static factory method to get field configs from a database table
      *
-     * @param  array $tableInfo
-     * @param  array $attribs
-     * @param  array $config
-     * @param  mixed $omit
+     * @param  array  $tableInfo
+     * @param  ?array $attribs
+     * @param  ?array $config
+     * @param  mixed  $omit
      * @throws Exception
      * @return array
      */
-    public static function getConfigFromTable(array $tableInfo, array $attribs = null, array $config = null, $omit = null)
+    public static function getConfigFromTable(
+        array $tableInfo, ?array $attribs = null, ?array $config = null, mixed $omit = null
+    ): array
     {
         $fields = [];
 
@@ -203,7 +207,7 @@ class Fields
             throw new Exception('Error: The table info parameter is not in the correct format');
         }
 
-        if (null !== $omit) {
+        if ($omit !== null) {
             if (!is_array($omit)) {
                 $omit = [$omit];
             }
@@ -211,7 +215,7 @@ class Fields
             $omit = [];
         }
 
-        if (null === $config) {
+        if ($config === null) {
             $config = [];
         }
 
@@ -235,7 +239,7 @@ class Fields
                 } else if ((stripos($name, 'email') !== false) || (stripos($name, 'e-mail') !== false) ||
                     (stripos($name, 'e_mail') !== false)) {
                     $fieldType = 'email';
-                    if (null !== $validators) {
+                    if ($validators !== null) {
                         $validators[] = new \Pop\Validator\Email();
                     } else {
                         $validators = [new \Pop\Validator\Email()];
@@ -250,7 +254,7 @@ class Fields
                     $fieldLabel = ucwords(str_replace('_', ' ', $name)) . ':';
                 }
 
-                if (null !== $attribs) {
+                if ($attribs !== null) {
                     if (isset($attribs[$fieldType])) {
                         $attributes =  $attribs[$fieldType];
                     }
