@@ -33,6 +33,32 @@ class FormValidatorTest extends TestCase
         $this->assertEquals($values, $formValidator->getValues());
     }
 
+
+    public function testCreateFromConfig()
+    {
+        $formValidator = FormValidator::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'required' => true,
+                'validators' => [
+                    new Validator\LengthGte(6),
+                    new Validator\NotContains(['$', '?'])
+                ]
+            ],
+            'email' => [
+                'type'  => 'email',
+                'label' => 'Email:',
+                'validator' => new Validator\Email()
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+        $this->assertTrue($formValidator->hasValidators());
+    }
+
     public function testGettersAndSetters()
     {
         $validators = [
