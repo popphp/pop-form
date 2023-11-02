@@ -4,7 +4,20 @@ pop-form
 [![Build Status](https://github.com/popphp/pop-form/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-form/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+* [Field Elements](#field-elements)
+* [Field Configurations](#field-configurations)
+* [Filtering](#filtering)
+* [Validation](#validation)
+* [Dynamic Fields](#dynamic-fields)
+* [ACL Forms](#acl-forms)
+
+Overview
 --------
 `pop-form` is a robust component for managing, rendering and validating HTML forms.
 With it, you can have complete control over how a form looks and functions as well
@@ -18,7 +31,9 @@ as granular control over field validation. Features include:
 
 `pop-form`is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+[Top](#pop-form)
+
+Install
 -------
 
 Install `pop-form` using Composer.
@@ -31,16 +46,15 @@ Or, require it in your composer.json file
         "popphp/pop-form" : "^4.0.0"
     }
 
-## BASIC USAGE
+[Top](#pop-form)
 
-* [Using field element objects](#using-field-element-objects)
-* [Using field configurations](#using-field-configurations)
-* [Filtering](#filtering)
-* [Validation](#validation)
-* [Dynamic fields from a database table](#dynamic-fields-from-a-database-table)
-* [ACL Forms](#acl-forms)
+Quickstart
+----------
 
-### Using field element objects
+[Top](#pop-form)
+
+Field Elements
+--------------
 
 ```php
 use Pop\Form\Form;
@@ -149,9 +163,10 @@ If it fails validation, it will render with the errors. In this case, the userna
 </form>
 ```
 
-[Top](#basic-usage)
+[Top](#pop-form)
 
-### Using field configurations
+Field Configurations
+--------------------
 
 We can do the same thing as above with a field configuration array,
 which helps streamline the process:
@@ -201,9 +216,10 @@ if ($_POST) {
 }
 ```
 
-[Top](#basic-usage)
+[Top](#pop-form)
 
-### Filtering
+Filtering
+---------
 
 As mentioned above, when dealing user-submitted values, it's a bad idea to use them or
 display them back on the screen without filtering them. A common set a filters to employ
@@ -244,9 +260,10 @@ Without the `htmlentities` filter, the quotes within the value would break the H
 Of course, if you want to use the values after the form is validated, then you have to call `clearFilters()`
 and filter the values with `html_entity_decode`.
 
-[Top](#basic-usage)
+[Top](#pop-form)
 
-### Validation
+Validation
+----------
 
 Of course, one of the main reasons for using a form component such as this one is the leverage
 the validation aspect of it. You've already seen the use of a basic validator from the `pop-validator`
@@ -329,9 +346,10 @@ Array
 )
 ```
 
-[Top](#basic-usage)
+[Top](#pop-form)
 
-### Dynamic fields from a database table
+Dynamic Fields
+--------------
 
 The `pop-form` comes with the functionality to very quickly wire up form fields that are mapped
 to the columns in a database. It does require the installation of the `pop-db` component to work.
@@ -385,9 +403,10 @@ You can set element-specific attributes and values, as well as set fields to omi
 the 'id' parameter in the above examples. Any `TEXT` column type in the database is
 created as textarea objects and then the rest are created as input text objects.
 
-[Top](#basic-usage)
+[Top](#pop-form)
 
-### ACL Forms
+ACL Forms
+---------
 
 ACL forms are an extension of the regular form class that take an ACL object with its roles
 and resources and enforce which form fields can be seen and edited. Consider the following
