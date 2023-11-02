@@ -51,10 +51,117 @@ Or, require it in your composer.json file
 Quickstart
 ----------
 
+The most basic way to wire up a form object is through a simple configuration.
+
+```php
+use Pop\Form\Form;
+
+$fields = [
+    'username' => [
+        'type'     => 'text',
+        'label'    => 'Username:',
+        'required' => true
+    ],
+    'email' => [
+        'type'  => 'email',
+        'label' => 'Email:'
+    ],
+    'submit' => [
+        'type'  => 'submit',
+        'value' => 'SUBMIT'
+    ]
+];
+
+$form = Form::createFromConfig($fields);
+
+if ($_POST) {
+    $form->setFieldValues($_POST);
+    if (!$form->isValid()) {
+        echo $form; // Has errors
+    } else {
+        echo 'Valid!';
+    }
+} else {
+    echo $form;
+}
+```
+
+The form rendered will look like:
+
+```html
+<form action="#" method="post" id="pop-form" class="pop-form">
+    <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="email">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+```
+
+Upon submit, if the form values do not pass validation, the form will re-render with the errors
+(note the error `div` under the username field):
+
+```html
+<form action="/" method="post" id="pop-form" class="pop-form">
+    <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" />
+                <div class="error">This field is required.</div>
+            </dd>
+            <dt>
+                <label for="email">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="test@test.com" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+```
+
+The form object will default to `POST` as the method and the current `REQUEST_URI`
+as the action, but those values can be changed in a number of ways:
+
+```php
+$form = new Form($fields, , '/form-action', 'GET');
+```
+
+```php
+$form = Form::createFromConfig($fields, '/form-action', 'GET');
+```
+
+```php
+$form->setMethod('GET')
+    ->setAction('/form-action');
+```
+
 [Top](#pop-form)
 
 Field Elements
 --------------
+
+A form can be wired up by interfacing directly with form element objects and the form object itself.
 
 ```php
 use Pop\Form\Form;
@@ -66,14 +173,14 @@ $form->setAttribute('id', 'my-form');
 
 $username = new Input\Text('username');
 $username->setLabel('Username:')
-         ->setRequired(true)
-         ->setAttribute('size', 40)
-         ->addValidator(new Validator\AlphaNumeric());
+    ->setRequired(true)
+    ->setAttribute('size', 40)
+    ->addValidator(new Validator\AlphaNumeric());
 
 $email = new Input\Email('email');
 $email->setLabel('Email:')
-      ->setRequired(true)
-      ->setAttribute('size', 40);
+    ->setRequired(true)
+    ->setAttribute('size', 40);
 
 $submit = new Input\Submit('submit', 'SUBMIT');
 
@@ -95,7 +202,7 @@ if ($_POST) {
 }
 ```
 
-So a few things are going on in the above example:
+There are number of different concepts happening in the above example:
 
 1. We created the form object and gave it an 'id' attribute.
 2. We created the individual field elements setting their name, label, attributes, validators, etc.
@@ -107,8 +214,6 @@ So a few things are going on in the above example:
     2. Check if the form object passes validation. If not, re-render the form with the errors.
     If it does pass, then you're good to go.
 
-Just as a note, the form object will default to 'post' as the method and the
-current request URI as the action otherwise changed by the user.
 
 On the first pass, the form will render like this:
 
