@@ -84,16 +84,17 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to create form object and fields from config
      *
      * @param  array|FormConfig $config
+     * @param  ?string           $container
      * @param  ?string          $action
      * @param  string           $method
      * @return Form
      */
     public static function createFromConfig(
-        array|FormConfig $config, ?string $action = null, string $method = 'post'
+        array|FormConfig $config, ?string $container = null, ?string $action = null, string $method = 'post'
     ): Form
     {
         $form = new static(null, $action, $method);
-        $form->addFieldsFromConfig($config);
+        $form->addFieldsFromConfig($config, $container);
         return $form;
     }
 
@@ -107,7 +108,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * @return Form
      */
     public static function createFromFieldsetConfig(
-        array|FormConfig$config, ?string $container = null, ?string $action = null, string $method = 'post'
+        array|FormConfig $config, ?string $container = null, ?string $action = null, string $method = 'post'
     ): Form
     {
         $form = new static(null, $action, $method);
@@ -419,12 +420,13 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to add a form field
      *
      * @param  AbstractElement $field
+     * @param  ?string         $container
      * @return Form
      */
-    public function addField(AbstractElement $field): Form
+    public function addField(AbstractElement $field, ?string $container = null): Form
     {
         if (count($this->fieldsets) == 0) {
-            $this->createFieldset();
+            $this->createFieldset(null, $container);
         }
         $this->fieldsets[$this->current]->addField($field);
         return $this;
@@ -461,9 +463,10 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      * Method to add form fields from config
      *
      * @param  array|FormConfig $config
+     * @param  ?string          $container
      * @return Form
      */
-    public function addFieldsFromConfig(array|FormConfig $config): Form
+    public function addFieldsFromConfig(array|FormConfig $config, ?string $container = null): Form
     {
         $i = 1;
         foreach ($config as $name => $field) {
@@ -476,12 +479,12 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
                     $this->fieldsets[$this->current]->createGroup();
                 }
                 if (!isset($this->fieldsets[$this->current])) {
-                    $this->fieldsets[$this->current] = new Fieldset();
+                    $this->fieldsets[$this->current] = new Fieldset(null, $container);
                 }
                 $this->fieldsets[$this->current]->addFields($fields);
                 $i++;
             } else {
-                $this->addField(Fields::create($name, $field));
+                $this->addField(Fields::create($name, $field), $container);
             }
         }
         return $this;

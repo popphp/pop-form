@@ -12,6 +12,7 @@ pop-form
 * [Quickstart](#quickstart)
 * [Field Elements](#field-elements)
 * [Field Configurations](#field-configurations)
+* [Field Containers](#field-containers)
 * [Filtering](#filtering)
 * [Validation](#validation)
 * [Dynamic Fields](#dynamic-fields)
@@ -220,7 +221,7 @@ On the first pass, the form will render like this:
 ```html
 <form action="/" method="post" id="my-form">
     <fieldset d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
-        <dl >
+        <dl>
             <dt>
                 <label for="username" class="required">Username:</label>
             </dt>
@@ -246,7 +247,7 @@ If it fails validation, it will render with the errors. In this case, the userna
 ```html
 <form action="/" method="post" id="my-form">
     <fieldset d="my-form-fieldset-1" class="my-form-fieldset"></fieldset>
-        <dl >
+        <dl>
             <dt>
                 <label for="username" class="required">Username:</label>
             </dt>
@@ -319,6 +320,74 @@ if ($_POST) {
 } else {
     echo $form;
 }
+```
+
+[Top](#pop-form)
+
+Field Containers
+----------------
+
+The default fieldset HTML containers for the form elements is a combination of `dl`, `dt` and `dd` tags.
+If alternate container tags are needed, you can set them like these examples below.
+
+##### Using `table`:
+
+```php
+$form = Form::createFromConfig($fields, 'table');
+```
+
+```html
+<form action="#" method="post" id="my-form" class="pop-form">
+    <fieldset id="my-form-fieldset-1" class="pop-form-fieldset">
+        <table>
+            <tr>
+                <td>
+                    <label for="username" class="required">Username:</label>
+                </td>
+                <td>
+                    <input type="text" name="username" id="username" value="" required="required" size="40" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="email" class="required">Email:</label>
+                </td>
+                <td>
+                    <input type="email" name="email" id="email" value="" required="required" size="40" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" name="submit" id="submit" value="SUBMIT" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>
+```
+
+##### Using `div` (or any other single element container):
+
+```php
+$form = Form::createFromConfig($fields, 'div');
+```
+
+```html
+<form action="#" method="post" id="my-form" class="pop-form">
+    <fieldset id="my-form-fieldset-1" class="pop-form-fieldset">
+        <div>
+            <label for="username" class="required">Username:</label>
+            <input type="text" name="username" id="username" value="" required="required" size="40" />
+        </div>
+        <div>
+            <label for="email" class="required">Email:</label>
+            <input type="email" name="email" id="email" value="" required="required" size="40" />
+        </div>
+        <div>
+            <input type="submit" name="submit" id="submit" value="SUBMIT" />
+        </div>
+    </fieldset>
+</form>
 ```
 
 [Top](#pop-form)

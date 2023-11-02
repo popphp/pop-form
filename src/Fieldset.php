@@ -61,12 +61,14 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
      * Instantiate the form fieldset object
      *
      * @param  ?array $fields
-     * @param  string $container
+     * @param  ?string $container
      */
-    public function __construct(?array $fields = null, string $container = 'dl')
+    public function __construct(?array $fields = null, ?string $container = 'dl')
     {
         parent::__construct('fieldset');
-        $this->setContainer($container);
+        if ($container !== null) {
+            $this->setContainer($container);
+        }
         if ($fields !== null) {
             $this->addFields($fields);
         }
