@@ -12,6 +12,8 @@ pop-form
 * [Quickstart](#quickstart)
 * [Field Elements](#field-elements)
 * [Field Configurations](#field-configurations)
+    - [Fieldsets](#fieldsets)
+    - [Legends](#legends) 
 * [Field Containers](#field-containers)
 * [Filtering](#filtering)
 * [Validation](#validation)
@@ -320,6 +322,202 @@ if ($_POST) {
 } else {
     echo $form;
 }
+```
+
+[Top](#pop-form)
+
+### Fieldsets
+
+Multiple fieldset configurations can be used to generate a larger form with more organized elements.
+This requires the config to contain multiple arrays of field configurations:
+
+```php
+use Pop\Form\Form;
+
+$fields = [
+    [
+        'username' => [
+            'type'       => 'text',
+            'label'      => 'Username:',
+            'required'   => true,
+        ],
+        'email' => [
+            'type'       => 'email',
+            'label'      => 'Email:',
+            'required'   => true,
+        ],
+        'submit' => [
+            'type'  => 'submit',
+            'value' => 'SUBMIT'
+        ]
+    ],
+    [
+        'first_name' => [
+            'type'  => 'text',
+            'label' => 'First Name:',
+        ],
+        'last_name' => [
+            'type'  => 'text',
+            'label' => 'Last Name:',
+        ],
+    ],
+    [
+        'submit' => [
+            'type'  => 'submit',
+            'value' => 'SUBMIT'
+        ]
+    ]
+];
+
+$form = Form::createFromFieldsetConfig($fields);
+```
+
+Which produces the following HTML with the appropriate `fieldset` grouping:
+
+```html
+<form action="#" method="post" id="my-form" class="pop-form">
+    <fieldset id="my-form-fieldset-1" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="email" class="required">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" required="required" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+    <fieldset id="my-form-fieldset-2" class="pop-form-fieldset">
+        <dl>
+            <dt>
+                <label for="first_name">First Name:</label>
+            </dt>
+            <dd>
+                <input type="text" name="first_name" id="first_name" value="" />
+            </dd>
+            <dt>
+                <label for="last_name">Last Name:</label>
+            </dt>
+            <dd>
+                <input type="text" name="last_name" id="last_name" value="" />
+            </dd>
+        </dl>
+    </fieldset>
+    <fieldset id="my-form-fieldset-3" class="pop-form-fieldset">
+        <dl>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+```
+
+[Top](#pop-form)
+
+### Legends
+
+If you'd like to label each of the multiple fieldsets, that can be done by using `legend` values
+as the array keys in the config:
+
+```php
+use Pop\Form\Form;
+
+$fields = [
+    'Account Info' => [
+        'username' => [
+            'type'       => 'text',
+            'label'      => 'Username:',
+            'required'   => true,
+        ],
+        'email' => [
+            'type'       => 'email',
+            'label'      => 'Email:',
+            'required'   => true,
+        ],
+        'submit' => [
+            'type'  => 'submit',
+            'value' => 'SUBMIT'
+        ]
+    ],
+    'Personal Info' => [
+        'first_name' => [
+            'type'  => 'text',
+            'label' => 'First Name:',
+        ],
+        'last_name' => [
+            'type'  => 'text',
+            'label' => 'Last Name:',
+        ],
+    ],
+    [
+        'submit' => [
+            'type'  => 'submit',
+            'value' => 'SUBMIT'
+        ]
+    ]
+];
+
+$form = Form::createFromFieldsetConfig($fields);
+```
+
+Which produces the following HTML with the appropriate `fieldset` grouping:
+
+```html
+<form action="#" method="post" id="my-form" class="pop-form">
+    <fieldset id="my-form-fieldset-1" class="pop-form-fieldset">
+        <legend>Account Info</legend>
+        <dl>
+            <dt>
+                <label for="username" class="required">Username:</label>
+            </dt>
+            <dd>
+                <input type="text" name="username" id="username" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="email" class="required">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" required="required" />
+            </dd>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+    <fieldset id="my-form-fieldset-2" class="pop-form-fieldset">
+        <legend>Personal Info</legend>
+        <dl>
+            <dt>
+                <label for="first_name">First Name:</label>
+            </dt>
+            <dd>
+                <input type="text" name="first_name" id="first_name" value="" />
+            </dd>
+            <dt>
+                <label for="last_name">Last Name:</label>
+            </dt>
+            <dd>
+                <input type="text" name="last_name" id="last_name" value="" />
+            </dd>
+        </dl>
+    </fieldset>
+    <fieldset id="my-form-fieldset-3" class="pop-form-fieldset">
+        <dl>
+            <dd>
+                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>
 ```
 
 [Top](#pop-form)
