@@ -656,6 +656,15 @@ $username->addValidator(function ($value) {
 });
 ```
 
+##### Using a validator
+
+```php
+use Pop\Validator\AlphaNumeric;
+
+$username = new Input\Text('username');
+$username->addValidator(new AlphaNumeric());
+```
+
 ##### Using a custom class
 
 ```php
@@ -726,7 +735,7 @@ Dynamic Fields
 The `pop-form` comes with the functionality to very quickly wire up form fields that are mapped
 to the columns in a database. It does require the installation of the `pop-db` component to work.
 Consider that there is a database table class called `Users` that is mapped to the `users` table
-in the database. It has three fields: `id`, `username` and `password`.
+in the database. It has six fields: `id`, `username`, `password`, `first_name`, `last_name` and `email`.
 
 (For more information on using `pop-db` [click here](https://github.com/popphp/pop-db).)
 
@@ -735,20 +744,16 @@ use Pop\Form\Form;
 use Pop\Form\Fields;
 use MyApp\Table\Users;
 
-$fields = new Fields(Users::getTableInfo(), null, null, 'id');
-$fields->submit = [
-    'type'  => 'submit',
-    'value' => 'SUBMIT'
-];
-
-$form = new Form($fields->getFields());
+// The 4th parameter is an 'omit' to prevent certain fields from displaying
+$config = Fields::getConfigFromTable(Users::getTableInfo(), null, null, 'id');
+$form   = Form::createFromConfig($config);
 echo $form;
 ```
 
 This will render like:
 
 ```html
-<form action="/fields2.php" method="post">
+<form action="/" method="post" id="pop-form" class="pop-form">
     <fieldset id="pop-form-fieldset-1" class="pop-form-fieldset">
         <dl>
             <dt>
@@ -763,8 +768,23 @@ This will render like:
             <dd>
                 <input type="password" name="password" id="password" value="" required="required" />
             </dd>
+            <dt>
+                <label for="first_name" class="required">First Name:</label>
+            </dt>
             <dd>
-                <input type="submit" name="submit" id="submit" value="SUBMIT" />
+                <input type="text" name="first_name" id="first_name" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="last_name" class="required">Last Name:</label>
+            </dt>
+            <dd>
+                <input type="text" name="last_name" id="last_name" value="" required="required" />
+            </dd>
+            <dt>
+                <label for="email" class="required">Email:</label>
+            </dt>
+            <dd>
+                <input type="email" name="email" id="email" value="" required="required" />
             </dd>
         </dl>
     </fieldset>
@@ -780,9 +800,9 @@ created as textarea objects and then the rest are created as input text objects.
 ACL Forms
 ---------
 
-ACL forms are an extension of the regular form class that take an ACL object with its roles
-and resources and enforce which form fields can be seen and edited. Consider the following
-code below:
+ACL forms utilize the `pop-acl` component and are an extension of the regular form class
+that take an ACL object with its roles and resources and enforce which form fields can
+be seen and edited. Consider the following code below:
 
 ```php
 use Pop\Form;
