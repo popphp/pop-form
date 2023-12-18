@@ -169,15 +169,15 @@ class AclForm extends Form
                 $fieldName   = $field->getName();
                 if ($this->acl->hasResource($fieldName)) {
                     $viewDenied = ($this->aclStrict) ?
-                        $this->acl->isDeniedManyStrict($this->roles, $fieldName, $this->permissions['display']) :
-                        $this->acl->isDeniedMany($this->roles, $fieldName, $this->permissions['display']);
+                        $this->acl->isDeniedMultiStrict($this->roles, $fieldName, $this->permissions['display']) :
+                        $this->acl->isDeniedMulti($this->roles, $fieldName, $this->permissions['display']);
 
                     if ($viewDenied) {
                         unset($fieldset[$fieldName]);
                     } else {
                         $modifyDenied = ($this->aclStrict) ?
-                            $this->acl->isDeniedManyStrict($this->roles, $fieldName, $this->permissions['modify']) :
-                            $this->acl->isDeniedMany($this->roles, $fieldName, $this->permissions['modify']);
+                            $this->acl->isDeniedMultiStrict($this->roles, $fieldName, $this->permissions['modify']) :
+                            $this->acl->isDeniedMulti($this->roles, $fieldName, $this->permissions['modify']);
                         if ($modifyDenied) {
                             $field->setReadonly(true);
                         }
