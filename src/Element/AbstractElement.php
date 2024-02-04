@@ -60,6 +60,18 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected array $hintAttributes = [];
 
     /**
+     * Form element prepend contents
+     * @var ?string
+     */
+    protected ?string $prepend = null;
+
+    /**
+     * Form element append contents
+     * @var ?string
+     */
+    protected ?string $append = null;
+
+    /**
      * Form element required property
      * @var bool
      */
@@ -157,6 +169,30 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function setHint(string $hint): AbstractElement
     {
         $this->hint = $hint;
+        return $this;
+    }
+
+    /**
+     * Set the prepend contents of the form element object
+     *
+     * @param  string $prepend
+     * @return AbstractElement
+     */
+    public function setPrepend(string $prepend): AbstractElement
+    {
+        $this->prepend = $prepend;
+        return $this;
+    }
+
+    /**
+     * Set the append contents of the form element object
+     *
+     * @param  string $append
+     * @return AbstractElement
+     */
+    public function setAppend(string $append): AbstractElement
+    {
+        $this->append = $append;
         return $this;
     }
 
@@ -330,6 +366,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Determine if form element has a label
+     *
+     * @return bool
+     */
+    public function hasLabel(): bool
+    {
+        return !empty($this->label);
+    }
+
+    /**
      * Get form element object hint
      *
      * @return ?string
@@ -337,6 +383,56 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function getHint(): ?string
     {
         return $this->hint;
+    }
+
+    /**
+     * Determine if form element has a hint
+     *
+     * @return bool
+     */
+    public function hasHint(): bool
+    {
+        return !empty($this->hint);
+    }
+
+    /**
+     * Get form element object prepend contents
+     *
+     * @return ?string
+     */
+    public function getPrepend(): ?string
+    {
+        return $this->prepend;
+    }
+
+    /**
+     * Determine if form element has prepend content
+     *
+     * @return bool
+     */
+    public function hasPrepend(): bool
+    {
+        return !empty($this->prepend);
+    }
+
+    /**
+     * Get form element object append contents
+     *
+     * @return ?string
+     */
+    public function getAppend(): ?string
+    {
+        return $this->append;
+    }
+
+    /**
+     * Determine if form element has append content
+     *
+     * @return bool
+     */
+    public function hasAppend(): bool
+    {
+        return !empty($this->append);
     }
 
     /**
@@ -350,6 +446,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Determine if form element has label attributes
+     *
+     * @return bool
+     */
+    public function hasLabelAttributes(): bool
+    {
+        return !empty($this->labelAttributes);
+    }
+
+    /**
      * Get the attributes of the form element object hint
      *
      * @return array
@@ -360,6 +466,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     }
 
     /**
+     * Determine if form element has hint attributes
+     *
+     * @return bool
+     */
+    public function hasHintAttributes(): bool
+    {
+        return !empty($this->hintAttributes);
+    }
+
+    /**
      * Get validators
      *
      * @return array
@@ -367,6 +483,16 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function getValidators(): array
     {
         return $this->validators;
+    }
+
+    /**
+     * Determine if form element has validators
+     *
+     * @return bool
+     */
+    public function hasValidators(): bool
+    {
+        return !empty($this->validators);
     }
 
     /**

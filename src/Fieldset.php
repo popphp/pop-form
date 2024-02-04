@@ -449,7 +449,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
         foreach ($this->fields as $groups) {
             foreach ($groups as $field) {
-                if ($field->getLabel() !== null) {
+                if ($field->hasLabel()) {
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
                     $label    = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
@@ -466,7 +466,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $fields[$field->getName() . '_label'] = $label->render();
                 }
 
-                if ($field->getHint() !== null) {
+                if ($field->hasHint()) {
                     $hint = new Child('span', $field->getHint());
                     if ($field->getHintAttributes() !== null) {
                         $hint->setAttributes($field->getHintAttributes());
@@ -504,13 +504,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
 
                 $tr = new Child('tr');
-                if ($field->getLabel() !== null) {
+                if ($field->hasLabel()) {
                     $td = new Child('td');
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
                     $label = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if ($field->getLabelAttributes() !== null) {
+                    if ($field->hasLabelAttributes()) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -524,21 +524,32 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $tr->addChild($td);
                 }
 
-                $td = new Child('td');
+                $nodeValue = null;
+                $options   = [];
+                if ($field->hasAppend()) {
+                    $nodeValue = $field->getAppend();
+                    $options   = ['childrenFirst' => true];
+                } else if ($field->hasPrepend()) {
+                    $nodeValue = $field->getPrepend();
+                    $options   = ['childrenFirst' => false];
+                }
+
+                $td = new Child('td', $nodeValue, $options);
+
                 if ($field->isErrorPre()) {
                     $td->addChildren($errors);
                 }
                 $td->addChild($field);
 
-                if ($field->getHint() !== null) {
+                if ($field->hasHint()) {
                     $hint = new Child('span', $field->getHint());
-                    if ($field->getHintAttributes() !== null) {
+                    if ($field->hasHintAttributes()) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $td->addChild($hint);
                 }
 
-                if ($field->getLabel() === null) {
+                if ($field->hasLabel()) {
                     $td->setAttribute('colspan', 2);
                 }
                 if (!$field->isErrorPre()) {
@@ -569,12 +580,23 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
                 }
 
-                $container = new Child($element);
-                if ($field->getLabel() !== null) {
+                $nodeValue = null;
+                $options   = [];
+                if ($field->hasAppend()) {
+                    $nodeValue = $field->getAppend();
+                    $options   = ['childrenFirst' => true];
+                } else if ($field->hasPrepend()) {
+                    $nodeValue = $field->getPrepend();
+                    $options   = ['childrenFirst' => false];
+                }
+
+                $container = new Child($element, $nodeValue, $options);
+
+                if ($field->hasLabel()) {
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
                     $label    = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if ($field->getLabelAttributes() !== null) {
+                    if ($field->hasLabelAttributes()) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -592,9 +614,9 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $container->addChild($field);
 
-                if ($field->getHint() !== null) {
+                if ($field->hasHint()) {
                     $hint = new Child('span', $field->getHint());
-                    if ($field->getHintAttributes() !== null) {
+                    if ($field->hasHintAttributes()) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $container->addChild($hint);
@@ -625,13 +647,13 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
                 }
 
-                if ($field->getLabel() !== null) {
+                if ($field->hasLabel()) {
                     $dt = new Child('dt');
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
 
                     $label = new Child('label', $field->getLabel());
                     $label->setAttribute('for', $labelFor);
-                    if ($field->getLabelAttributes() !== null) {
+                    if ($field->hasLabelAttributes()) {
                         $label->setAttributes($field->getLabelAttributes());
                     }
                     if ($field->isRequired()) {
@@ -645,15 +667,26 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $dl->addChild($dt);
                 }
 
-                $dd = new Child('dd');
+                $nodeValue = null;
+                $options   = [];
+                if ($field->hasAppend()) {
+                    $nodeValue = $field->getAppend();
+                    $options   = ['childrenFirst' => true];
+                } else if ($field->hasPrepend()) {
+                    $nodeValue = $field->getPrepend();
+                    $options   = ['childrenFirst' => false];
+                }
+
+                $dd = new Child('dd', $nodeValue, $options);
+
                 if ($field->isErrorPre()) {
                     $dd->addChildren($errors);
                 }
                 $dd->addChild($field);
 
-                if ($field->getHint() !== null) {
+                if ($field->hasHint()) {
                     $hint = new Child('span', $field->getHint());
-                    if ($field->getHintAttributes() !== null) {
+                    if ($field->hasHintAttributes()) {
                         $hint->setAttributes($field->getHintAttributes());
                     }
                     $dd->addChild($hint);

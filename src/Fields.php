@@ -64,6 +64,8 @@ class Fields
         $hint         = $field['hint'] ?? null;
         $hintAttribs  = $field['hint-attributes'] ?? null;
         $labelAttribs = $field['label-attributes'] ?? null;
+        $prepend      = $field['prepend'] ?? null;
+        $append       = $field['append'] ?? null;
 
         $errorPre = (isset($field['error']) && ($field['error'] == 'pre'));
 
@@ -141,6 +143,14 @@ class Fields
         // Set the label attributes.
         if (($labelAttribs !== null) && is_array($labelAttribs)) {
             $element->setLabelAttributes($labelAttribs);
+        }
+        // Set prepend content.
+        if ($prepend !== null) {
+            $element->setPrepend($prepend);
+        }
+        // Set append content.
+        if ($append !== null) {
+            $element->setAppend($append);
         }
         // Set the hint.
         if ($hint !== null) {
