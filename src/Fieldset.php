@@ -496,10 +496,12 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $table = new Child('table');
 
             foreach ($fields as $field) {
-                $errors = [];
+                $errors = null;
                 if ($field->hasErrors()) {
+                    $errors = new Child('div');
+                    $errors->setAttribute('class', 'error');
                     foreach ($field->getErrors() as $error) {
-                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        $errors->addChild(new Child('span', $error));
                     }
                 }
 
@@ -536,8 +538,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
                 $td = new Child('td', $nodeValue, $options);
 
-                if ($field->isErrorPre()) {
-                    $td->addChildren($errors);
+                if (!empty($errors) && ($field->isErrorPre())) {
+                    $td->addChild($errors);
                 }
                 $td->addChild($field);
 
@@ -552,8 +554,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 if ($field->hasLabel()) {
                     $td->setAttribute('colspan', 2);
                 }
-                if (!$field->isErrorPre()) {
-                    $td->addChildren($errors);
+                if (!empty($errors) && (!$field->isErrorPre())) {
+                    $td->addChild($errors);
                 }
                 $tr->addChild($td);
                 $table->addChild($tr);
@@ -573,10 +575,12 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     {
         foreach ($this->fields as $fields) {
             foreach ($fields as $field) {
-                $errors = [];
+                $errors = null;
                 if ($field->hasErrors()) {
+                    $errors = new Child('div');
+                    $errors->setAttribute('class', 'error');
                     foreach ($field->getErrors() as $error) {
-                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        $errors->addChild(new Child('span', $error));
                     }
                 }
 
@@ -609,8 +613,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $container->addChild($label);
                 }
 
-                if ($field->isErrorPre()) {
-                    $container->addChildren($errors);
+                if (!empty($errors) && ($field->isErrorPre())) {
+                    $container->addChild($errors);
                 }
                 $container->addChild($field);
 
@@ -621,8 +625,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
                     $container->addChild($hint);
                 }
-                if (!$field->isErrorPre()) {
-                    $container->addChildren($errors);
+                if (!empty($errors) && (!$field->isErrorPre())) {
+                    $container->addChild($errors);
                 }
                 $this->addChild($container);
             }
@@ -640,10 +644,12 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $dl = new Child('dl');
 
             foreach ($fields as $field) {
-                $errors = [];
+                $errors = null;
                 if ($field->hasErrors()) {
+                    $errors = new Child('div');
+                    $errors->setAttribute('class', 'error');
                     foreach ($field->getErrors() as $error) {
-                        $errors[] = (new Child('div', $error))->setAttribute('class', 'error');
+                        $errors->addChild(new Child('span', $error));
                     }
                 }
 
@@ -679,8 +685,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
                 $dd = new Child('dd', $nodeValue, $options);
 
-                if ($field->isErrorPre()) {
-                    $dd->addChildren($errors);
+                if (!empty($errors) && ($field->isErrorPre())) {
+                    $dd->addChild($errors);
                 }
                 $dd->addChild($field);
 
@@ -691,8 +697,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     }
                     $dd->addChild($hint);
                 }
-                if (!$field->isErrorPre()) {
-                    $dd->addChildren($errors);
+                if (!empty($errors) && (!$field->isErrorPre())) {
+                    $dd->addChild($errors);
                 }
                 $dl->addChild($dd);
             }
