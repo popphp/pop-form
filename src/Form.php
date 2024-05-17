@@ -564,14 +564,27 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to get the field values as an array
      *
+     * @param  array $options
      * @return array
      */
-    public function toArray(): array
+    public function toArray(array $options = []): array
     {
         $fieldValues = [];
 
         foreach ($this->fieldsets as $fieldset) {
             $fieldValues = array_merge($fieldValues, $fieldset->toArray());
+        }
+
+        if (!empty($options)) {
+            if (isset($options['exclude'])) {
+                if (!is_array($options['exclude'])) {
+                    $options['exclude'] = [$options['exclude']];
+                }
+                $fieldValues = array_diff_key($fieldValues, array_flip($options['exclude']));
+            }
+            if (isset($options['filter'])) {
+                $fieldValues = array_filter($fieldValues, $options['filter']);
+            }
         }
 
         return $fieldValues;

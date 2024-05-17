@@ -506,11 +506,26 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Get values
      *
+     * @param  array $options
      * @return array
      */
-    public function toArray(): array
+    public function toArray(array $options = []): array
     {
-        return $this->values;
+        $fieldValues = $this->values;
+
+        if (!empty($options)) {
+            if (isset($options['exclude'])) {
+                if (!is_array($options['exclude'])) {
+                    $options['exclude'] = [$options['exclude']];
+                }
+                $fieldValues = array_diff_key($fieldValues, array_flip($options['exclude']));
+            }
+            if (isset($options['filter'])) {
+                $fieldValues = array_filter($fieldValues, $options['filter']);
+            }
+        }
+
+        return $fieldValues;
     }
 
     /**

@@ -39,9 +39,10 @@ interface FormInterface
     /**
      * Get values
      *
+     * @param  array $options
      * @return array
      */
-    public function toArray(): array;
+    public function toArray(array $options = []): array;
 
     /**
      * Method to iterate over object
