@@ -35,12 +35,12 @@ class Number extends Element\Input
      * Instantiate the number input form element
      *
      * @param  string  $name
-     * @param  int     $min
-     * @param  int     $max
+     * @param  mixed   $min
+     * @param  mixed   $max
      * @param  ?string $value
      * @param  ?string $indent
      */
-    public function __construct(string $name, int $min, int $max, ?string $value = null, ?string $indent = null)
+    public function __construct(string $name, mixed $min, mixed $max, ?string $value = null, ?string $indent = null)
     {
         parent::__construct($name, 'number', $value, $indent);
         $this->setAttributes([
