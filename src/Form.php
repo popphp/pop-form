@@ -194,23 +194,23 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to set an attribute
      *
-     * @param  string $a
-     * @param  string $v
+     * @param  string $name
+     * @param  mixed  $value
      * @return Form
      */
-    public function setAttribute(string $a, string $v): Form
+    public function setAttribute(string $name, mixed $value = null): Form
     {
-        parent::setAttribute($a, $v);
+        parent::setAttribute($name, $value);
 
-        if ($a == 'id') {
+        if ($name == 'id') {
             foreach ($this->fieldsets as $i => $fieldset) {
-                $id = $v . '-fieldset-' . ($i + 1);
+                $id = $value . '-fieldset-' . ($i + 1);
                 $fieldset->setAttribute('id', $id);
             }
 
-        } else if ($a == 'class') {
+        } else if ($name == 'class') {
             foreach ($this->fieldsets as $i => $fieldset) {
-                $class = $v . '-fieldset';
+                $class = $value . '-fieldset';
                 $fieldset->setAttribute('class', $class);
             }
         }
@@ -221,12 +221,12 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
     /**
      * Method to set attributes
      *
-     * @param  array $a
+     * @param  array $attributes
      * @return Form
      */
-    public function setAttributes(array $a): Form
+    public function setAttributes(array $attributes): Form
     {
-        foreach ($a as $name => $value) {
+        foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
         return $this;
