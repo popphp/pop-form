@@ -78,6 +78,12 @@ abstract class AbstractElement extends Child implements ElementInterface
     protected bool $required = false;
 
     /**
+     * Form element required message
+     * @var ?string
+     */
+    protected ?string $requiredMessage = null;
+
+    /**
      * Form element disabled property
      * @var bool
      */
@@ -253,12 +259,30 @@ abstract class AbstractElement extends Child implements ElementInterface
     /**
      * Set whether the form element is required
      *
-     * @param  bool $required
+     * @param  bool    $required
+     * @param  ?string $requiredMessage
      * @return AbstractElement
      */
-    public function setRequired(bool $required): AbstractElement
+    public function setRequired(bool $required, ?string $requiredMessage = 'This field is required.'): AbstractElement
     {
         $this->required = $required;
+
+        if (!empty($requiredMessage)) {
+            $this->setRequiredMessage($requiredMessage);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the form element is required message
+     *
+     * @param  string $requiredMessage
+     * @return AbstractElement
+     */
+    public function setRequiredMessage(string $requiredMessage): AbstractElement
+    {
+        $this->requiredMessage = $requiredMessage;
         return $this;
     }
 
@@ -503,6 +527,26 @@ abstract class AbstractElement extends Child implements ElementInterface
     public function isRequired(): bool
     {
         return $this->required;
+    }
+
+    /**
+     * Does the form element object have a required message
+     *
+     * @return bool
+     */
+    public function hasRequiredMessage(): bool
+    {
+        return !empty($this->requiredMessage);
+    }
+
+    /**
+     * Get the form element object required message
+     *
+     * @return ?string
+     */
+    public function getRequiredMessage(): ?string
+    {
+        return $this->requiredMessage;
     }
 
     /**

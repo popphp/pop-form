@@ -301,7 +301,7 @@ class RadioSet extends AbstractElement
 
         // Check if the element is required
         if (($this->required) && empty($value)) {
-            $this->errors[] = 'This field is required.';
+            $this->errors[] = $this->getRequiredMessage();
         }
 
         $this->validateValue($value, $formValues);

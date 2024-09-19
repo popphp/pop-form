@@ -162,7 +162,7 @@ class Fields
         }
         // Set if required.
         if (($required !== null) && ($required)) {
-            $element->setRequired($required);
+            $element->setRequired($required, ($field['required_message'] ?? 'This field is required.'));
         }
         // Set if disabled.
         if (($disabled !== null) && ($disabled)) {

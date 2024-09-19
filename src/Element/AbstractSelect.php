@@ -86,17 +86,18 @@ abstract class AbstractSelect extends AbstractElement
     /**
      * Set whether the form element is required
      *
-     * @param  bool $required
+     * @param  bool    $required
+     * @param  ?string $requiredMessage
      * @return AbstractSelect
      */
-    public function setRequired(bool $required): AbstractSelect
+    public function setRequired(bool $required, ?string $requiredMessage = 'This field is required.'): AbstractSelect
     {
         if ($required) {
             $this->setAttribute('required', 'required');
         } else {
             $this->removeAttribute('required');
         }
-        return parent::setRequired($required);
+        return parent::setRequired($required, $requiredMessage);
     }
 
     /**
@@ -226,7 +227,7 @@ abstract class AbstractSelect extends AbstractElement
 
         // Check if the element is required
         if (($this->required) && empty($value)) {
-            $this->errors[] = 'This field is required.';
+            $this->errors[] = $this->getRequiredMessage();
         }
 
         $this->validateValue($value, $formValues);

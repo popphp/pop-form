@@ -61,7 +61,7 @@ class File extends Element\Input
 
         // Check if the element is required
         if (($this->required) && empty($value)) {
-            $this->errors[] = 'This field is required.';
+            $this->errors[] = $this->getRequiredMessage();
         }
 
         // Check field validators

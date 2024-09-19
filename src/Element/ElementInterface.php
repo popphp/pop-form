@@ -68,10 +68,11 @@ interface ElementInterface
     /**
      * Set whether the form element is required
      *
-     * @param  bool $required
+     * @param  bool    $required
+     * @param  ?string $requiredMessage
      * @return mixed
      */
-    public function setRequired(bool $required): mixed;
+    public function setRequired(bool $required, ?string $requiredMessage = 'This field is required.'): mixed;
 
     /**
      * Set whether the form element is disabled

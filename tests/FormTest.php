@@ -26,6 +26,7 @@ class FormTest extends TestCase
         $this->assertEquals('admin', $form->username);
         unset($form->username);
         $this->assertEmpty($form->username);
+        $this->assertFalse($username->hasHintAttributes());
     }
 
     public function testSetAttributes()
@@ -98,9 +99,10 @@ class FormTest extends TestCase
         $form = Form::createFromFieldsetConfig([
             [
                 'username' => [
-                    'type'     => 'text',
-                    'label'    => 'Username:',
-                    'required' => true
+                    'type'             => 'text',
+                    'label'            => 'Username:',
+                    'required'         => true,
+                    'required_message' => 'Hey! The username field is required!',
                 ],
                 'file' => [
                     'type'  => 'file',
@@ -117,6 +119,8 @@ class FormTest extends TestCase
         ]);
         $this->assertInstanceOf('Pop\Form\Form', $form);
         $this->assertEquals(3, count($form->getFields()));
+        $this->assertTrue($form->getField('username')->hasRequiredMessage());
+        $this->assertEquals('Hey! The username field is required!', $form->getField('username')->getRequiredMessage());
     }
 
     public function testCreateFromFieldsetConfig2()
@@ -396,28 +400,7 @@ class FormTest extends TestCase
         $form->setFieldValues(['username' => 'admin', 'password' => 1234]);
         $this->assertFalse($form->isValid());
         $this->assertEquals(1, count($form->getErrors('password')));
-        /*
-        $validators = [
-            'password' => [
-                function($value, array $formValues = []) {
-                    if (!empty($formValues['username'])) {
-                        return new Validator\LengthGte(8);
-                    }
-                    return null;
-                }
-            ]
-        ];
-
-        $validator = new FormValidator($validators);
-        $validator->setValues([
-            'username' => 'sdfd345345',
-            'password' => '@!@#'
-        ]);
-
-        $validator->validate();
-        $this->assertEquals(1, count($validator->getErrors()));
-        $this->assertEquals(1, count($validator->getErrors()['password']));
-        */
+        $this->assertTrue($form->getField('password')->hasValidators());
     }
 
     public function testValidateCallables()

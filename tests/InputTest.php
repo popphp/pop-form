@@ -175,6 +175,20 @@ class InputTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Url', $input);
     }
 
+    public function testAppend()
+    {
+        $input = new Input('username');
+        $input->setAppend('Append');
+        $this->assertEquals('Append', $input->getAppend());
+    }
+
+    public function testPrepend()
+    {
+        $input = new Input('username');
+        $input->setPrepend('Prepend');
+        $this->assertEquals('Prepend', $input->getPrepend());
+    }
+
     public function testRemoveRequired()
     {
         $input = new Input('my_field');

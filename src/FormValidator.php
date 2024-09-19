@@ -249,10 +249,11 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     /**
      * Set required
      *
-     * @param  mixed $required
+     * @param  mixed   $required
+     * @param  ?string $requiredMessage
      * @return FormValidator
      */
-    public function setRequired(mixed $required): FormValidator
+    public function setRequired(mixed $required, ?string $requiredMessage = 'This field is required.'): FormValidator
     {
         if (!is_array($required)) {
             $required = [$required];
@@ -260,7 +261,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
 
         foreach ($required as $req) {
             if (!in_array($req, $this->required)) {
-                $this->required[] = $req;
+                $this->required[$req] = $requiredMessage;
             }
         }
 
@@ -275,7 +276,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      */
     public function isRequired(string $field): bool
     {
-        return (in_array($field, $this->required));
+        return array_key_exists($field, $this->required);
     }
 
     /**
@@ -286,8 +287,8 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      */
     public function removeRequired(string $field): FormValidator
     {
-        if (in_array($field, $this->required)) {
-            unset($this->required[array_search($field, $this->required)]);
+        if (array_key_exists($field, $this->required)) {
+            unset($this->required[$field]);
         }
 
         return $this;
@@ -383,16 +384,16 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
             );
 
             foreach ($formFields as $field) {
-                if (in_array($field, $this->required) && !isset($formFields[$field])) {
-                    $this->addError($field, 'This field is required.');
+                if (array_key_exists($field, $this->required) && !isset($formFields[$field])) {
+                    $this->addError($field, $this->required[$field]);
                 }
             }
         } else {
             $formFields = $this->values;
             // Check for required fields
-            foreach ($this->required as $required) {
-                if (!isset($formFields[$required])) {
-                    $this->addError($required, 'This field is required.');
+            foreach ($this->required as $field => $requiredMessage) {
+                if (!isset($formFields[$field])) {
+                    $this->addError($field, $requiredMessage);
                 }
             }
         }
