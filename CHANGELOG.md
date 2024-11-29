@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## 4.2.0
+## 4.2.1
 
 * [UPDATED] Updated to a minimum of PHP 7.3 and PHPUnit 9.0. Migrated from TravisCI to GitHub Actions for CI.  
 
