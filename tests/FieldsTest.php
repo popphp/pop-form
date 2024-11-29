@@ -101,9 +101,7 @@ class FieldsTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Range', $range);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[runInSeparateProcess]
     public function testCreateCsrfAndCaptcha()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';

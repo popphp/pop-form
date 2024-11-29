@@ -224,9 +224,7 @@ class InputTest extends TestCase
         $this->assertFalse($input->isReadonly());
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[runInSeparateProcess]
     public function testCaptcha()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -236,9 +234,7 @@ class InputTest extends TestCase
         $this->assertTrue(is_array($input->getToken()));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[runInSeparateProcess]
     public function testCsrf()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';

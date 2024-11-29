@@ -458,9 +458,7 @@ class FormTest extends TestCase
         $this->assertStringContainsString('<form', $result);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[runInSeparateProcess]
     public function testClear()
     {
         $form = Form::createFromConfig([
