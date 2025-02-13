@@ -27,7 +27,7 @@ use Pop\Form\Element\Input\File;
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.2.1
+ * @version    4.2.2
  */
 
 class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \IteratorAggregate

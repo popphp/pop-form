@@ -24,7 +24,7 @@ use Pop\Validator\ValidatorInterface;
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.2.1
+ * @version    4.2.2
  */
 
 class FormConfig extends Utils\ArrayObject
