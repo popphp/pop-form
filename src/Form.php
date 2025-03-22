@@ -740,7 +740,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         }
 
         if (($field instanceof AbstractElement) && !($field instanceof Checkbox) &&
-            !($field instanceof Radio) && ($realValue !== null) && ($realValue != '')) {
+            !($field instanceof Radio)) {
             $field->setValue($realValue);
         }
 

@@ -6,6 +6,7 @@ use Pop\Form\Form;
 use Pop\Filter\Filter;
 use Pop\Form\Element;
 use Pop\Validator;
+use PHPUnit\Framework\Attributes;
 use PHPUnit\Framework\TestCase;
 
 class FormTest extends TestCase
@@ -285,6 +286,108 @@ class FormTest extends TestCase
         $form->setFieldValues(['username' => '<h1>admin</h1>', 'email' => 'admin@admin.com']);
         $this->assertEquals('&lt;h1&gt;admin&lt;/h1&gt;', $form->username);
         $form->clearFilters();
+    }
+
+    #[Attributes\DataProvider('provideBlankOrEmptyStringValue')]
+    #[Attributes\DataProvider('provideUntrimmedStringValue')]
+    public function testCanFilterValueToTrimmedString(string $value): void
+    {
+        $name = 'foo';
+
+        $filter = new Filter('trim');
+
+        $form = new Form();
+
+        $form->addField(new Element\Input($name));
+        $form->addFilter($filter);
+        $form->setFieldValues([
+            $name => $value,
+        ]);
+
+        $expected = trim($value);
+
+        $this->assertSame($expected, $filter->filter($value), sprintf(
+            'Failed asserting that "%s" is filtered to "%s".',
+            $value,
+            $expected
+        ));
+
+        $this->assertSame($expected, $form->getFieldValue($name), sprintf(
+            'Failed asserting that field value "%s" is set to "%s" after filtering.',
+            $value,
+            $expected
+        ));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function provideUntrimmedStringValue(): array
+    {
+        $values = [
+            'string-untrimmed' => ' foo ',
+        ];
+
+        return array_map(static function (string $value): array {
+            return [
+                $value
+            ];
+        }, $values);
+    }
+
+    #[Attributes\DataProvider('provideBlankOrEmptyStringValue')]
+    public function testCanFilterValueToNull(string $value): void
+    {
+        $name = 'foo';
+
+        $filter = new Filter(static function ($value) {
+            if (!is_string($value)) {
+                return $value;
+            }
+
+            $trimmed = trim($value);
+
+            if ('' !== $trimmed) {
+                return $trimmed;
+            }
+
+            return null;
+        });
+
+        $form = new Form();
+
+        $form->addField(new Element\Input($name));
+        $form->addFilter($filter);
+        $form->setFieldValues([
+            $name => $value,
+        ]);
+
+        $this->assertNull($filter->filter($value), sprintf(
+            'Failed asserting that "%s" is filtered to null',
+            $value,
+        ));
+
+        $this->assertNull($form->getFieldValue($name), sprintf(
+            'Failed asserting that field value "%s" is set to null after filtering.',
+            $value,
+        ));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function provideBlankOrEmptyStringValue(): array
+    {
+        $values = [
+            'string-blank' => ' ',
+            'string-empty' => '',
+        ];
+
+        return array_map(static function (string $value): array {
+            return [
+                $value
+            ];
+        }, $values);
     }
 
     public function testAddColumn1()
