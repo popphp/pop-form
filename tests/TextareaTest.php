@@ -21,6 +21,23 @@ class TextareaTest extends TestCase
         $this->assertTrue(empty($textarea->getValue()));
     }
 
+    public function testValueIsNullByDefault()
+    {
+        $textarea = new Textarea('my_textarea');
+
+        $this->assertNull($textarea->getValue());
+    }
+
+    public function testCanSetValueToNull()
+    {
+        $textarea = new Textarea('my_textarea');
+
+        $textarea->setValue('foo');
+        $textarea->setValue(null);
+
+        $this->assertNull($textarea->getValue());
+    }
+
     public function testValidate()
     {
         $textarea = new Textarea('my_textarea', 'Type something', '    ');
