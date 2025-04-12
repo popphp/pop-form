@@ -96,6 +96,13 @@ class Textarea extends AbstractElement
         return parent::setReadonly($readonly);
     }
 
+    public function setNodeValue(?string $value): Textarea
+    {
+        $this->nodeValue = $value;
+
+        return $this;
+    }
+
     /**
      * Set the value of the form textarea element object
      *
