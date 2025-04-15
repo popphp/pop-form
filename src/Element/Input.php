@@ -109,7 +109,7 @@ class Input extends AbstractElement
      * @param  mixed $value
      * @return Input
      */
-    public function setValue(mixed $value): Input
+    public function setValue(mixed $value = null): Input
     {
         $this->setAttribute('value', $value);
         return $this;

@@ -192,7 +192,7 @@ class RadioSet extends AbstractElement
      * @param  mixed $value
      * @return RadioSet
      */
-    public function setValue(mixed $value): RadioSet
+    public function setValue(mixed $value = null): RadioSet
     {
         $this->checked = $value;
 

@@ -169,6 +169,23 @@ class InputTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Text', $input);
     }
 
+    public function testValueIsNullByDefault()
+    {
+        $input = new Input\Text('my_text');
+
+        $this->assertNull($input->getValue());
+    }
+
+    public function testCanSetValueToNull()
+    {
+        $input = new Input\Text('my_text');
+
+        $input->setValue('foo');
+        $input->setValue(null);
+
+        $this->assertNull($input->getValue());
+    }
+
     public function testUrl()
     {
         $input = new Input\Url('my_url');

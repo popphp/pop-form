@@ -40,7 +40,7 @@ interface ElementInterface
      * @param  mixed $value
      * @return ElementInterface
      */
-    public function setValue(mixed $value): ElementInterface;
+    public function setValue(mixed $value = null): ElementInterface;
 
     /**
      * Reset the value of the form element

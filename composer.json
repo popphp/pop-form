@@ -22,7 +22,7 @@
     "require": {
         "php": ">=8.2.0",
         "popphp/pop-acl": "^4.1.2",
-        "popphp/pop-dom": "^4.0.5",
+        "popphp/pop-dom": "^4.0.6",
         "popphp/pop-filter": "^4.0.3",
         "popphp/pop-utils": "^2.2.0",
         "popphp/pop-validator": "^4.1.3"

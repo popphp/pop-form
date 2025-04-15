@@ -47,7 +47,7 @@ class Checkbox extends Element\Input
      * @param  mixed $value
      * @return Checkbox
      */
-    public function setValue(mixed $value): Checkbox
+    public function setValue(mixed $value = null): Checkbox
     {
         if ($value == $this->getAttribute('value')) {
             $this->check();

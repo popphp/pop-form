@@ -145,7 +145,7 @@ abstract class AbstractElement extends Child implements ElementInterface
      * @param  mixed $value
      * @return AbstractElement
      */
-    abstract public function setValue(mixed $value): AbstractElement;
+    abstract public function setValue(mixed $value = null): AbstractElement;
 
     /**
      * Reset the value of the form element

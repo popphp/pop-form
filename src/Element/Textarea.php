@@ -102,7 +102,7 @@ class Textarea extends AbstractElement
      * @param  mixed $value
      * @return Textarea
      */
-    public function setValue(mixed $value): Textarea
+    public function setValue(mixed $value = null): Textarea
     {
         $this->setNodeValue($value);
         return $this;

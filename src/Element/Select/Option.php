@@ -50,7 +50,7 @@ class Option extends Child
      * @param  mixed $value
      * @return Option
      */
-    public function setValue(mixed $value): Option
+    public function setValue(mixed $value = null): Option
     {
         $this->setAttribute('value', $value);
         return $this;

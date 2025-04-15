@@ -48,7 +48,7 @@ class Radio extends Element\Input
      * @param  mixed $value
      * @return Radio
      */
-    public function setValue(mixed $value): Radio
+    public function setValue(mixed $value = null): Radio
     {
         if ($value == $this->getAttribute('value')) {
             $this->check();

@@ -67,7 +67,7 @@ class Button extends AbstractElement
      * @param  mixed $value
      * @return Button
      */
-    public function setValue(mixed $value): Button
+    public function setValue(mixed $value = null): Button
     {
         $this->setNodeValue($value);
         return $this;

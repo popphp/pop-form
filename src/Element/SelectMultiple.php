@@ -105,7 +105,7 @@ class SelectMultiple extends AbstractSelect
      * @param  mixed $value
      * @return SelectMultiple
      */
-    public function setValue(mixed $value): SelectMultiple
+    public function setValue(mixed $value = null): SelectMultiple
     {
         $this->selected = (!is_array($value)) ? [$value] : $value;
 

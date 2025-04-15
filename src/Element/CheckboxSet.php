@@ -193,7 +193,7 @@ class CheckboxSet extends AbstractElement
      * @param  mixed $value
      * @return CheckboxSet
      */
-    public function setValue(mixed $value): CheckboxSet
+    public function setValue(mixed $value = null): CheckboxSet
     {
         $this->checked = (!is_array($value)) ? [$value] : $value;
 

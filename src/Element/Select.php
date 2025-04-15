@@ -124,7 +124,7 @@ class Select extends AbstractSelect
      * @param  mixed $value
      * @return Select
      */
-    public function setValue(mixed $value): Select
+    public function setValue(mixed $value = null): Select
     {
         $this->selected = $value;
 
