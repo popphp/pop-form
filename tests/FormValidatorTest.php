@@ -14,10 +14,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => new Validator\Email()
         ];
         $required = ['username', 'password'];
@@ -42,7 +42,7 @@ class FormValidatorTest extends TestCase
                 'label'    => 'Username:',
                 'required' => true,
                 'validators' => [
-                    new Validator\LengthGte(6),
+                    new Validator\LengthGreaterThanEqual(6),
                     new Validator\NotContains(['$', '?'])
                 ]
             ],
@@ -63,10 +63,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => new Validator\Email()
         ];
         $required = ['username', 'password'];
@@ -88,7 +88,7 @@ class FormValidatorTest extends TestCase
         $this->assertTrue($formValidator->hasValidators('username'));
         $this->assertFalse($formValidator->hasValidators('foo'));
         $this->assertTrue($formValidator->hasValidator('username', 0));
-        $this->assertInstanceOf('Pop\Validator\LengthGte', $formValidator->getValidator('username', 0));
+        $this->assertInstanceOf('Pop\Validator\LengthGreaterThanEqual', $formValidator->getValidator('username', 0));
 
         $this->assertTrue($formValidator->hasValidator('username', 1));
         $formValidator->removeValidator('username', 1);
@@ -105,10 +105,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => new Validator\Email()
         ];
         $required = ['username', 'password'];
@@ -135,10 +135,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => new Validator\Email()
         ];
         $required = ['username', 'password'];
@@ -176,10 +176,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => function($value) {
                 if ($value != 'test@test.com') {
                     return 'The email must be test@test.com';
@@ -205,10 +205,10 @@ class FormValidatorTest extends TestCase
     {
         $validators = [
             'username' => [
-                new Validator\LengthGte(6),
+                new Validator\LengthGreaterThanEqual(6),
                 new Validator\NotContains(['$', '?'])
             ],
-            'password' => new Validator\LengthGte(8),
+            'password' => new Validator\LengthGreaterThanEqual(8),
             'email'    => function($value) {
                 if ($value != 'test@test.com') {
                     return 'The email must be test@test.com';
@@ -234,7 +234,7 @@ class FormValidatorTest extends TestCase
             'password' => [
                 function($value, array $formValues = []) {
                     if (!empty($formValues['username'])) {
-                        return new Validator\LengthGte(8);
+                        return new Validator\LengthGreaterThanEqual(8);
                     }
                     return null;
                 }
@@ -259,7 +259,7 @@ class FormValidatorTest extends TestCase
                 function($value, array $formValues = []) {
                     if (!empty($formValues['username'])) {
                         return [
-                            new Validator\LengthGte(8),
+                            new Validator\LengthGreaterThanEqual(8),
                             new Validator\AlphaNumeric()
                         ];
                     }

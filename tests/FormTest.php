@@ -490,7 +490,7 @@ class FormTest extends TestCase
                 'label' => 'Password:',
                 'validators' => function($value, array $formValues = []) {
                     if (!empty($formValues['username'])) {
-                        return new Validator\LengthGte(8);
+                        return new Validator\LengthGreaterThanEqual(8);
                     }
                     return null;
                 }
@@ -520,7 +520,7 @@ class FormTest extends TestCase
                 'validators' =>                 function($value, array $formValues = []) {
                     if (!empty($formValues['username'])) {
                         return [
-                            new Validator\LengthGte(8),
+                            new Validator\LengthGreaterThanEqual(8),
                             new Validator\AlphaNumeric()
                         ];
                     }
