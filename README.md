@@ -45,7 +45,7 @@ Install `pop-form` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-form" : "^4.2.2"
+        "popphp/pop-form" : "^4.2.6"
     }
 
 [Top](#pop-form)
