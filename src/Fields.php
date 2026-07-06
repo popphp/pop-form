@@ -66,8 +66,9 @@ class Fields
         $labelAttribs = $field['label-attributes'] ?? null;
         $prepend      = $field['prepend'] ?? null;
         $append       = $field['append'] ?? null;
-
-        $errorPre = (isset($field['error']) && ($field['error'] == 'pre'));
+        $legend       = $field['legend'] ?? null;
+        $container    = $field['container'] ?? null;
+        $errorPre     = (isset($field['error']) && ($field['error'] == 'pre'));
 
         // Initialize the form element.
         switch (strtolower($type)) {
@@ -90,7 +91,7 @@ class Fields
                 }
                 break;
             case 'checkbox-set':
-                $element = new Element\CheckboxSet($name, $values, $checked, $indent);
+                $element = new Element\CheckboxSet($name, $values, $checked, $indent, $container);
                 break;
             case 'radio':
                 $element = new Element\Input\Radio($name, $value, $indent);
@@ -99,7 +100,7 @@ class Fields
                 }
                 break;
             case 'radio-set':
-                $element = new Element\RadioSet($name, $values, $checked, $indent);
+                $element = new Element\RadioSet($name, $values, $checked, $indent, $container);
                 break;
             case 'csrf':
                 $element = new Element\Input\Csrf($name, $value, $expire, $indent);
@@ -151,6 +152,10 @@ class Fields
         // Set append content.
         if ($append !== null) {
             $element->setAppend($append);
+        }
+        // Set legend content.
+        if ($legend !== null) {
+            $element->setLegend($legend);
         }
         // Set the hint.
         if ($hint !== null) {

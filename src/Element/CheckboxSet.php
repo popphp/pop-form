@@ -48,6 +48,12 @@ class CheckboxSet extends AbstractElement
     protected ?string $legend = null;
 
     /**
+     * Fieldset container
+     * @var ?string
+     */
+    protected ?string $container = null;
+
+    /**
      * Constructor
      *
      * Instantiate a fieldset of checkbox input form elements
@@ -56,8 +62,9 @@ class CheckboxSet extends AbstractElement
      * @param  array             $values
      * @param  string|array|null $checked
      * @param  ?string           $indent
+     * @param  ?string           $container
      */
-    public function __construct(string $name, array $values, string|array|null $checked = null, ?string $indent = null)
+    public function __construct(string $name, array $values, string|array|null $checked = null, ?string $indent = null, ?string $container = null)
     {
         parent::__construct('fieldset');
 
@@ -70,6 +77,10 @@ class CheckboxSet extends AbstractElement
 
         if ($indent !== null) {
             $this->setIndent($indent);
+        }
+
+        if ($container !== null) {
+            $this->setContainer($container);
         }
 
         // Create the checkbox elements and related span elements.
@@ -100,7 +111,16 @@ class CheckboxSet extends AbstractElement
             }
             $span->setAttribute('class', 'checkbox-span');
             $span->setNodeValue($nodeValue);
-            $this->addChildren([$checkbox, $span]);
+
+            if (!empty($this->container)) {
+                $container = new Child($this->container);
+                $container->setAttribute('class', 'checkbox-fieldset-container');
+                $container->addChildren([$checkbox, $span]);
+                $this->addChildren([$container]);
+            } else {
+                $this->addChildren([$checkbox, $span]);
+            }
+
             $this->checkboxes[] = $checkbox;
             $i++;
         }
@@ -114,12 +134,13 @@ class CheckboxSet extends AbstractElement
      */
     public function setDisabled(bool $disabled): CheckboxSet
     {
+        $childNodes = $this->getFieldsetChildNodes();
         if ($disabled) {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->setAttribute('disabled', 'disabled');
             }
         } else {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->removeAttribute('disabled');
             }
         }
@@ -135,13 +156,14 @@ class CheckboxSet extends AbstractElement
      */
     public function setReadonly(bool $readonly): CheckboxSet
     {
+        $childNodes = $this->getFieldsetChildNodes();
         if ($readonly) {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->setAttribute('readonly', 'readonly');
                 $childNode->setAttribute('onclick', 'return false;');
             }
         } else {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->removeAttribute('readonly');
                 $childNode->removeAttribute('onclick');
             }
@@ -198,7 +220,8 @@ class CheckboxSet extends AbstractElement
         $this->checked = (!is_array($value)) ? [$value] : $value;
 
         if ((count($this->checked) > 0) && ($this->hasChildren())) {
-            foreach ($this->childNodes as $child) {
+            $childNodes = $this->getFieldsetChildNodes();
+            foreach ($childNodes as $child) {
                 if ($child instanceof Input\Checkbox) {
                     if (in_array($child->getValue(), $this->checked)) {
                         $child->check();
@@ -218,8 +241,10 @@ class CheckboxSet extends AbstractElement
      */
     public function resetValue(): CheckboxSet
     {
+        $childNodes    = $this->getFieldsetChildNodes();
         $this->checked = [];
-        foreach ($this->childNodes as $child) {
+
+        foreach ($childNodes as $child) {
             if ($child instanceof Input\Checkbox) {
                 $child->uncheck();
             }
@@ -278,6 +303,48 @@ class CheckboxSet extends AbstractElement
     public function getLegend(): ?string
     {
         return $this->legend;
+    }
+
+    /**
+     * Method to set fieldset container
+     *
+     * @param  string $container
+     * @return CheckboxSet
+     */
+    public function setContainer(string $container): CheckboxSet
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    /**
+     * Method to get fieldset container
+     *
+     * @return ?string
+     */
+    public function getContainer(): ?string
+    {
+        return $this->container;
+    }
+
+    /**
+     * Method to get fieldset child nodes
+     *
+     * @return ?string
+     */
+    public function getFieldsetChildNodes(): array
+    {
+        if (!empty($this->container)) {
+            $childNodes = [];
+            foreach ($this->childNodes as $childNode) {
+                if (($childNode->getNodeName() == $this->container) && ($childNode->hasChildNodes())) {
+                    $childNodes = array_merge($childNodes, $childNode->getChildNodes());
+                }
+            }
+            return $childNodes;
+        } else {
+            return $this->childNodes;
+        }
     }
 
     /**

@@ -48,6 +48,12 @@ class RadioSet extends AbstractElement
     protected ?string $legend = null;
 
     /**
+     * Fieldset container
+     * @var ?string
+     */
+    protected ?string $container = null;
+
+    /**
      * Constructor
      *
      * Instantiate the radio input form elements
@@ -56,8 +62,9 @@ class RadioSet extends AbstractElement
      * @param  array   $values
      * @param  ?string $checked
      * @param  ?string $indent
+     * @param  ?string $container
      */
-    public function __construct(string $name, array $values, ?string $checked = null, ?string $indent = null)
+    public function __construct(string $name, array $values, ?string $checked = null, ?string $indent = null, ?string $container = null)
     {
         parent::__construct('fieldset');
 
@@ -70,6 +77,10 @@ class RadioSet extends AbstractElement
 
         if ($indent !== null) {
             $this->setIndent($indent);
+        }
+
+        if ($container !== null) {
+            $this->setContainer($container);
         }
 
         // Create the radio elements and related span elements.
@@ -100,7 +111,16 @@ class RadioSet extends AbstractElement
             }
             $span->setAttribute('class', 'radio-span');
             $span->setNodeValue($nodeValue);
-            $this->addChildren([$radio, $span]);
+
+            if (!empty($this->container)) {
+                $container = new Child($this->container);
+                $container->setAttribute('class', 'radio-fieldset-container');
+                $container->addChildren([$radio, $span]);
+                $this->addChildren([$container]);
+            } else {
+                $this->addChildren([$radio, $span]);
+            }
+
             $this->radios[] = $radio;
             $i++;
         }
@@ -114,12 +134,13 @@ class RadioSet extends AbstractElement
      */
     public function setDisabled(bool $disabled): RadioSet
     {
+        $childNodes = $this->getFieldsetChildNodes();
         if ($disabled) {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->setAttribute('disabled', 'disabled');
             }
         } else {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->removeAttribute('disabled');
             }
         }
@@ -135,13 +156,14 @@ class RadioSet extends AbstractElement
      */
     public function setReadonly(bool $readonly): RadioSet
     {
+        $childNodes = $this->getFieldsetChildNodes();
         if ($readonly) {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->setAttribute('readonly', 'readonly');
                 $childNode->setAttribute('onclick', 'return false;');
             }
         } else {
-            foreach ($this->childNodes as $childNode) {
+            foreach ($childNodes as $childNode) {
                 $childNode->removeAttribute('readonly');
                 $childNode->removeAttribute('onclick');
             }
@@ -194,10 +216,11 @@ class RadioSet extends AbstractElement
      */
     public function setValue(mixed $value = null): RadioSet
     {
+        $childNodes    = $this->getFieldsetChildNodes();
         $this->checked = $value;
 
         if (($this->checked !== null) && ($this->hasChildren())) {
-            foreach ($this->childNodes as $child) {
+            foreach ($childNodes as $child) {
                 if ($child instanceof Input\Radio) {
                     if ($child->getValue() == $this->checked) {
                         $child->check();
@@ -217,8 +240,9 @@ class RadioSet extends AbstractElement
      */
     public function resetValue(): RadioSet
     {
+        $childNodes    = $this->getFieldsetChildNodes();
         $this->checked = null;
-        foreach ($this->childNodes as $child) {
+        foreach ($childNodes as $child) {
             if ($child instanceof Input\Radio) {
                 $child->uncheck();
             }
@@ -287,6 +311,48 @@ class RadioSet extends AbstractElement
     public function getLegend(): ?string
     {
         return $this->legend;
+    }
+
+    /**
+     * Method to set fieldset container
+     *
+     * @param  string $container
+     * @return RadioSet
+     */
+    public function setContainer(string $container): RadioSet
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    /**
+     * Method to get fieldset container
+     *
+     * @return ?string
+     */
+    public function getContainer(): ?string
+    {
+        return $this->container;
+    }
+
+    /**
+     * Method to get fieldset child nodes
+     *
+     * @return ?string
+     */
+    public function getFieldsetChildNodes(): array
+    {
+        if (!empty($this->container)) {
+            $childNodes = [];
+            foreach ($this->childNodes as $childNode) {
+                if (($childNode->getNodeName() == $this->container) && ($childNode->hasChildNodes())) {
+                    $childNodes = array_merge($childNodes, $childNode->getChildNodes());
+                }
+            }
+            return $childNodes;
+        } else {
+            return $this->childNodes;
+        }
     }
 
     /**
