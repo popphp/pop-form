@@ -235,4 +235,45 @@ class SelectTest extends TestCase
         $this->assertFalse($select->isReadonly());
     }
 
+    public function testConstructorForwardsIndentToOptions()
+    {
+        $select = new Select('my_select', [
+            'Red' => 'Red', 'White' => 'White'
+        ], null, null, '    ');
+        $this->assertStringContainsString("\n        <option", $select->render());
+    }
+
+    public function testConstructorForwardsIndentToOptgroupOptions()
+    {
+        $select = new Select('my_select', [
+            'Colors 1' => ['Red' => 'Red', 'White' => 'White']
+        ], null, null, '    ');
+        $this->assertStringContainsString("\n        <option", $select->render());
+    }
+
+    public function testFlatOptionWithCustomAttributes()
+    {
+        $select = new Select('my_select', [
+            'red' => ['value' => 'Red', 'attributes' => ['data-color' => 'red']]
+        ]);
+        $this->assertStringContainsString('data-color="red"', $select->render());
+    }
+
+    public function testOptGroupOptionWithCustomAttributes()
+    {
+        $select = new Select('my_select', [
+            'Colors 1' => [
+                'red' => ['value' => 'Red', 'attributes' => ['data-color' => 'red']]
+            ]
+        ]);
+        $this->assertStringContainsString('data-color="red"', $select->render());
+    }
+
+    public function testConstructorForwardsCustomXmlFile()
+    {
+        $select = new Select('my_select', 'CUSTOM_SET', null, __DIR__ . '/TestAsset/custom-options.xml');
+        $this->assertEquals(2, count($select->getOptions()));
+        $this->assertStringContainsString('Alpha', $select->render());
+    }
+
 }

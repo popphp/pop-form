@@ -135,6 +135,78 @@ class FormConfigTest extends TestCase
         $this->assertInstanceOf('Pop\Validator\RegEx', $formConfig['username']['validators'][0]);
     }
 
+    public function testFromJsonWithValidatorInputFlat()
+    {
+        $validator = new Validator\Equal('password');
+        $validator->setInput('confirm_password');
+
+        $config = new FormConfig([
+            'confirm_password' => [
+                'type'       => 'text',
+                'label'      => 'Confirm Password',
+                'validators' => [$validator]
+            ]
+        ]);
+
+        $formConfig = FormConfig::createFromJson($config->jsonSerialize(JSON_PRETTY_PRINT));
+        $rebuilt    = $formConfig['confirm_password']['validators'][0];
+        $this->assertInstanceOf('Pop\Validator\Equal', $rebuilt);
+        $this->assertEquals('confirm_password', $rebuilt->getInput());
+    }
+
+    public function testFromJsonWithValidatorInputFieldset()
+    {
+        $validator = new Validator\Equal('password');
+        $validator->setInput('confirm_password');
+
+        $config = new FormConfig([
+            [
+                'confirm_password' => [
+                    'type'       => 'text',
+                    'label'      => 'Confirm Password',
+                    'validators' => [$validator]
+                ]
+            ]
+        ]);
+
+        $formConfig = FormConfig::createFromJson($config->jsonSerialize(JSON_PRETTY_PRINT));
+        $rebuilt    = $formConfig[0]['confirm_password']['validators'][0];
+        $this->assertInstanceOf('Pop\Validator\Equal', $rebuilt);
+        $this->assertEquals('confirm_password', $rebuilt->getInput());
+    }
+
+    public function testFilterConfigSingularValidatorKey()
+    {
+        $config = new FormConfig([
+            'username' => [
+                'type'      => 'text',
+                'label'     => 'Username',
+                'validator' => new Validator\NotEmpty()
+            ]
+        ]);
+
+        $json = json_decode($config->jsonSerialize(), true);
+        $this->assertArrayNotHasKey('validator', $json['username']);
+        $this->assertEquals('NotEmpty', $json['username']['validators'][0]['type']);
+    }
+
+    public function testFilterFieldsetConfigSingularValidatorKey()
+    {
+        $config = new FormConfig([
+            [
+                'username' => [
+                    'type'      => 'text',
+                    'label'     => 'Username',
+                    'validator' => new Validator\NotEmpty()
+                ]
+            ]
+        ]);
+
+        $json = json_decode($config->jsonSerialize(), true);
+        $this->assertArrayNotHasKey('validator', $json[0]['username']);
+        $this->assertEquals('NotEmpty', $json[0]['username']['validators'][0]['type']);
+    }
+
 
 
     public function testFromJson2()

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE options [
+    <!ELEMENT options ANY>
+    <!ELEMENT set ANY>
+    <!ELEMENT opt ANY>
+    <!ATTLIST set
+        name    CDATA    #REQUIRED
+        desc    CDATA    #REQUIRED
+    >
+    <!ATTLIST opt
+        value   CDATA    #REQUIRED
+    >
+]>
+<options>
+    <set name="CUSTOM_SET" desc="A custom test option set">
+        <opt value="a">Alpha</opt>
+        <opt value="b">Beta</opt>
+    </set>
+</options>

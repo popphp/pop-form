@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,7 +19,7 @@ namespace Pop\Form\Element;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  * @version    4.2.6
  */
@@ -70,25 +70,25 @@ interface ElementInterface
      *
      * @param  bool    $required
      * @param  ?string $requiredMessage
-     * @return mixed
+     * @return ElementInterface
      */
-    public function setRequired(bool $required, ?string $requiredMessage = 'This field is required.'): mixed;
+    public function setRequired(bool $required, ?string $requiredMessage = 'This field is required.'): ElementInterface;
 
     /**
      * Set whether the form element is disabled
      *
      * @param  bool $disabled
-     * @return mixed
+     * @return ElementInterface
      */
-    public function setDisabled(bool $disabled): mixed;
+    public function setDisabled(bool $disabled): ElementInterface;
 
     /**
      * Set whether the form element is readonly
      *
      * @param  bool $readonly
-     * @return mixed
+     * @return ElementInterface
      */
-    public function setReadonly(bool $readonly): mixed;
+    public function setReadonly(bool $readonly): ElementInterface;
 
     /**
      * Set error to display before the element

@@ -101,4 +101,26 @@ class RadioSetTest extends TestCase
         $this->assertEquals(3, $radio->getChild(4)->getAttribute('tabindex'));
     }
 
+    public function testConstructorWithContainer()
+    {
+        $radio = new RadioSet('my_radio', [
+            'Red' => 'Red', 'White' => 'White'
+        ], null, null, 'li');
+        $this->assertEquals('li', $radio->getContainer());
+        $this->assertStringContainsString('<li class="radio-fieldset-container">', $radio->render());
+
+        // Disabling must still reach the radios even though they're wrapped in containers.
+        $radio->setDisabled(true);
+        $this->assertTrue($radio->isDisabled());
+        $this->assertStringContainsString('disabled="disabled"', $radio->render());
+    }
+
+    public function testConstructorWithPerOptionAttributes()
+    {
+        $radio = new RadioSet('my_radio', [
+            'red' => ['value' => 'Red', 'attributes' => ['data-color' => 'red']]
+        ]);
+        $this->assertStringContainsString('data-color="red"', $radio->render());
+    }
+
 }

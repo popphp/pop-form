@@ -14,8 +14,11 @@ pop-form
     - [Fieldsets](#fieldsets)
     - [Legends](#legends) 
 * [Field Containers](#field-containers)
+* [Accessibility](#accessibility)
 * [Filtering](#filtering)
 * [Validation](#validation)
+* [CSRF Protection](#csrf-protection)
+* [File Uploads](#file-uploads)
 * [Dynamic Fields](#dynamic-fields)
 * [ACL Forms](#acl-forms)
 
@@ -45,7 +48,7 @@ Install `pop-form` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-form" : "^4.2.6"
+        "popphp/pop-form" : "^5.0.0"
     }
 
 [Top](#pop-form)
@@ -125,8 +128,10 @@ Upon submit, if the form values do not pass validation, the form will re-render 
                 <label for="username" class="required">Username:</label>
             </dt>
             <dd>
-                <input type="text" name="username" id="username" value="" required="required" />
-                <div class="error">This field is required.</div>
+                <input type="text" name="username" id="username" value="" required="required" aria-invalid="true" aria-describedby="username-error" />
+                <div class="error" id="username-error" role="alert">
+                    <span>This field is required.</span>
+                </div>
             </dd>
             <dt>
                 <label for="email">Email:</label>
@@ -142,21 +147,23 @@ Upon submit, if the form values do not pass validation, the form will re-render 
 </form>
 ```
 
+Note the `aria-invalid`/`aria-describedby` on the input and the `role="alert"` on the error `div` — these are
+wired automatically whenever a field has errors or a hint. See [Accessibility](#accessibility) below.
+
 The form object will default to `POST` as the method and the current `REQUEST_URI`
 as the action, but those values can be changed in a number of ways:
 
 ```php
-$form = new Form($fields, , '/form-action', 'GET');
-```
-
-```php
-$form = Form::createFromConfig($fields, '/form-action', 'GET');
+$form = Form::createFromConfig($fields, null, '/form-action', 'GET');
 ```
 
 ```php
 $form->setMethod('GET')
     ->setAction('/form-action');
 ```
+
+(Note: `new Form(...)`'s first argument expects an array of already-built field element objects, not a
+config array — see [Field Elements](#field-elements) below for that form of construction.)
 
 [Top](#pop-form)
 
@@ -243,7 +250,9 @@ On the first pass, the form will render like this:
 </form>
 ```
 
-If it fails validation, it will render with the errors. In this case, the username was not alphanumeric:
+If it fails validation, it will render with the errors. In this case, the username was not alphanumeric
+(note that the submitted value is echoed back into the field, which is exactly why [filtering](#filtering)
+submitted values matters):
 
 ```html
 <form action="/" method="post" id="my-form">
@@ -253,14 +262,16 @@ If it fails validation, it will render with the errors. In this case, the userna
                 <label for="username" class="required">Username:</label>
             </dt>
             <dd>
-                <input type="text" name="username" id="username" value="" required="required" size="40" />
-                <div class="error">The value must only contain alphanumeric characters.</div>
+                <input type="text" name="username" id="username" value="admin$%^" required="required" size="40" aria-invalid="true" aria-describedby="username-error" />
+                <div class="error" id="username-error" role="alert">
+                    <span>The value must only contain alphanumeric characters.</span>
+                </div>
             </dd>
             <dt>
                 <label for="email" class="required">Email:</label>
             </dt>
             <dd>
-                <input type="email" name="email" id="email" value="" required="required" size="40" />
+                <input type="email" name="email" id="email" value="test@test.com" required="required" size="40" />
             </dd>
             <dd>
                 <input type="submit" name="submit" id="submit" value="SUBMIT" />
@@ -589,6 +600,44 @@ $form = Form::createFromConfig($fields, 'div');
 
 [Top](#pop-form)
 
+Accessibility
+-------------
+
+Whenever a field has a hint and/or validation errors, `pop-form` automatically wires up the ARIA attributes
+that connect them for assistive technology — there's nothing extra to configure. Given a required field with
+a hint that fails validation:
+
+```php
+$fields = [
+    'username' => [
+        'type'     => 'text',
+        'label'    => 'Username:',
+        'required' => true,
+        'hint'     => 'Letters and numbers only.'
+    ]
+];
+```
+
+it renders like this once it has an error:
+
+```html
+<input type="text" name="username" id="username" value="" required="required" aria-invalid="true" aria-describedby="username-hint username-error" />
+<span id="username-hint">Letters and numbers only.</span>
+<div class="error" id="username-error" role="alert">
+    <span>This field is required.</span>
+</div>
+```
+
+* The hint and error containers get predictable, stable ids (`{name}-hint` / `{name}-error`).
+* The field itself gets `aria-describedby`, listing whichever of those ids apply, and `aria-invalid="true"`
+  while it has errors — both are removed again once the field is valid, so a corrected field doesn't keep
+  announcing itself as invalid on re-render.
+* The error container gets `role="alert"`, so screen readers announce it as soon as it appears.
+* `aria-invalid` is intentionally left off `CheckboxSet`/`RadioSet` (they render as a `<fieldset>`, and
+  `aria-invalid` isn't a valid ARIA state for a grouping element) — `aria-describedby` is still applied there.
+
+[Top](#pop-form)
+
 Filtering
 ---------
 
@@ -725,6 +774,97 @@ Array
 
 )
 ```
+
+[Top](#pop-form)
+
+CSRF Protection
+---------------
+
+A CSRF token field can be added to a form just like any other field, using the `csrf` type:
+
+```php
+use Pop\Form\Form;
+
+$fields = [
+    'csrf_token' => [
+        'type' => 'csrf'
+    ],
+    'submit' => [
+        'type'  => 'submit',
+        'value' => 'SUBMIT'
+    ]
+];
+
+$form = Form::createFromConfig($fields);
+
+if ($_POST) {
+    $form->setFieldValues($_POST);
+    if (!$form->isValid()) {
+        echo $form; // Has errors — may include an invalid/missing/expired CSRF token
+    } else {
+        echo 'Valid!';
+    }
+} else {
+    echo $form;
+}
+```
+
+This renders as a hidden input whose value is a cryptographically random token, stored server-side in the
+session (starting one automatically, if needed) and validated on submission with a timing-safe comparison —
+a mismatched or missing token fails validation with the message `The security token does not match.`.
+
+A few things worth knowing:
+
+* Tokens are namespaced in the session by the field's name, so multiple CSRF-protected forms/fields can
+  coexist in the same session (and page) without clobbering each other's token.
+* Tokens expire after 300 seconds by default; pass a different number of seconds via the `expire` config key
+  (or the `Csrf` element's constructor) to change that. A value of `0` or less disables expiration entirely.
+* Call `$form->clearTokens()` to clear all stored CSRF tokens from the session — a reasonable thing to do
+  after a successful, sensitive submission.
+* There is no `captcha` field type. A math/image CAPTCHA is trivial for modern bots to defeat and offers
+  little real protection; if you need to filter out unsophisticated form spam, a honeypot field (a hidden
+  input real users never fill in) is a lighter-weight, more effective alternative to build at the application
+  level.
+
+[Top](#pop-form)
+
+File Uploads
+------------
+
+The `file` field type accepts two optional, purpose-built validation options beyond the standard config keys:
+
+```php
+use Pop\Form\Form;
+
+$fields = [
+    'avatar' => [
+        'type'          => 'file',
+        'label'         => 'Avatar:',
+        'allowed-types' => ['jpg', 'jpeg', 'png', 'gif'],
+        'max-size'      => 2000000 // 2 MB, in bytes
+    ],
+    'submit' => [
+        'type'  => 'submit',
+        'value' => 'SUBMIT'
+    ]
+];
+
+$form = Form::createFromConfig($fields);
+```
+
+* `allowed-types` is an extension allowlist (case-insensitive; a leading dot is optional, so `'jpg'` and
+  `'.jpg'` are equivalent). It's checked against the client-submitted filename's extension only — **not** the
+  file's actual content, so it's not a hard content-type guarantee (a client can rename any file). Pair it
+  with real content validation (e.g. `finfo`/magic-byte sniffing) at the point you actually store the file, if
+  that distinction matters for your use case.
+* `max-size` is the maximum allowed upload size in bytes, checked against the size PHP itself reports for the
+  upload. The resulting error message is human-readable (e.g. `The file size must be less than or equal to
+  2 MB.`) rather than a raw byte count.
+* `Form` automatically sets `enctype="multipart/form-data"` on the `<form>` tag at render time whenever it
+  contains a `file` field — there's nothing extra to configure for that.
+
+Both of these can also be set directly on the element itself, via `setAllowedTypes(array $extensions)` and
+`setMaxSize(int $bytes)`.
 
 [Top](#pop-form)
 

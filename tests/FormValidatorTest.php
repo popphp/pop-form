@@ -228,6 +228,59 @@ class FormValidatorTest extends TestCase
         $this->assertFalse($formValidator->hasErrors('email'));
     }
 
+    public function testValidateSingleFieldsFlagsMissingRequiredFieldInSubset()
+    {
+        $required = ['username', 'last_name'];
+        $values   = [
+            'username' => 'admin'
+        ];
+        $formValidator = new FormValidator(null, $required, $values);
+        $formValidator->validate(['username', 'last_name']);
+        $this->assertTrue($formValidator->hasErrors('last_name'));
+    }
+
+    public function testValidateSingleFieldsIgnoresRequiredFieldOutsideSubset()
+    {
+        $required = ['username', 'last_name'];
+        $values   = [
+            'username' => 'admin'
+        ];
+        $formValidator = new FormValidator(null, $required, $values);
+        $formValidator->validate('username');
+        $this->assertFalse($formValidator->hasErrors('last_name'));
+    }
+
+    public function testValidateSingleFieldsDoesNotFlagUnrelatedRequiredFieldOnValueCollision()
+    {
+        // A submitted value that happens to match another required field's name must not
+        // spuriously trigger that unrelated field's required error.
+        $required = ['username', 'password'];
+        $values   = [
+            'username' => 'password'
+        ];
+        $formValidator = new FormValidator(null, $required, $values);
+        $formValidator->validate('username');
+        $this->assertFalse($formValidator->hasErrors('password'));
+        $this->assertFalse($formValidator->hasErrors('username'));
+    }
+
+    public function testToArrayWithExcludeAndFilterOptions()
+    {
+        $formValidator = new FormValidator(null, null, [
+            'username' => 'admin',
+            'email'    => '',
+            'submit'   => 'SUBMIT'
+        ]);
+
+        $excluded = $formValidator->toArray(['exclude' => 'submit']);
+        $this->assertArrayNotHasKey('submit', $excluded);
+        $this->assertArrayHasKey('username', $excluded);
+
+        $filtered = $formValidator->toArray(['filter' => fn($value) => !empty($value)]);
+        $this->assertArrayHasKey('username', $filtered);
+        $this->assertArrayNotHasKey('email', $filtered);
+    }
+
     public function testValidateCallable()
     {
         $validators = [

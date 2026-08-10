@@ -201,6 +201,13 @@ class FormTest extends TestCase
 
     }
 
+    public function testFilterScalarValue()
+    {
+        $form = new Form();
+        $form->addFilter(new Filter('strip_tags'));
+        $this->assertEquals('admin', $form->filter('<b>admin</b>'));
+    }
+
     public function testInsertAfter()
     {
         $username = new Element\Input('username');
@@ -237,6 +244,34 @@ class FormTest extends TestCase
             ]
         ]);
         $this->assertEquals(3, count($form->toArray()));
+    }
+
+    public function testToArrayWithExcludeAndFilterOptions()
+    {
+        $form = Form::createFromConfig([
+            'username' => [
+                'type'     => 'text',
+                'label'    => 'Username:',
+                'value'    => 'admin',
+                'required' => true
+            ],
+            'email' => [
+                'type'  => 'email',
+                'label' => 'Email:'
+            ],
+            'submit' => [
+                'type'  => 'submit',
+                'value' => 'SUBMIT'
+            ]
+        ]);
+
+        $excluded = $form->toArray(['exclude' => 'submit']);
+        $this->assertArrayNotHasKey('submit', $excluded);
+        $this->assertArrayHasKey('username', $excluded);
+
+        $filtered = $form->toArray(['filter' => fn($value) => !empty($value)]);
+        $this->assertArrayHasKey('username', $filtered);
+        $this->assertArrayNotHasKey('email', $filtered);
     }
 
     public function testIterator()

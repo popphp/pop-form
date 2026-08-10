@@ -101,18 +101,65 @@ class FieldsTest extends TestCase
         $this->assertInstanceOf('Pop\Form\Element\Input\Range', $range);
     }
 
-    #[runInSeparateProcess]
-    public function testCreateCsrfAndCaptcha()
+    public function testCreateCheckedCheckboxAndRadioFromConfig()
+    {
+        $checkbox = Fields::create('subscribe', [
+            'type'    => 'checkbox',
+            'value'   => 'yes',
+            'checked' => true
+        ]);
+        $radio = Fields::create('color', [
+            'type'    => 'radio',
+            'value'   => 'red',
+            'checked' => 'red'
+        ]);
+        $this->assertTrue($checkbox->isChecked());
+        $this->assertTrue($radio->isChecked());
+    }
+
+    public function testCreateWithPrependAppendDisabledReadonly()
+    {
+        $field = Fields::create('amount', [
+            'type'     => 'text',
+            'prepend'  => '$',
+            'append'   => '.00',
+            'disabled' => true,
+            'readonly' => true
+        ]);
+        $this->assertEquals('$', $field->getPrepend());
+        $this->assertEquals('.00', $field->getAppend());
+        $this->assertTrue($field->isDisabled());
+        $this->assertTrue($field->isReadonly());
+    }
+
+    public function testCreateCheckboxSetAndRadioSetAttributesAndLegendFromConfig()
+    {
+        $checkboxSet = Fields::create('colors', [
+            'type'       => 'checkbox-set',
+            'values'     => ['red' => 'Red', 'blue' => 'Blue'],
+            'legend'     => 'Colors',
+            'attributes' => ['class' => 'color-checkbox']
+        ]);
+        $radioSet = Fields::create('size', [
+            'type'       => 'radio-set',
+            'values'     => ['sm' => 'Small', 'lg' => 'Large'],
+            'legend'     => 'Size',
+            'attributes' => ['class' => 'size-radio']
+        ]);
+
+        $this->assertEquals('Colors', $checkboxSet->getLegend());
+        $this->assertEquals('Size', $radioSet->getLegend());
+        $this->assertStringContainsString('color-checkbox', (string)$checkboxSet);
+        $this->assertStringContainsString('size-radio', (string)$radioSet);
+    }
+
+    public function testCreateCsrf()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $csrf = Fields::create('csrf', [
             'type' => 'csrf',
         ]);
-        $captcha = Fields::create('captcha', [
-            'type' => 'captcha'
-        ]);
         $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $csrf);
-        $this->assertInstanceOf('Pop\Form\Element\Input\Captcha', $captcha);
     }
 
     public function testTypeNotSetException()
@@ -132,11 +179,42 @@ class FieldsTest extends TestCase
         ]);
     }
 
+    public function testTypeCannotResolveToNonElementClassInSameNamespace()
+    {
+        // 'Exception' is a real class in the Pop\Form\Element\Input namespace, but it's
+        // not a form element. Fields::create() must not be able to instantiate it via
+        // an attacker/config-supplied 'type' string.
+        $this->expectException('Pop\Form\Exception');
+        Fields::create('bad', [
+            'type' => 'exception'
+        ]);
+    }
+
+    public function testCreateFileWithAllowedTypesAndMaxSize()
+    {
+        $file = Fields::create('upload', [
+            'type'          => 'file',
+            'allowed-types' => ['pdf', '.docx'],
+            'max-size'      => 2000000
+        ]);
+        $this->assertInstanceOf('Pop\Form\Element\Input\File', $file);
+        $this->assertEquals(['pdf', 'docx'], $file->getAllowedTypes());
+        $this->assertEquals(2000000, $file->getMaxSize());
+    }
+
     public function testGetConfigFromTable()
     {
         TestAsset\Users::setDb(Db\Db::sqliteConnect(['database' => __DIR__ . '/tmp/db.sqlite']));
         $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo(), null, null, ['id']);
         $this->assertEquals(4, count($fields));
+    }
+
+    public function testGetConfigFromTableWithScalarOmit()
+    {
+        TestAsset\Users::setDb(Db\Db::sqliteConnect(['database' => __DIR__ . '/tmp/db.sqlite']));
+        $fields = Fields::getConfigFromTable(TestAsset\Users::getTableInfo(), null, null, 'id');
+        $this->assertEquals(4, count($fields));
+        $this->assertArrayNotHasKey('id', $fields);
     }
 
     public function testTableNameNotSetException()

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -21,12 +21,42 @@ use Pop\Form\Element\AbstractElement;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  * @version    4.2.6
  */
 class Fields
 {
+
+    /**
+     * Map of field 'type' string => concrete input element class, for the input types
+     * that only need the standard (name, value, indent) constructor signature.
+     *
+     * This is an explicit allowlist rather than resolving
+     * `Pop\Form\Element\Input\{Ucfirst($type)}` dynamically via `class_exists()` — that
+     * pattern would instantiate *any* class sitting in that namespace from a
+     * config-supplied string, including non-element classes (e.g. `Element\Input\Exception`),
+     * with no check afterward that the result is actually an `AbstractElement`.
+     *
+     * @var array<string, class-string>
+     */
+    private const array INPUT_ELEMENT_TYPES = [
+        'color'    => Element\Input\Color::class,
+        'date'     => Element\Input\Date::class,
+        'email'    => Element\Input\Email::class,
+        'file'     => Element\Input\File::class,
+        'hidden'   => Element\Input\Hidden::class,
+        'month'    => Element\Input\Month::class,
+        'password' => Element\Input\Password::class,
+        'reset'    => Element\Input\Reset::class,
+        'search'   => Element\Input\Search::class,
+        'submit'   => Element\Input\Submit::class,
+        'tel'      => Element\Input\Tel::class,
+        'text'     => Element\Input\Text::class,
+        'time'     => Element\Input\Time::class,
+        'url'      => Element\Input\Url::class,
+        'week'     => Element\Input\Week::class,
+    ];
 
     /**
      * Static factory method to create a field element object from a field config array
@@ -56,8 +86,6 @@ class Fields
         $validators   = $field['validators'] ?? null;
         $render       = $field['render'] ?? false;
         $expire       = $field['expire'] ?? 300;
-        $captcha      = $field['captcha'] ?? null;
-        $answer       = $field['answer'] ?? null;
         $min          = $field['min'] ?? false;
         $max          = $field['max'] ?? false;
         $xmlFile      = $field['xml'] ?? null;
@@ -69,6 +97,8 @@ class Fields
         $legend       = $field['legend'] ?? null;
         $container    = $field['container'] ?? null;
         $errorPre     = (isset($field['error']) && ($field['error'] == 'pre'));
+        $allowedTypes = $field['allowed-types'] ?? null;
+        $maxSize      = $field['max-size'] ?? null;
 
         // Initialize the form element.
         switch (strtolower($type)) {
@@ -105,9 +135,6 @@ class Fields
             case 'csrf':
                 $element = new Element\Input\Csrf($name, $value, $expire, $indent);
                 break;
-            case 'captcha':
-                $element = new Element\Input\Captcha($name, $value, $captcha, $answer, $expire, $indent);
-                break;
             case 'input-button':
                 $element = new Element\Input\Button($name, $value);
                 break;
@@ -127,12 +154,13 @@ class Fields
                 $element = new Element\Input\Range($name, $min, $max, $value);
                 break;
             default:
-                $class = 'Pop\\Form\\Element\\Input\\' . ucfirst(strtolower($type));
-                if (!class_exists($class)) {
+                $typeKey = strtolower($type);
+                if (!isset(self::INPUT_ELEMENT_TYPES[$typeKey])) {
                     throw new Exception('Error: That class for that form element (' . $type . ') does not exist.');
                 }
+                $class   = self::INPUT_ELEMENT_TYPES[$typeKey];
                 $element = new $class($name, $value);
-                if ($class == 'Pop\\Form\\Element\\Input\\Password') {
+                if ($class === Element\Input\Password::class) {
                     $element->setRenderValue($render);
                 }
         }
@@ -179,6 +207,16 @@ class Fields
         }
 
         $element->setErrorPre($errorPre);
+
+        // Set file-specific options.
+        if ($element instanceof Element\Input\File) {
+            if (is_array($allowedTypes)) {
+                $element->setAllowedTypes($allowedTypes);
+            }
+            if ($maxSize !== null) {
+                $element->setMaxSize((int)$maxSize);
+            }
+        }
 
         // Set any attributes.
         if ($attributes !== null) {

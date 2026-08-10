@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -25,7 +25,7 @@ use Pop\Form\Element\Input\File;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  * @version    4.2.6
  */
@@ -155,7 +155,7 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
      */
     public function setAction(string $action): Form
     {
-        $this->setAttribute('action', str_replace(['?captcha=1', '&captcha=1'], ['', ''], $action));
+        $this->setAttribute('action', $action);
         return $this;
     }
 
@@ -851,9 +851,6 @@ class Form extends Child implements FormInterface, \ArrayAccess, \Countable, \It
         if ($_SESSION) {
             if (isset($_SESSION['pop_csrf'])) {
                 unset($_SESSION['pop_csrf']);
-            }
-            if (isset($_SESSION['pop_captcha'])) {
-                unset($_SESSION['pop_captcha']);
             }
         }
 

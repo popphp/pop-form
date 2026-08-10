@@ -101,4 +101,26 @@ class CheckboxSetTest extends TestCase
         $this->assertEquals(3, $checkbox->getChild(4)->getAttribute('tabindex'));
     }
 
+    public function testConstructorWithContainer()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'Red' => 'Red', 'White' => 'White'
+        ], null, null, 'li');
+        $this->assertEquals('li', $checkbox->getContainer());
+        $this->assertStringContainsString('<li class="checkbox-fieldset-container">', $checkbox->render());
+
+        // Disabling must still reach the checkboxes even though they're wrapped in containers.
+        $checkbox->setDisabled(true);
+        $this->assertTrue($checkbox->isDisabled());
+        $this->assertStringContainsString('disabled="disabled"', $checkbox->render());
+    }
+
+    public function testConstructorWithPerOptionAttributes()
+    {
+        $checkbox = new CheckboxSet('my_checkbox', [
+            'red' => ['value' => 'Red', 'attributes' => ['data-color' => 'red']]
+        ]);
+        $this->assertStringContainsString('data-color="red"', $checkbox->render());
+    }
+
 }

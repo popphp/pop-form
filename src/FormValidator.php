@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,7 +19,7 @@ namespace Pop\Form;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  * @version    4.2.6
  */
@@ -352,12 +352,8 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
             $this->values = $values;
         }
 
-        if (is_array($this->values)) {
-            foreach ($this->values as $name => $value) {
-                $this->values[$name] = $this->filterValue($name);
-            }
-        } else {
-            $this->values = $this->filterValue($this->values);
+        foreach ($this->values as $name => $value) {
+            $this->values[$name] = $this->filterValue($name);
         }
 
         return $this->values;
@@ -383,9 +379,9 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
                 ARRAY_FILTER_USE_KEY
             );
 
-            foreach ($formFields as $field) {
-                if (array_key_exists($field, $this->required) && !isset($formFields[$field])) {
-                    $this->addError($field, $this->required[$field]);
+            foreach ($this->required as $field => $requiredMessage) {
+                if (in_array($field, $fields) && !isset($formFields[$field])) {
+                    $this->addError($field, $requiredMessage);
                 }
             }
         } else {

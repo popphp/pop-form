@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -23,9 +23,9 @@ use ArrayIterator;
  * @category   Pop
  * @package    Pop\Form
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.2.6
+ * @version    5.0.0
  */
 
 class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -449,6 +449,8 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
 
         foreach ($this->fields as $groups) {
             foreach ($groups as $field) {
+                [, $hint] = $this->prepareFieldAccessibility($field);
+
                 if ($field->hasLabel()) {
                     $labelFor = $field->getName() . (($field->getNodeName() == 'fieldset') ? '1' : '');
                     $label    = new Child('label', $field->getLabel());
@@ -466,11 +468,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                     $fields[$field->getName() . '_label'] = $label->render();
                 }
 
-                if ($field->hasHint()) {
-                    $hint = new Child('span', $field->getHint());
-                    if ($field->getHintAttributes() !== null) {
-                        $hint->setAttributes($field->getHintAttributes());
-                    }
+                if ($hint !== null) {
                     $fields[$field->getName() . '_hint'] = $hint->render();
                 }
 
@@ -486,6 +484,64 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     }
 
     /**
+     * Build a field's error and hint child nodes, wiring aria-describedby/aria-invalid
+     * back onto the field itself so assistive tech announces validation state and hints.
+     *
+     * The error container and hint span get predictable ids (`{name}-error`/`{name}-hint`,
+     * with any `[]` stripped from the field name) so custom view templates can replicate
+     * the same association if they render the error/hint content themselves.
+     *
+     * @param  AbstractElement $field
+     * @return array
+     */
+    protected function prepareFieldAccessibility(AbstractElement $field): array
+    {
+        $baseId      = str_replace('[]', '', (string)$field->getName());
+        $isFieldset  = ($field->getNodeName() == 'fieldset');
+        $describedBy = [];
+        $hint        = null;
+        $errors      = null;
+
+        if ($field->hasHint()) {
+            $hintId = $baseId . '-hint';
+            $hint   = new Child('span', $field->getHint());
+            if ($field->hasHintAttributes()) {
+                $hint->setAttributes($field->getHintAttributes());
+            }
+            $hint->setAttribute('id', $hintId);
+            $describedBy[] = $hintId;
+        }
+
+        if ($field->hasErrors()) {
+            $errorId = $baseId . '-error';
+            $errors  = new Child('div');
+            $errors->setAttribute('class', 'error');
+            $errors->setAttribute('id', $errorId);
+            $errors->setAttribute('role', 'alert');
+            foreach ($field->getErrors() as $error) {
+                $errors->addChild(new Child('span', $error));
+            }
+            $describedBy[] = $errorId;
+
+            // aria-invalid is only valid on actual form controls, not on the grouping
+            // <fieldset> that composite elements like CheckboxSet/RadioSet render as.
+            if (!$isFieldset) {
+                $field->setAttribute('aria-invalid', 'true');
+            }
+        } else if (!$isFieldset) {
+            $field->removeAttribute('aria-invalid');
+        }
+
+        if (!empty($describedBy)) {
+            $field->setAttribute('aria-describedby', implode(' ', $describedBy));
+        } else {
+            $field->removeAttribute('aria-describedby');
+        }
+
+        return [$errors, $hint];
+    }
+
+    /**
      * Prepare table
      *
      * @return void
@@ -496,14 +552,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $table = new Child('table');
 
             foreach ($fields as $field) {
-                $errors = null;
-                if ($field->hasErrors()) {
-                    $errors = new Child('div');
-                    $errors->setAttribute('class', 'error');
-                    foreach ($field->getErrors() as $error) {
-                        $errors->addChild(new Child('span', $error));
-                    }
-                }
+                [$errors, $hint] = $this->prepareFieldAccessibility($field);
 
                 $tr = new Child('tr');
                 if ($field->hasLabel()) {
@@ -543,11 +592,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $td->addChild($field);
 
-                if ($field->hasHint()) {
-                    $hint = new Child('span', $field->getHint());
-                    if ($field->hasHintAttributes()) {
-                        $hint->setAttributes($field->getHintAttributes());
-                    }
+                if ($hint !== null) {
                     $td->addChild($hint);
                 }
 
@@ -575,14 +620,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
     {
         foreach ($this->fields as $fields) {
             foreach ($fields as $field) {
-                $errors = null;
-                if ($field->hasErrors()) {
-                    $errors = new Child('div');
-                    $errors->setAttribute('class', 'error');
-                    foreach ($field->getErrors() as $error) {
-                        $errors->addChild(new Child('span', $error));
-                    }
-                }
+                [$errors, $hint] = $this->prepareFieldAccessibility($field);
 
                 $nodeValue = null;
                 $options   = [];
@@ -618,11 +656,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $container->addChild($field);
 
-                if ($field->hasHint()) {
-                    $hint = new Child('span', $field->getHint());
-                    if ($field->hasHintAttributes()) {
-                        $hint->setAttributes($field->getHintAttributes());
-                    }
+                if ($hint !== null) {
                     $container->addChild($hint);
                 }
                 if (!empty($errors) && (!$field->isErrorPre())) {
@@ -644,14 +678,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
             $dl = new Child('dl');
 
             foreach ($fields as $field) {
-                $errors = null;
-                if ($field->hasErrors()) {
-                    $errors = new Child('div');
-                    $errors->setAttribute('class', 'error');
-                    foreach ($field->getErrors() as $error) {
-                        $errors->addChild(new Child('span', $error));
-                    }
-                }
+                [$errors, $hint] = $this->prepareFieldAccessibility($field);
 
                 if ($field->hasLabel()) {
                     $dt = new Child('dt');
@@ -690,11 +717,7 @@ class Fieldset extends Child implements \ArrayAccess, \Countable, \IteratorAggre
                 }
                 $dd->addChild($field);
 
-                if ($field->hasHint()) {
-                    $hint = new Child('span', $field->getHint());
-                    if ($field->hasHintAttributes()) {
-                        $hint->setAttributes($field->getHintAttributes());
-                    }
+                if ($hint !== null) {
                     $dd->addChild($hint);
                 }
                 if (!empty($errors) && (!$field->isErrorPre())) {
