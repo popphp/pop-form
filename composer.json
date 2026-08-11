@@ -23,8 +23,8 @@
         "php": ">=8.4.0",
         "popphp/pop-acl": "^5.0.0-beta.1",
         "popphp/pop-dom": "^4.1.0-beta.1",
-        "popphp/pop-filter": "^4.0.4",
-        "popphp/pop-utils": "^2.5.0-beta.2",
+        "popphp/pop-filter": "^4.1.0-beta.2",
+        "popphp/pop-utils": "^3.0.0-beta.1",
         "popphp/pop-validator": "^4.6.5"
     },
     "require-dev": {
