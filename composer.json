@@ -24,12 +24,13 @@
         "popphp/pop-acl": "^5.0.0-beta.1",
         "popphp/pop-dom": "^4.1.0-beta.1",
         "popphp/pop-filter": "^4.1.0-beta.2",
-        "popphp/pop-utils": "^3.0.0-beta.1",
-        "popphp/pop-validator": "^4.6.5"
+        "popphp/pop-utils": "^3.0.0-beta.4",
+        "popphp/pop-validator": "^5.0.0-beta.1"
     },
     "require-dev": {
+        "popphp/pop-db": "^7.0.0-beta.1",
         "phpunit/phpunit": "^12.5.0",
-        "popphp/pop-db": "^7.0.0-beta.1"
+        "phpstan/phpstan": "^2.2"
     },
     "suggest": {
         "popphp/pop-db": "To use the dynamic field generation based on database table columns",
@@ -47,7 +48,8 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "test": "vendor/bin/phpunit",
+        "analyse": "vendor/bin/phpstan analyse"
     },
     "extra": {
         "branch-alias": {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -66,7 +67,7 @@ class SelectMultiple extends AbstractSelect
                 }
                 $optGroup->setAttribute('label', $k);
                 foreach ($v as $ky => $vl) {
-                    $option = new Select\Option($ky, $vl);
+                    $option = new Select\Option((string)$ky, (string)$vl);
                     if ($indent !== null) {
                         $option->setIndent($indent);
                     }
@@ -74,7 +75,7 @@ class SelectMultiple extends AbstractSelect
                 }
                 $this->addChild($optGroup);
             } else {
-                $option = new Select\Option($k, $v);
+                $option = new Select\Option((string)$k, (string)$v);
                 if ($indent !== null) {
                     $option->setIndent($indent);
                 }

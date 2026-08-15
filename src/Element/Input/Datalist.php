@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -53,15 +54,13 @@ class Datalist extends Text
         }
         $this->setAttribute('list', $name . '_datalist');
 
-        if ($values !== null) {
-            $this->datalist = new Child('datalist');
-            if ($indent !== null) {
-                $this->datalist->setIndent($indent);
-            }
-            $this->datalist->setAttribute('id', $name . '_datalist');
-            foreach ($values as $key => $val) {
-                $this->datalist->addChild((new Child('option', $val))->setAttribute('value', $key));
-            }
+        $this->datalist = new Child('datalist');
+        if ($indent !== null) {
+            $this->datalist->setIndent($indent);
+        }
+        $this->datalist->setAttribute('id', $name . '_datalist');
+        foreach ($values as $key => $val) {
+            $this->datalist->addChild((new Child('option', $val))->setAttribute('value', $key));
         }
     }
 

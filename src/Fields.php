@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -73,7 +74,7 @@ class Fields
         }
 
         $type         = $field['type'];
-        $value        = $field['value'] ?? null;
+        $value        = isset($field['value']) ? (string)$field['value'] : null;
         $values       = $field['values'] ?? [];
         $label        = $field['label'] ?? null;
         $indent       = $field['indent'] ?? null;

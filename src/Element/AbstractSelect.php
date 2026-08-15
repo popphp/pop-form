@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -97,7 +98,8 @@ abstract class AbstractSelect extends AbstractElement
         } else {
             $this->removeAttribute('required');
         }
-        return parent::setRequired($required, $requiredMessage);
+        parent::setRequired($required, $requiredMessage);
+        return $this;
     }
 
     /**
@@ -113,7 +115,8 @@ abstract class AbstractSelect extends AbstractElement
         } else {
             $this->removeAttribute('disabled');
         }
-        return parent::setDisabled($disabled);
+        parent::setDisabled($disabled);
+        return $this;
     }
 
     /**
@@ -141,7 +144,8 @@ abstract class AbstractSelect extends AbstractElement
             }
         }
 
-        return parent::setReadonly($readonly);
+        parent::setReadonly($readonly);
+        return $this;
     }
 
     /**
@@ -250,7 +254,7 @@ abstract class AbstractSelect extends AbstractElement
         if (is_array($values)) {
             $parsedValues = $values;
         // Else, if the value is a string
-        } else if (is_string($values)) {
+        } else {
             // If the value flag is YEAR-based, calculate the year range for the select drop-down menu.
             if (str_contains($values, 'YEAR')) {
                 $years = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -68,7 +69,8 @@ class Input extends AbstractElement
         } else {
             $this->removeAttribute('required');
         }
-        return parent::setRequired($required, $requiredMessage);
+        parent::setRequired($required, $requiredMessage);
+        return $this;
     }
 
     /**
@@ -84,7 +86,8 @@ class Input extends AbstractElement
         } else {
             $this->removeAttribute('disabled');
         }
-        return parent::setDisabled($disabled);
+        parent::setDisabled($disabled);
+        return $this;
     }
 
     /**
@@ -100,7 +103,8 @@ class Input extends AbstractElement
         } else {
             $this->removeAttribute('readonly');
         }
-        return parent::setReadonly($readonly);
+        parent::setReadonly($readonly);
+        return $this;
     }
 
     /**

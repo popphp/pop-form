@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -145,7 +146,8 @@ class CheckboxSet extends AbstractElement
             }
         }
 
-        return parent::setDisabled($disabled);
+        parent::setDisabled($disabled);
+        return $this;
     }
 
     /**
@@ -169,7 +171,8 @@ class CheckboxSet extends AbstractElement
             }
         }
 
-        return parent::setReadonly($readonly);
+        parent::setReadonly($readonly);
+        return $this;
     }
 
     /**
@@ -330,7 +333,7 @@ class CheckboxSet extends AbstractElement
     /**
      * Method to get fieldset child nodes
      *
-     * @return ?string
+     * @return array
      */
     public function getFieldsetChildNodes(): array
     {

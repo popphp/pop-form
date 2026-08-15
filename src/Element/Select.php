@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -75,7 +76,7 @@ class Select extends AbstractSelect
         foreach ($values as $k => $v) {
             if (is_array($v)) {
                 if (isset($v['value']) && isset($v['attributes'])) {
-                    $option = new Select\Option($k, $v['value'], ['attributes' => $v['attributes']]);
+                    $option = new Select\Option((string)$k, (string)$v['value'], ['attributes' => $v['attributes']]);
                     $this->addChild($option);
                 } else {
                     $optGroup = new Select\Optgroup();
@@ -85,9 +86,9 @@ class Select extends AbstractSelect
                     $optGroup->setAttribute('label', $k);
                     foreach ($v as $ky => $vl) {
                         if (is_array($vl) && isset($vl['value']) && isset($vl['attributes'])) {
-                            $option = new Select\Option($ky, $vl['value'], ['attributes' => $vl['attributes']]);
+                            $option = new Select\Option((string)$ky, (string)$vl['value'], ['attributes' => $vl['attributes']]);
                         } else {
-                            $option = new Select\Option($ky, $vl);
+                            $option = new Select\Option((string)$ky, (string)$vl);
                         }
                         if ($indent !== null) {
                             $option->setIndent($indent);
@@ -102,7 +103,7 @@ class Select extends AbstractSelect
                     $this->addChild($optGroup);
                 }
             } else {
-                $option = new Select\Option($k, $v);
+                $option = new Select\Option((string)$k, (string)$v);
                 if ($indent !== null) {
                     $option->setIndent($indent);
                 }

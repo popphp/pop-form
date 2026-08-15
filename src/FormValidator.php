@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -166,7 +167,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     {
         if ($field === null) {
             return (count($this->validators) > 0);
-        } else if (($field !== null) && isset($this->validators[$field])) {
+        } else if (isset($this->validators[$field])) {
             return (count($this->validators[$field]) > 0);
         } else {
             return false;
@@ -183,7 +184,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
     {
         if ($field === null) {
             return $this->validators;
-        } else if (($field !== null) && isset($this->validators[$field])) {
+        } else if (isset($this->validators[$field])) {
             return $this->validators[$field];
         } else {
             return null;
