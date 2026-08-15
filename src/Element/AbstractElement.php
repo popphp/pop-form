@@ -16,6 +16,7 @@ namespace Pop\Form\Element;
 
 use Pop\Dom\Child;
 use Pop\Validator;
+use Pop\Form\ValidatorEvaluationTrait;
 
 /**
  * Abstract form element class
@@ -29,6 +30,8 @@ use Pop\Validator;
  */
 abstract class AbstractElement extends Child implements ElementInterface
 {
+
+    use ValidatorEvaluationTrait;
 
     /**
      * Element name
@@ -644,14 +647,10 @@ abstract class AbstractElement extends Child implements ElementInterface
         // Check field validators
         if (count($this->validators) > 0) {
             foreach ($this->validators as $validator) {
-                if ($validator instanceof \Pop\Validator\ValidatorInterface) {
-                    if (!$validator->evaluate($value)) {
-                        if (!in_array($validator->getMessage(), $this->errors)) {
-                            $this->errors[] = $validator->getMessage();
-                        }
+                foreach ($this->evaluateValidator($validator, $value, $formValues) as $message) {
+                    if (!in_array($message, $this->errors)) {
+                        $this->errors[] = $message;
                     }
-                } else if (is_callable($validator)) {
-                    $this->validateCallable($validator, $value, $formValues);
                 }
             }
         }
@@ -667,21 +666,10 @@ abstract class AbstractElement extends Child implements ElementInterface
      */
     public function validateCallable(callable $validator, mixed $value, array $formValues = []): void
     {
-        $result = call_user_func_array($validator, [$value, $formValues]);
-        if ($result instanceof \Pop\Validator\ValidatorInterface) {
-            if (!$result->evaluate($value)) {
-                $this->errors[] = $result->getMessage();
+        foreach ($this->evaluateValidator($validator, $value, $formValues) as $message) {
+            if (!in_array($message, $this->errors)) {
+                $this->errors[] = $message;
             }
-        } else if (is_array($result)) {
-            foreach ($result as $val) {
-                if ($val instanceof \Pop\Validator\ValidatorInterface) {
-                    if (!$val->evaluate($value)) {
-                        $this->errors[] = $val->getMessage();
-                    }
-                }
-            }
-        } else if ($result !== null) {
-            $this->errors[] = $result;
         }
     }
 

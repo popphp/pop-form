@@ -27,32 +27,14 @@ use Pop\Dom\Child;
  * @version    5.0.0
  */
 
-class RadioSet extends AbstractElement
+class RadioSet extends AbstractInputSet
 {
-
-    /**
-     * Array of radio input elements
-     * @var array
-     */
-    protected array $radios = [];
 
     /**
      * Array of checked values
      * @var ?string
      */
     protected ?string $checked = null;
-
-    /**
-     * Fieldset legend
-     * @var ?string
-     */
-    protected ?string $legend = null;
-
-    /**
-     * Fieldset container
-     * @var ?string
-     */
-    protected ?string $container = null;
 
     /**
      * Constructor
@@ -106,73 +88,9 @@ class RadioSet extends AbstractElement
                 $radio->check();
             }
 
-            $span = new Child('span');
-            if ($indent !== null) {
-                $span->setIndent($indent);
-            }
-            $span->setAttribute('class', 'radio-span');
-            $span->setNodeValue($nodeValue);
-
-            if (!empty($this->container)) {
-                $container = new Child($this->container);
-                $container->setAttribute('class', 'radio-fieldset-container');
-                $container->addChildren([$radio, $span]);
-                $this->addChildren([$container]);
-            } else {
-                $this->addChildren([$radio, $span]);
-            }
-
-            $this->radios[] = $radio;
+            $this->appendInputWithSpan($radio, $nodeValue, 'radio-span', $indent, 'radio-fieldset-container');
             $i++;
         }
-    }
-
-    /**
-     * Set whether the form element is disabled
-     *
-     * @param  bool $disabled
-     * @return RadioSet
-     */
-    public function setDisabled(bool $disabled): RadioSet
-    {
-        $childNodes = $this->getFieldsetChildNodes();
-        if ($disabled) {
-            foreach ($childNodes as $childNode) {
-                $childNode->setAttribute('disabled', 'disabled');
-            }
-        } else {
-            foreach ($childNodes as $childNode) {
-                $childNode->removeAttribute('disabled');
-            }
-        }
-
-        parent::setDisabled($disabled);
-        return $this;
-    }
-
-    /**
-     * Set whether the form element is readonly
-     *
-     * @param  bool $readonly
-     * @return RadioSet
-     */
-    public function setReadonly(bool $readonly): RadioSet
-    {
-        $childNodes = $this->getFieldsetChildNodes();
-        if ($readonly) {
-            foreach ($childNodes as $childNode) {
-                $childNode->setAttribute('readonly', 'readonly');
-                $childNode->setAttribute('onclick', 'return false;');
-            }
-        } else {
-            foreach ($childNodes as $childNode) {
-                $childNode->removeAttribute('readonly');
-                $childNode->removeAttribute('onclick');
-            }
-        }
-
-        parent::setReadonly($readonly);
-        return $this;
     }
 
     /**
@@ -184,14 +102,7 @@ class RadioSet extends AbstractElement
      */
     public function setRadioAttribute(string $a, string $v): Child
     {
-        foreach ($this->radios as $radio) {
-            $radio->setAttribute($a, $v);
-            if ($a == 'tabindex') {
-                $v++;
-            }
-
-        }
-        return $this;
+        return $this->setInputAttribute($a, $v);
     }
 
     /**
@@ -202,13 +113,7 @@ class RadioSet extends AbstractElement
      */
     public function setRadioAttributes(array $a): Child
     {
-        foreach ($this->radios as $radio) {
-            $radio->setAttributes($a);
-            if (isset($a['tabindex'])) {
-                $a['tabindex']++;
-            }
-        }
-        return $this;
+        return $this->setInputAttributes($a);
     }
 
     /**
@@ -292,106 +197,6 @@ class RadioSet extends AbstractElement
     public function getChecked(): mixed
     {
         return $this->getValue();
-    }
-
-    /**
-     * Method to set fieldset legend
-     *
-     * @param  string $legend
-     * @return RadioSet
-     */
-    public function setLegend(string $legend): RadioSet
-    {
-        $this->legend = $legend;
-        return $this;
-    }
-
-    /**
-     * Method to get fieldset legend
-     *
-     * @return ?string
-     */
-    public function getLegend(): ?string
-    {
-        return $this->legend;
-    }
-
-    /**
-     * Method to set fieldset container
-     *
-     * @param  string $container
-     * @return RadioSet
-     */
-    public function setContainer(string $container): RadioSet
-    {
-        $this->container = $container;
-        return $this;
-    }
-
-    /**
-     * Method to get fieldset container
-     *
-     * @return ?string
-     */
-    public function getContainer(): ?string
-    {
-        return $this->container;
-    }
-
-    /**
-     * Method to get fieldset child nodes
-     *
-     * @return array
-     */
-    public function getFieldsetChildNodes(): array
-    {
-        if (!empty($this->container)) {
-            $childNodes = [];
-            foreach ($this->childNodes as $childNode) {
-                if (($childNode->getNodeName() == $this->container) && ($childNode->hasChildNodes())) {
-                    $childNodes = array_merge($childNodes, $childNode->getChildNodes());
-                }
-            }
-            return $childNodes;
-        } else {
-            return $this->childNodes;
-        }
-    }
-
-    /**
-     * Validate the form element object
-     *
-     * @param  array $formValues
-     * @return bool
-     */
-    public function validate(array $formValues = []): bool
-    {
-        $value = $this->getValue();
-
-        // Check if the element is required
-        if (($this->required) && empty($value)) {
-            $this->errors[] = $this->getRequiredMessage();
-        }
-
-        $this->validateValue($value, $formValues);
-
-        return (count($this->errors) == 0);
-    }
-
-    /**
-     * Render the child and its child nodes
-     *
-     * @param  int     $depth
-     * @param  ?string $indent
-     * @param  bool    $inner
-     * @return string
-     */
-    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string
-    {
-        if (!empty($this->legend)) {
-            $this->addChild(new Child('legend', $this->legend));
-        }
-        return parent::render($depth, $indent, $inner);
     }
 
 }

@@ -32,6 +32,7 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
      * Trait declaration
      */
     use FormTrait;
+    use ValidatorEvaluationTrait;
 
     /**
      * Form validators
@@ -399,27 +400,8 @@ class FormValidator implements FormInterface, \ArrayAccess, \Countable, \Iterato
         foreach ($formFields as $field => $value) {
             if ($this->hasValidators($field)) {
                 foreach ($this->validators[$field] as $validator) {
-                    if ($validator instanceof \Pop\Validator\ValidatorInterface) {
-                        if (!$validator->evaluate($value)) {
-                            $this->addError($field, $validator->getMessage());
-                        }
-                    } else if (is_callable($validator)) {
-                        $result = call_user_func_array($validator, [$value, $formFields]);
-                        if ($result instanceof \Pop\Validator\ValidatorInterface) {
-                            if (!$result->evaluate($value)) {
-                                $this->addError($field, $result->getMessage());
-                            }
-                        } else if (is_array($result)) {
-                            foreach ($result as $val) {
-                                if ($val instanceof \Pop\Validator\ValidatorInterface) {
-                                    if (!$val->evaluate($value)) {
-                                        $this->addError($field, $val->getMessage());
-                                    }
-                                }
-                            }
-                        } else if ($result !== null) {
-                            $this->addError($field, $result);
-                        }
+                    foreach ($this->evaluateValidator($validator, $value, $formFields) as $message) {
+                        $this->addError($field, $message);
                     }
                 }
             }

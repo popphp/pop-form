@@ -27,32 +27,14 @@ use Pop\Dom\Child;
  * @version    5.0.0
  */
 
-class CheckboxSet extends AbstractElement
+class CheckboxSet extends AbstractInputSet
 {
-
-    /**
-     * Array of checkbox input elements
-     * @var array
-     */
-    protected array $checkboxes = [];
 
     /**
      * Array of checked values
      * @var array
      */
     protected array $checked = [];
-
-    /**
-     * Fieldset legend
-     * @var ?string
-     */
-    protected ?string $legend = null;
-
-    /**
-     * Fieldset container
-     * @var ?string
-     */
-    protected ?string $container = null;
 
     /**
      * Constructor
@@ -101,78 +83,14 @@ class CheckboxSet extends AbstractElement
                 $nodeValue = $v;
             }
 
-            // Determine if the current radio element is checked.
+            // Determine if the current checkbox element is checked.
             if (in_array($k, $this->checked)) {
                 $checkbox->check();
             }
 
-            $span = new Child('span');
-            if ($indent !== null) {
-                $span->setIndent($indent);
-            }
-            $span->setAttribute('class', 'checkbox-span');
-            $span->setNodeValue($nodeValue);
-
-            if (!empty($this->container)) {
-                $container = new Child($this->container);
-                $container->setAttribute('class', 'checkbox-fieldset-container');
-                $container->addChildren([$checkbox, $span]);
-                $this->addChildren([$container]);
-            } else {
-                $this->addChildren([$checkbox, $span]);
-            }
-
-            $this->checkboxes[] = $checkbox;
+            $this->appendInputWithSpan($checkbox, $nodeValue, 'checkbox-span', $indent, 'checkbox-fieldset-container');
             $i++;
         }
-    }
-
-    /**
-     * Set whether the form element is disabled
-     *
-     * @param  bool $disabled
-     * @return CheckboxSet
-     */
-    public function setDisabled(bool $disabled): CheckboxSet
-    {
-        $childNodes = $this->getFieldsetChildNodes();
-        if ($disabled) {
-            foreach ($childNodes as $childNode) {
-                $childNode->setAttribute('disabled', 'disabled');
-            }
-        } else {
-            foreach ($childNodes as $childNode) {
-                $childNode->removeAttribute('disabled');
-            }
-        }
-
-        parent::setDisabled($disabled);
-        return $this;
-    }
-
-    /**
-     * Set whether the form element is readonly
-     *
-     * @param  bool $readonly
-     * @return CheckboxSet
-     */
-    public function setReadonly(bool $readonly): CheckboxSet
-    {
-        $childNodes = $this->getFieldsetChildNodes();
-        if ($readonly) {
-            foreach ($childNodes as $childNode) {
-                $childNode->setAttribute('readonly', 'readonly');
-                $childNode->setAttribute('onclick', 'return false;');
-            }
-        } else {
-            foreach ($childNodes as $childNode) {
-                $childNode->removeAttribute('readonly');
-                $childNode->removeAttribute('onclick');
-            }
-        }
-
-        parent::setReadonly($readonly);
-        return $this;
     }
 
     /**
@@ -184,14 +102,7 @@ class CheckboxSet extends AbstractElement
      */
     public function setCheckboxAttribute(string $a, string $v): Child
     {
-        foreach ($this->checkboxes as $checkbox) {
-            $checkbox->setAttribute($a, $v);
-            if ($a == 'tabindex') {
-                $v++;
-            }
-
-        }
-        return $this;
+        return $this->setInputAttribute($a, $v);
     }
 
     /**
@@ -202,15 +113,8 @@ class CheckboxSet extends AbstractElement
      */
     public function setCheckboxAttributes(array $a): Child
     {
-        foreach ($this->checkboxes as $checkbox) {
-            $checkbox->setAttributes($a);
-            if (isset($a['tabindex'])) {
-                $a['tabindex']++;
-            }
-        }
-        return $this;
+        return $this->setInputAttributes($a);
     }
-
 
     /**
      * Set the checked value of the checkbox form elements
@@ -287,70 +191,6 @@ class CheckboxSet extends AbstractElement
     }
 
     /**
-     * Method to set fieldset legend
-     *
-     * @param  string $legend
-     * @return CheckboxSet
-     */
-    public function setLegend(string $legend): CheckboxSet
-    {
-        $this->legend = $legend;
-        return $this;
-    }
-
-    /**
-     * Method to get fieldset legend
-     *
-     * @return ?string
-     */
-    public function getLegend(): ?string
-    {
-        return $this->legend;
-    }
-
-    /**
-     * Method to set fieldset container
-     *
-     * @param  string $container
-     * @return CheckboxSet
-     */
-    public function setContainer(string $container): CheckboxSet
-    {
-        $this->container = $container;
-        return $this;
-    }
-
-    /**
-     * Method to get fieldset container
-     *
-     * @return ?string
-     */
-    public function getContainer(): ?string
-    {
-        return $this->container;
-    }
-
-    /**
-     * Method to get fieldset child nodes
-     *
-     * @return array
-     */
-    public function getFieldsetChildNodes(): array
-    {
-        if (!empty($this->container)) {
-            $childNodes = [];
-            foreach ($this->childNodes as $childNode) {
-                if (($childNode->getNodeName() == $this->container) && ($childNode->hasChildNodes())) {
-                    $childNodes = array_merge($childNodes, $childNode->getChildNodes());
-                }
-            }
-            return $childNodes;
-        } else {
-            return $this->childNodes;
-        }
-    }
-
-    /**
      * Get form element object type
      *
      * @return string
@@ -358,42 +198,6 @@ class CheckboxSet extends AbstractElement
     public function getType(): string
     {
         return 'checkbox';
-    }
-
-    /**
-     * Validate the form element object
-     *
-     * @param  array $formValues
-     * @return bool
-     */
-    public function validate(array $formValues = []): bool
-    {
-        $value = $this->getValue();
-
-        // Check if the element is required
-        if (($this->required) && empty($value)) {
-            $this->errors[] = $this->getRequiredMessage();
-        }
-
-        $this->validateValue($value, $formValues);
-
-        return (count($this->errors) == 0);
-    }
-
-    /**
-     * Render the child and its child nodes
-     *
-     * @param  int     $depth
-     * @param  ?string $indent
-     * @param  bool    $inner
-     * @return string
-     */
-    public function render(int $depth = 0, ?string $indent = null, bool $inner = false): string
-    {
-        if (!empty($this->legend)) {
-            $this->addChild(new Child('legend', $this->legend));
-        }
-        return parent::render($depth, $indent, $inner);
     }
 
 }
