@@ -66,7 +66,7 @@ abstract class AbstractInputSet extends AbstractElement
             $span->setIndent($indent);
         }
         $span->setAttribute('class', $spanClass);
-        $span->setNodeValue($nodeValue);
+        $span->setNodeValue(($nodeValue !== null) ? (string)$nodeValue : null);
 
         if (!empty($this->container)) {
             $container = new Child($this->container);
@@ -140,7 +140,7 @@ abstract class AbstractInputSet extends AbstractElement
         foreach ($this->inputs as $input) {
             $input->setAttribute($a, $v);
             if ($a == 'tabindex') {
-                $v++;
+                $v = (string)((int)$v + 1);
             }
         }
         return $this;
@@ -154,10 +154,13 @@ abstract class AbstractInputSet extends AbstractElement
      */
     protected function setInputAttributes(array $a): static
     {
+        if (isset($a['tabindex'])) {
+            $a['tabindex'] = (string)$a['tabindex'];
+        }
         foreach ($this->inputs as $input) {
             $input->setAttributes($a);
             if (isset($a['tabindex'])) {
-                $a['tabindex']++;
+                $a['tabindex'] = (string)((int)$a['tabindex'] + 1);
             }
         }
         return $this;
