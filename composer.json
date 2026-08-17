@@ -21,14 +21,14 @@
     ],
     "require": {
         "php": ">=8.4.0",
-        "popphp/pop-acl": "^5.0.0-beta.1",
-        "popphp/pop-dom": "^5.0.0-beta.1",
-        "popphp/pop-filter": "^5.0.0-beta.1",
-        "popphp/pop-utils": "^3.0.0-beta.4",
-        "popphp/pop-validator": "^5.0.0-beta.1"
+        "popphp/pop-acl": "^5.0.0",
+        "popphp/pop-dom": "^5.0.0",
+        "popphp/pop-filter": "^5.0.0",
+        "popphp/pop-utils": "^3.0.0",
+        "popphp/pop-validator": "^5.0.0"
     },
     "require-dev": {
-        "popphp/pop-db": "^7.0.0-beta.1",
+        "popphp/pop-db": "^7.0.0",
         "phpunit/phpunit": "^12.5.0",
         "phpstan/phpstan": "^2.2"
     },
