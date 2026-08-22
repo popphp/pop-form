@@ -743,7 +743,7 @@ use Pop\Validator;
 
 $validators = [
     'username' => new Validator\AlphaNumeric(),
-    'password' => new Validator\LengthGte(6)
+    'password' => new Validator\LengthGreaterThanEqual(6)
 ];
 
 $form = new FormValidator($validators);
