@@ -2,7 +2,7 @@ pop-form
 ========
 
 [![Build Status](https://github.com/popphp/pop-form/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-form/actions)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-form)](http://cc.popphp.org/pop-form/)
+[![Coverage Status](https://cc.popphp.org/coverage.php?comp=pop-form)](https://cc.popphp.org/pop-form/)
 
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
