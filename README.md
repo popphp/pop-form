@@ -14,6 +14,7 @@ pop-form
     - [Fieldsets](#fieldsets)
     - [Legends](#legends) 
 * [Field Containers](#field-containers)
+* [Rendering Into Your Own View](#rendering-into-your-own-view)
 * [Accessibility](#accessibility)
 * [Filtering](#filtering)
 * [Validation](#validation)
@@ -597,6 +598,75 @@ $form = Form::createFromConfig($fields, 'div');
     </fieldset>
 </form>
 ```
+
+[Top](#pop-form)
+
+Rendering Into Your Own View
+----------------------------
+
+Everything up to this point has let `pop-form` build and output the whole `<form>...</form>` markup itself,
+via `echo $form` (or `(string)$form`) — it wraps every field in one of the [containers](#field-containers)
+above and handles the labels, hints and errors for you. That's the easy path, but sometimes you need the
+individual pieces instead — the form markup has to fit inside an existing template, use a container structure
+pop-form doesn't provide out of the box, or be handed off field-by-field to a front-end framework/templating
+engine. For that, call `prepareForView()` instead of echoing the form:
+
+```php
+if ($_POST) {
+    $form->setFieldValues($_POST);
+    $form->isValid();
+}
+
+$fields = $form->prepareForView();
+```
+
+`prepareForView()` doesn't render any container markup at all — it returns a flat array of the already-rendered
+pieces for every field, keyed off each field's name, so you can drop them wherever you want in your own
+template. For a field named `username` with a hint that fails validation, `$fields` looks like:
+
+```php
+[
+    'username_label'  => '<label for="username" class="required">Username:</label>',
+    'username_hint'   => '<span id="username-hint">Letters and numbers only.</span>',
+    'username_errors' => ['This field is required.'],
+    'username'        => '<input type="text" name="username" id="username" value="" required="required" aria-invalid="true" aria-describedby="username-hint username-error" />',
+    // ...one set of keys per field
+]
+```
+
+* `$fields['{name}']` — the rendered field element itself (always present).
+* `$fields['{name}_label']` — the rendered `<label>`, only present if the field has one.
+* `$fields['{name}_hint']` — the rendered hint `<span>`, only present if the field has a hint.
+* `$fields['{name}_errors']` — a plain array of error message strings, only present if the field failed validation.
+
+You're then free to lay those pieces out however your template needs, for example:
+
+```html
+<form action="/" method="post">
+    <div class="form-row">
+        <?=$fields['username_label'] ?? ''?>
+        <?=$fields['username']?>
+        <?php if (isset($fields['username_hint'])): ?>
+            <?=$fields['username_hint']?>
+        <?php endif; ?>
+        <?php foreach ($fields['username_errors'] ?? [] as $error): ?>
+            <div class="error"><?=$error?></div>
+        <?php endforeach; ?>
+    </div>
+    <div class="form-row">
+        <?=$fields['email_label'] ?? ''?>
+        <?=$fields['email']?>
+    </div>
+    <?=$fields['submit']?>
+</form>
+```
+
+The same `aria-invalid`/`aria-describedby` wiring described in [Accessibility](#accessibility) below still
+happens on each field, whether it ends up rendered by `pop-form` or laid out by hand this way — `prepareForView()`
+just leaves the surrounding container markup up to you.
+
+`prepareForView()` is available on the `Form` object (merging fields across all of its fieldsets) as well as
+on an individual `Fieldset` object, if you're working with one fieldset at a time.
 
 [Top](#pop-form)
 
