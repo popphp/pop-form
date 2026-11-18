@@ -147,8 +147,15 @@ class File extends Element\Input
             $this->errors[] = $this->getRequiredMessage();
         }
 
+        // Nothing was uploaded. The required check above has already spoken for a required
+        // field, and an optional one has nothing to validate - no name to match, no size to
+        // compare. Every check below assumes there is a file.
+        if (empty($value)) {
+            return (count($this->errors) == 0);
+        }
+
         // Check the file extension against the allowlist, if one is set
-        if (!empty($value) && $this->hasAllowedTypes()) {
+        if ($this->hasAllowedTypes()) {
             $extension = strtolower((string)pathinfo((string)$value, PATHINFO_EXTENSION));
             if (!in_array($extension, $this->allowedTypes, true)) {
                 $this->errors[] = 'The file type must be one of the following: ' .

@@ -115,6 +115,28 @@ class InputTest extends TestCase
         $this->assertEquals(1, count($input->getErrors()));
     }
 
+    public function testFileOptionalNotUploadedSkipsValidators()
+    {
+        unset($_FILES['my_file']);
+        $input = new Input\File('my_file');
+        $input->addValidator(new Validator\LessThanEqual(500));
+        $this->assertTrue($input->validate());
+        $this->assertEquals(0, count($input->getErrors()));
+    }
+
+    public function testFileOptionalEmptyUploadSkipsValidators()
+    {
+        $_FILES['my_file'] = [
+            'name' => '',
+            'size' => 0
+        ];
+        $input = new Input\File('my_file');
+        $input->addValidator(new Validator\LessThanEqual(500));
+        $this->assertTrue($input->validate());
+        $this->assertEquals(0, count($input->getErrors()));
+        unset($_FILES['my_file']);
+    }
+
     public function testFileAllowedTypesRejectsDisallowedExtension()
     {
         $_FILES['my_file'] = [

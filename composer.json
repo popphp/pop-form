@@ -25,7 +25,7 @@
         "popphp/pop-dom": "^5.0.0",
         "popphp/pop-filter": "^5.0.0",
         "popphp/pop-utils": "^3.0.0",
-        "popphp/pop-validator": "^5.0.0"
+        "popphp/pop-validator": "^5.1.0"
     },
     "require-dev": {
         "popphp/pop-db": "^7.0.0",
