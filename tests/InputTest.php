@@ -351,6 +351,22 @@ class InputTest extends TestCase
         $this->assertFalse($input->hasErrors());
     }
 
+    public function testCsrfRejectsMismatchedTokenWithEmptyPost()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET = [];
+        new Input\Csrf('json_token');
+
+        // A JSON-bodied POST leaves $_POST empty; the token must still be checked
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [];
+        $input = new Input\Csrf('json_token');
+        $input->setValue('not-the-real-token');
+
+        $this->assertFalse($input->validate());
+        $this->assertContains('The security token does not match.', $input->getErrors());
+    }
+
     public function testCsrfTokensAreNamespacedPerFieldName()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -383,21 +399,25 @@ class InputTest extends TestCase
         $this->assertNotEquals($originalValue, $renewed->getValue());
     }
 
-    public function testCsrfHandlesNonGetPostRequestMethod()
+    public function testCsrfRejectsMismatchedTokenWithNonGetPostRequestMethod()
     {
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $input = new Input\Csrf('put_token');
-        $this->assertInstanceOf('Pop\Form\Element\Input\Csrf', $input);
+        $input->setValue('not-the-real-token');
+        $this->assertFalse($input->validate());
+        $this->assertContains('The security token does not match.', $input->getErrors());
     }
 
-    public function testCsrfThrowsExceptionWithoutRequestMethod()
+    public function testCsrfRejectsMismatchedTokenWithoutRequestMethod()
     {
         $original = $_SERVER['REQUEST_METHOD'] ?? null;
         unset($_SERVER['REQUEST_METHOD']);
 
         try {
-            $this->expectException('Pop\Form\Element\Input\Exception');
-            new Input\Csrf('no_request_method_token');
+            $input = new Input\Csrf('no_request_method_token');
+            $input->setValue('not-the-real-token');
+            $this->assertFalse($input->validate());
+            $this->assertContains('The security token does not match.', $input->getErrors());
         } finally {
             if ($original !== null) {
                 $_SERVER['REQUEST_METHOD'] = $original;

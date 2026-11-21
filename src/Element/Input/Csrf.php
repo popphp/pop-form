@@ -102,44 +102,18 @@ class Csrf extends Hidden
     /**
      * Set the validator
      *
-     * @throws Exception
+     * The validator is always added and checks the value the field was given against the real,
+     * server-side token value using a timing-safe comparison. It does not inspect the request
+     * itself, so the check cannot be skipped by changing the request's format (e.g. a JSON body).
+     *
      * @return void
      */
     protected function setValidator(): void
     {
-        // Get query data
-        if (!isset($_SERVER['REQUEST_METHOD'])) {
-            throw new Exception('Error: The server request method is not set.');
-        }
-
-        $queryData = [];
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET':
-                $queryData = $_GET;
-                break;
-
-            case 'POST':
-                $queryData = $_POST;
-                break;
-
-            default:
-                $input = fopen('php://input', 'r');
-                $qData = '';
-                while ($data = fread($input, 1024)) {
-                    $qData .= $data;
-                }
-
-                parse_str($qData, $queryData);
-        }
-
-        // If there is query data, set validator to check the submitted value against the
-        // real, server-side token value using a timing-safe comparison.
-        if (count($queryData) > 0) {
-            $expectedValue = $this->token['value'] ?? '';
-            $this->addValidator(function ($value) use ($expectedValue) {
-                return hash_equals($expectedValue, (string)$value) ? null : 'The security token does not match.';
-            });
-        }
+        $expectedValue = $this->token['value'] ?? '';
+        $this->addValidator(function ($value) use ($expectedValue) {
+            return hash_equals($expectedValue, (string)$value) ? null : 'The security token does not match.';
+        });
     }
 
 }
